@@ -1,6 +1,7 @@
 ## TODO
 
  - [x] Make grunt install all module dependencies recursively seeking the directory tree
+
    ✔ Done by improving [grunt-auto-install](https://github.com/Manabu-GT/grunt-auto-install) module on 30/09/2015
  - [ ] Fix the server tests (it remains listening to requests after closing), it is related to [this github thread](https://github.com/nodejs/node/issues/2642)
 
