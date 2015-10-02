@@ -8,6 +8,6 @@
 ## Improviconrs
 Improvements that are as feasible as riding unicorns
 
-These are things that, although will be convenient, don't add very much added value, requiring a big effort or major changes that make them not of utmost importance at all.
+These are things that, although will be convenient, don't add so much value, requiring a big effort or major changes that make them not of utmost importance at all.
 
  - [ ] Override the npm install process, so local dependencies are ignored when already present in the project root
