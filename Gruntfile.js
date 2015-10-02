@@ -19,7 +19,7 @@ module.exports = function(grunt) {
       local: {},
       options: {
         recursive: true,
-        exclude: ['.git', 'node_modules', 'bower_components']
+        exclude: ['.git', 'node_modules', 'bower_components', 'sample_module']
       }
     },
 
@@ -33,7 +33,8 @@ module.exports = function(grunt) {
         filter: function(path) {
           return [
             'node_modules',
-            'bower_components'
+            'bower_components',
+            'sample_module'
           ].every(function(regexp) {
             return path.match(regexp) === null;
           });

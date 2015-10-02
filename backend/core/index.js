@@ -33,7 +33,7 @@ var Core = (function() {
     });
 
     core.init = function(callback) {
-      console.dir(this.webserver);
+      this.config.init();
       this.webserver.init();
       // Example: exports.db.mongo.init();
       if (callback) {

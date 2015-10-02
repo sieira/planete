@@ -1,30 +1,66 @@
 'use strict';
 
-var express = require('express');
+var express = require('express'),
+    logger = require('_').logger,
+    config = require('_').config;
 
 var Server = (function () {
-  var app = express();
-  var server;
+  var server = express(),
+      runningInstance = {};
 
-  function configure() {
-    // TODO get options from config module
-    var options = {};
+  function configure(server) {
+    server.get('/', function (req, res) {
+      res.status(200).send('ok');
+    });
 
-    app.set('port', options.port || process.env.PORT || 8080);
-    app.set('ip', process.env.HOST || 'localhost');
+    server.get('*', function (req, res) {
+      res.status(404).send('nok');
+    });
   }
 
-  return {
-    // Start it up!
-    init: function() {
-      configure();
-      server = app.listen(app.get('port'), app.get('ip'), function() {
-        // TODO log through the logger module
-        console.log('\x1b[33m' + 'Running in '+ process.env.NODE_ENV + ' mode\x1b[0m');
-        console.log('\x1b[32m✔\x1b[0m [%s] Express server listening at %s:%d', Date(Date.now()), app.get('ip'),app.get('port'));
-      });
+  // Start it up!
+  server.init = function(callback) {
+    configure(this);
+
+    process.on('SIGTERM', function () {
+      this.close();
+    });
+
+    runningInstance = this.listen(config.PORT, config.HOST, function() {
+      // TODO log through the logger module
+      logger.info('Running in '+ config.NODE_ENV + ' mode');
+      logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
+      if(callback) { callback(); }
+    });
+  };
+
+  server.close = function(callback) {
+    if(!runningInstance.close) {
+      if(callback) { return callback('Tried to close a server that\'s not up'); }
+      else { return; }
     }
-  }
+    // Stops the server from accepting new connections and keeps existing connections.
+    runningInstance.close(function(err) {
+      if(err) {
+        logger.error('Tried to close a server that\'s not up on %s:%s', config.HOST, config.PORT);
+        if(callback) { return callback(err); }
+        else { return; }
+      }
+      logger.OK('Express server closed at %s:%d', config.HOST, config.PORT);
+      if(callback) { return callback(); }
+      else { return; }
+    });
+  };
+
+  server.on = function(event, handler) {
+    runningInstance.on(event,handler);
+  };
+
+  server.once = function(event, handler) {
+    runningInstance.once(event,handler);
+  };
+
+  return server;
 })();
 
 module.exports = Server;

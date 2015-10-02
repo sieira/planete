@@ -1,11 +1,13 @@
-var core = require('_');
+var core = require('_'),
+    logger = core.logger,
+    config = core.config;
 
 core.init(function(err) {
   //TODO log with the logger module if possible
   if(err) {
-    console.log('Error loading core');
+    logger.error('Error loading core');
   }
   if (!err) {
-    console.log('Planète\'s  bootstraped, configured in %s mode', process.env.NODE_ENV);
+    logger.info('Planète\'s core bootstraped, configured in %s mode', config.NODE_ENV);
   }
 });
