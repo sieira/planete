@@ -11,7 +11,7 @@ Installation process uses grunt, you'll need to install it prior to running foll
  2. `grunt build`
 
 # Configure
-*You can find extensive information about the configuration layer on the [configuration module readme]('backend/core/config/README.md').*
+*You can find extensive information about the configuration layer on the [configuration module readme](backend/core/config/README.md).*
 
 Pleanète's core has several configuration layers.
 
@@ -22,7 +22,7 @@ In order to deploy or test the system, you need to create a .env file on the pro
   - Values: [development|production]
 
 ## Core configuration
-Please refer to the [core docs](backend/core/README.md) and the [configuration module readme]('backend/core/config/README.md').
+Please refer to the [core docs](backend/core/README.md) and the [configuration module readme](backend/core/config/README.md).
 
 # Testing
 Just run `grunt test` or `npm test`
