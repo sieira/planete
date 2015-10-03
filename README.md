@@ -11,19 +11,18 @@ Installation process uses grunt, you'll need to install it prior to running foll
  2. `grunt build`
 
 # Configure
+*You can find extensive information about the configuration layer on the [configuration module readme]('backend/core/config/README.md').*
+
 Pleanète's core has several configuration layers.
 
 ## Environment configuration
-Planète uses [dotenv](https://github.com/bkeepers/dotenv)
-
 In order to deploy or test the system, you need to create a .env file on the project root. You can copy/rename what is in env.example
 
  - NODE_ENV:
   - Values: [development|production]
 
 ## Core configuration
-Please refer to the [core docs](backend/core/README.md)
-
+Please refer to the [core docs](backend/core/README.md) and the [configuration module readme]('backend/core/config/README.md').
 
 # Testing
 Just run `grunt test` or `npm test`
@@ -41,5 +40,5 @@ To all those who created or contributed to every npm module used by planète. No
  - [The gruntjs team](https://github.com/orgs/gruntjs/people)
  - [Peter Halliday](https://github.com/pghalliday) For his [grunt-mocha-test module](https://github.com/pghalliday/grunt-mocha-test)
  - [Manabu Shimobe](https://github.com/Manabu-GT) for his very handy [grunt-auto-install](https://github.com/Manabu-GT/grunt-auto-install) module
- - [Brandom Keepers](https://github.com/bkeepers) For his dotenv module
+ - [Brandom Keepers](https://github.com/bkeepers) For his dotenv module, from where the config module took it's parse function
  - [Mark Harter](https://strongloop.com/strongblog/author/marc/) Who inspired the modular structure of planete with [this article](https://strongloop.com/strongblog/modular-node-js-express/)

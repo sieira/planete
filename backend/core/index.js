@@ -3,7 +3,7 @@
 var fs = require('fs');
 
 /**
- * This singleton exports the entire core functionallity as object attributes
+ * This singleton exports the entire core functionality as object attributes
  *
  * The returned object contains every module referenced by an attribute
  * with the same name than the directory it's contained into.
@@ -35,7 +35,7 @@ var Core = (function() {
     core.init = function(callback) {
       this.config.init();
       this.webserver.init();
-      // Example: exports.db.mongo.init();
+
       if (callback) {
         callback();
       }

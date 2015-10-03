@@ -2,8 +2,12 @@
 
 var Module = (function () {
   return {
-    init: function() {},
-    close: function() {},
+    init: function(callback) {
+      return callback ? error ? callback(error) : callback() : undefined;
+    },
+    close: function(callback) {
+      return callback ? error ? callback(error) : callback() : undefined;
+    },
   };
 })();
 
