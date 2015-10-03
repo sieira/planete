@@ -4,6 +4,10 @@ var express = require('express'),
     logger = require('_').logger,
     config = require('_').config;
 
+/**
+ * This is the main web server
+ * it creates an instance of
+ */
 var Server = (function () {
   var server = express(),
       runningInstance = {};
@@ -22,12 +26,7 @@ var Server = (function () {
   server.init = function(callback) {
     configure(this);
 
-    process.on('SIGTERM', function () {
-      this.close();
-    });
-
     runningInstance = this.listen(config.PORT, config.HOST, function() {
-      // TODO log through the logger module
       logger.info('Running in '+ config.NODE_ENV + ' mode');
       logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
       if(callback) { callback(); }

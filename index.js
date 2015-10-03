@@ -2,8 +2,21 @@ var core = require('_'),
     logger = core.logger,
     config = core.config;
 
+// Consider if this could be placed on the core code
+function shutdown(event, logger) {
+  return function() {
+    logger('Gracefully exiting on \''+ event +'\' event');
+    core.close(function () {
+      process.exit(0);
+    });
+  }
+}
+
+process.on('SIGTERM', shutdown('SIGTERM', logger.info));
+process.on('SIGINT', shutdown('SIGINT', logger.info));
+process.on('uncaughtException', shutdown('uncaughtException', logger.error));
+
 core.init(function(err) {
-  //TODO log with the logger module if possible
   if(err) {
     logger.error('Error loading core');
   }

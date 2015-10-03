@@ -7,7 +7,9 @@
  - [x] Create basic module structure
 
    ✔ Done, check the [sample-module](backend/core/sample-module) 03/10/2015
- - [ ] Create a shutdown mechanism that calls every module close() method.
+ - [x] Create a shutdown mechanism that calls every module close() method.
+
+   ✔ The main file captures SIGERM and SIGINT and requests the core to close
  - [ ] Create a module prototype with a default behavior for init() and close()
 
 ## Improviconrs

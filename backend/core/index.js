@@ -32,14 +32,29 @@ var Core = (function() {
       });
     });
 
+    /**
+     * Init order is important, so please, comment why you decided to load your module
+     * on this precise step, and not before or after
+     */
     core.init = function(callback) {
+      // Loads the config file before anything else, so defaults are overriden
       this.config.init();
+      // Load the logger so output start going to the proper place
+      this.logger.init();
+      // Start the webserver, so the rest of the modules can register it's routings
       this.webserver.init();
 
       if (callback) {
         callback();
       }
     };
+
+    /**
+     * Gracefully close the core
+     */
+    core.close = function(callback) {
+      return this.webserver.close(callback);
+    }
 
     return core;
   }
