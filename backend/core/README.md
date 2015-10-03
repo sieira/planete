@@ -1,7 +1,7 @@
 # Core
-This is planète's core, index.js will load and init every module within
+*For a bakend reference, please check the [backend readme](..//README.md)*
 
-For a main reference, please check the [main planète readme](../../README.md)
+This is planète's core, index.js will load and init every module within
 
 ## Module stucture
 Modules should expose an init() method when some initialization is needed. In that case, this initialization has to be performed on the [index.js](./index.js) init method.

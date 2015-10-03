@@ -1,4 +1,6 @@
 # Config
+*This module is part of planète's core, whose docs can be found [here](../README.md)*
+
 This module load, store, and allow access to every system-wide variable.
 Config is a singleton that will expose the same contents to any instance.
 
