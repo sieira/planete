@@ -1,5 +1,5 @@
 # How is this thing organised?
-Give a look to the [docs index](../README.md) and/or the [main README file](../../README.md) for an overview of the system
+*Give a look to the [docs index](../README.md) and/or the [main README file](../../README.md) for an overview of the system*
 
 # How can I collaborate?
 Planète is licensed under the [MIT license](../../LICENSE), you can freely copy, fork, modify and redistribute [its github repository](https://github.com/sieira/planete).

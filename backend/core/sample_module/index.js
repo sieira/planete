@@ -3,10 +3,14 @@
 var Module = (function () {
   return {
     init: function(callback) {
-      return callback ? error ? callback(error) : callback() : undefined;
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() };
+      }
     },
     close: function(callback) {
-      return callback ? error ? callback(error) : callback() : undefined;
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() };
+      }
     },
   };
 })();

@@ -67,7 +67,7 @@ var Config = (function () {
         try {
           var envs = parse('.env');
         } catch(err) {
-          return callback ? callback(err) : undefined;
+          if(callback && typeof callback == 'function') { return callback(error); }
         }
 
         for(var env in envs) {
@@ -76,8 +76,7 @@ var Config = (function () {
                                               enumerable : false,
                                               configurable : false });
         };
-
-        return callback ? callback() : undefined;
+        if(callback && typeof callback == 'function') { return callback(); }
       },
       close: function() {},
     };

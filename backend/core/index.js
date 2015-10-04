@@ -37,6 +37,7 @@ var Core = (function() {
      * on this precise step, and not before or after
      */
     core.init = function(callback) {
+      //TODO Run sequentially
       // Loads the config file before anything else, so defaults are overriden
       this.config.init();
       // Load the logger so output start going to the proper place
