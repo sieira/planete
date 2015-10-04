@@ -22,7 +22,7 @@ In order to deploy or test the system, you need to create a .env file on the pro
   - Values: [development|production]
 
 ## Core configuration
-Please refer to the [core docs](backend/core/README.md) and the [configuration module readme](backend/core/config/README.md).
+Please refer to the [core docs](core/backend/README.md) and the [configuration module readme](core/backend/config/README.md).
 
 # Testing
 Just run `npm test`

@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         overwrite: true
       },
       explicit: {
-        src: 'backend/core',
+        src: 'core/backend',
         dest: 'node_modules/_'
       }
     },
