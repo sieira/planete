@@ -5,10 +5,10 @@ As for the present version (0.0.0), this repository is absolutely useless.
 Mudular Node.js CMS
 
 # Install
-Installation process uses grunt, you'll need to install it prior to running following script
- 0. `npm install`
- 1. You need to download [this branch](https://github.com/sieira/grunt-auto-install) of `grunt-auto-install` and override the default until my PR is accepted (if it is)
- 2. `grunt build`
+ 0. `sudo npm install -g bower`
+ 1. `npm install`
+ 2. You need to download [this branch](https://github.com/sieira/grunt-auto-install) of `grunt-auto-install` and override the default until my PR is accepted (if it is)
+ 3. `grunt build`
 
 # Configure
 *You can find extensive information about the configuration layer on the [configuration module readme](backend/core/config/README.md).*
@@ -25,7 +25,10 @@ In order to deploy or test the system, you need to create a .env file on the pro
 Please refer to the [core docs](backend/core/README.md) and the [configuration module readme](backend/core/config/README.md).
 
 # Testing
-Just run `grunt test` or `npm test`
+Just run `npm test`
+
+Note: Since planète uses some ES6 functionalities that are not still fully supported by node, `grunt test` will fail for all the tests involving modules that use ES6 functionality needing to use the --harmony flag.
+[This answer explains it on detail](http://stackoverflow.com/a/17751775/1430607)
 
 # How to collaborate
 Please refer to the [collaboration docs](docs/collaboration/README.md)
