@@ -21,19 +21,20 @@ When several modules share the same dependencies, those dependencies may be extr
 ### Requires a module
 Modules are included in the main node_modules directory during install under the alias `_`.
 
-Most modules are not singleton, this means that you can, for instance, make any module use a custom logger, while still using the core's one.
-
-Thus, when requiring any core module, there are two ways to do it depending on your needs :
-
-  1. Require the instance of the module that's registered on the core.
+There are two ways to require any core module :
 
 ```js
   var module = require('_').module;
 ```  
-  2. Require a new instance of the module
 
 ```js
   var module = require('_/module');
+```
+
+Core modules are singletons, but some allow to create separated instances. This means that you can, for instance, make any module use a custom logger, while still using the core's one.
+
+```js
+  var module = require('_/module').new();
 ```
 
 This can be a little tricky, but think about the logger. When you get a new logger, you are writing to the console, whereas when getting the core's logger, you will log according to the current configuration. You should use the first option unless you know what you're doing.

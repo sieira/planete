@@ -1,6 +1,6 @@
 'use strict';
 
-var Logger = (function () {
+var Logger = (function _Logger() {
   var logger = {};
 
   var Color = {
@@ -31,6 +31,9 @@ var Logger = (function () {
       var args = [].slice.call(arguments);
 
       console.error.apply(this, ['%s [x] %s [%s]: ' + args.shift(), Color.RED_FG, Color.RESET, Date(Date.now())].concat(args));
+    };
+    logger.new = function() {
+      return new _Logger();
     };
 
   return logger;
