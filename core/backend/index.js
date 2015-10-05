@@ -33,21 +33,64 @@ var Core = (function() {
     });
 
     /**
-     * Init order is important, so please, comment why you decided to load your module
-     * on this precise step, and not before or after
+     * Run a single async function, or an array of async functions,
+     * and resolve the promise when all of them have ended
      */
-    core.init = function(callback) {
-      //TODO Run sequentially
-      // Loads the config file before anything else, so defaults are overriden
-      this.config.init();
-      // Load the logger so output start going to the proper place
-      this.logger.init();
-      // Start the webserver, so the rest of the modules can register it's routings
-      this.webserver.init();
+    function parallelRunner() {
+      var tasks = arguments,
+          n = arguments.length;
 
-      if (callback) {
-        callback();
-      }
+      return new Promise(function(resolve, reject) {
+        for(var task in tasks) {
+          if(typeof tasks[task] == 'function') {
+            tasks[task](function(err) {
+              if(err) { return reject(err); }
+              if(--n <= 0) {
+                return resolve();
+              }
+            });
+          } else {
+            return reject(Object.keys(tasks[task][0]) + ' is not a function');
+          }
+        }
+      });
+    }
+
+    /**
+     * Receives : ([async] | async)*
+     * Async function, array of async functions, an arguments list of both async functions and arrays of async functions
+     * and sequentially run each term of the list.
+     *
+     * Resolves when all the functions have run, and rejects if any of them fails
+     */
+    function serialRunner() {
+      var tasks = Array.prototype.slice.call(arguments);
+
+      return new Promise(function(resolve,reject) {
+        // Gets a single async function, or a list of async functions
+        var paralelTasks = [].concat(tasks.shift());
+        parallelRunner.apply(this, paralelTasks)
+        .then(function() {
+          if(tasks.length) {
+            serialRunner.apply(this,tasks).then(resolve);
+          } else {
+            resolve();
+          }
+        })
+        .catch(reject);
+      });
+    }
+
+    core.init = function(callback) {
+      serialRunner(
+        core.config.init,   // Loads the config file before anything else, so defaults are overriden
+        core.logger.init,   // Load the logger so output start going to the proper place
+        core.webserver.init // Start the webserver, so the rest of the modules can register it's routings
+      )
+      .then(function() {
+        if(callback && typeof callback == 'function') { return callback(); }
+      })
+      .catch(this.logger.error);
     };
 
     /**

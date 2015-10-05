@@ -1,7 +1,8 @@
 'use strict';
 
-var fs = require('fs');
-var Reflect = require('harmony-reflect');
+var fs = require('fs'),
+    Reflect = require('harmony-reflect'),
+    logger = require('_').logger;
 
 /**
  * Welcome to ES6 Proxies :-)
@@ -28,6 +29,7 @@ var Config = (function () {
       TEST_PORT: 8080,
       init: function(callback) {
         require('dotenv').load();
+        logger.OK('Configuration loaded');
         if(callback && typeof callback == 'function') { return callback(); }
       },
       close: function(callback) {

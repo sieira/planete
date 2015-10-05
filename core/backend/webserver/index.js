@@ -12,7 +12,7 @@ var Server = (function () {
   var server = express(),
       runningInstance = {};
 
-  function configure(server) {
+  function configure() {
     server.get('/', function (req, res) {
       res.status(200).send('ok');
     });
@@ -24,12 +24,12 @@ var Server = (function () {
 
   // Start it up!
   server.init = function(callback) {
-    configure(this);
+    configure();
 
-    runningInstance = this.listen(config.PORT, config.HOST, function() {
+    runningInstance = server.listen(config.PORT, config.HOST, function() {
       logger.info('Running in '+ config.NODE_ENV + ' mode');
       logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
-      if(callback) { callback(); }
+      if(callback && typeof callback == 'function') { return callback(); }
     });
   };
 

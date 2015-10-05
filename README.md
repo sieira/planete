@@ -11,15 +11,14 @@ Mudular Node.js CMS
  3. `grunt build`
 
 # Configure
-*You can find extensive information about the configuration layer on the [configuration module readme](backend/core/config/README.md).*
+*You can find extensive information about the configuration layer on the [configuration module readme](core/backend/config/README.md).*
 
 Pleanète's core has several configuration layers.
 
 ## Environment configuration
 In order to deploy or test the system, you need to create a .env file on the project root. You can copy/rename what is in env.example
 
- - NODE_ENV:
-  - Values: [development|production]
+Check the [configuration module readme](core/backend/config/README.md#env) for a detailed explanation.
 
 ## Core configuration
 Please refer to the [core docs](core/backend/README.md) and the [configuration module readme](core/backend/config/README.md).
