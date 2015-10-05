@@ -27,7 +27,6 @@ var Server = (function () {
     configure();
 
     runningInstance = server.listen(config.PORT, config.HOST, function() {
-      logger.info('Running in '+ config.NODE_ENV + ' mode');
       logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
       if(callback && typeof callback == 'function') { return callback(); }
     });
@@ -35,19 +34,23 @@ var Server = (function () {
 
   server.close = function(callback) {
     if(!runningInstance.close) {
-      if(callback) { return callback('Tried to close a server that\'s not up'); }
+      if(callback && typeof callback == 'function') { return callback('Tried to close a server that\'s not up'); }
       else { return; }
     }
-    // Stops the server from accepting new connections and keeps existing connections.
+
+    // Once the server closes, log it and rock the callback
+    if(callback && typeof callback == 'function') runningInstance.once('close', function() {
+      logger.OK('Express server closed at %s:%d', config.HOST, config.PORT);
+      callback();
+    });
+
+    // Stops the server from accepting new connections
     runningInstance.close(function(err) {
       if(err) {
         logger.error('Tried to close a server that\'s not up on %s:%s', config.HOST, config.PORT);
-        if(callback) { return callback(err); }
+        if(callback && typeof callback == 'function') { return callback(err); }
         else { return; }
       }
-      logger.OK('Express server closed at %s:%d', config.HOST, config.PORT);
-      if(callback) { return callback(); }
-      else { return; }
     });
   };
 

@@ -9,6 +9,8 @@
 var should = require('chai').should(),
     expect = require('chai').expect;
 
+var sample_module = require('_/sample_module');
+
 // The highest level describe should be the module name.
 // This thing -> \x1b[0m will print the name yellow
 describe('\x1b[33mSample module\x1b[0m', function() {
