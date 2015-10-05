@@ -22,11 +22,14 @@ var Server = (function () {
     });
   }
 
+  server._listen = server.listen;
+  server.listen = server.init;
+
   // Start it up!
   server.init = function(callback) {
     configure();
 
-    runningInstance = server.listen(config.PORT, config.HOST, function() {
+    runningInstance = server._listen(config.PORT, config.HOST, function() {
       logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
       if(callback && typeof callback == 'function') { return callback(); }
     });
