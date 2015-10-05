@@ -2,8 +2,11 @@
 
  - [ ] Fix the server tests (it remains listening to requests after closing), it is related to [this github thread](https://github.com/nodejs/node/issues/2642)
  - [ ] Create a module prototype with a default behavior for init() and close()
- - [ ] Allow the modules to log to the core logger as well as its own
+ - [ ] Allow the DB module to register nested models (recursive)
 
+ - [x] Allow the modules to log to the core logger as well as its own
+
+   ✔ Done by adding a new() method to logger module on 05/10/2015
  - [x] Make grunt install all module dependencies recursively seeking the directory tree
 
    ✔ Done by improving [grunt-auto-install](https://github.com/Manabu-GT/grunt-auto-install) module on 30/09/2015

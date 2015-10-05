@@ -1,11 +1,8 @@
 {
-  "name": "config",
+  "name": "authentication",
   "version": "1.0.0",
-  "description": "*This module is part of planète's core, whose docs can be found [here](../README.md)*",
+  "description": "",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,7 +10,10 @@
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^1.2.0",
-    "harmony-reflect": "^1.4.2"
+    "passport": "^0.3.0",
+    "passport-http-bearer": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai-passport-strategy": "^0.2.0"
   }
 }

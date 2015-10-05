@@ -32,7 +32,7 @@ var Core = (function() {
   */
   function parallelRunner() {
     var tasks = arguments,
-    n = arguments.length;
+        n = arguments.length;
 
     return new Promise(function(resolve, reject) {
       for(var task in tasks) {
@@ -63,10 +63,10 @@ var Core = (function() {
     return new Promise(function(resolve,reject) {
       // Gets a single async function, or a list of async functions
       var paralelTasks = [].concat(tasks.shift());
-      parallelRunner.apply(this, paralelTasks)
+      parallelRunner.apply(null, paralelTasks)
       .then(function() {
         if(tasks.length) {
-          serialRunner.apply(this,tasks).then(resolve);
+          serialRunner.apply(null, tasks).then(resolve);
         } else {
           resolve();
         }
@@ -77,9 +77,11 @@ var Core = (function() {
 
   core.init = function(callback) {
     serialRunner(
-      core.config.init,   // Loads the config file before anything else, so defaults are overriden
-      core.logger.init,   // Load the logger so output start going to the proper place
-      core.webserver.init // Start the webserver, so the rest of the modules can register it's routings
+      core.config.init,     // Loads the config file before anything else, so defaults are overriden
+      core.logger.init,     // Load the logger so output start going to the proper place
+      [core.webserver.init, // Start the webserver, so the rest of the modules can register it's routings
+      core.db.init],        // Expose all the database models before the authentication system inits
+      core.authentication.init
     )
     .then(function() {
       if(callback && typeof callback == 'function') { return callback(); }
