@@ -66,7 +66,9 @@ var Core = (function() {
       parallelRunner.apply(null, paralelTasks)
       .then(function() {
         if(tasks.length) {
-          serialRunner.apply(null, tasks).then(resolve);
+          serialRunner.apply(null, tasks)
+          .then(resolve)
+          .catch(reject);
         } else {
           resolve();
         }

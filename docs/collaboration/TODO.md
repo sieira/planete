@@ -1,6 +1,5 @@
 ## TODO
 
- - [ ] Fix the server tests (it remains listening to requests after closing), it is related to [this github thread](https://github.com/nodejs/node/issues/2642)
  - [ ] Create a module prototype with a default behavior for init() and close()
  - [ ] Allow the DB module to register nested models (recursive)
 

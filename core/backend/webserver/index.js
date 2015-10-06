@@ -51,34 +51,23 @@ var Server = (function () {
     });
   };
 
+  /** This has to be reviewed, but well... it works. */
   server.close = function(callback) {
     if(!runningInstance.close) {
-      if(callback && typeof callback == 'function') { return callback('Tried to close a server that\'s not up'); }
-      else { return; }
+      logger.error('Tried to close a server that\'s not up on %s:%s', host, port);
+      throw new Error('Not running');
     }
-
-    // Once the server closes, log it and rock the callback
-    if(callback && typeof callback == 'function') runningInstance.once('close', function() {
-      logger.OK('Express server closed at %s:%d', host, port);
-      callback();
-    });
 
     // Stops the server from accepting new connections
     runningInstance.close(function(err) {
+      runningInstance = undefined;
       if(err) {
         logger.error('Tried to close a server that\'s not up on %s:%s', host, port);
         if(callback && typeof callback == 'function') { return callback(err); }
-        else { return; }
       }
+      logger.OK('Express server closed at %s:%d', host, port);
+      if(callback && typeof callback == 'function') { return callback() };
     });
-  };
-
-  server.on = function(event, handler) {
-    runningInstance.on(event,handler);
-  };
-
-  server.once = function(event, handler) {
-    runningInstance.once(event,handler);
   };
 
   return server;
