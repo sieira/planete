@@ -24,6 +24,7 @@ var Config = (function () {
     PORT: 8080,
     TEST_HOST: 'localhost',
     TEST_PORT: 8080,
+    FRONTEND_PATH: require.resolve('#').substring(0, require.resolve('#').lastIndexOf('/')),
     init: function(callback) {
       require('dotenv').load();
       logger.OK('Configuration loaded');
