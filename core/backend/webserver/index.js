@@ -12,6 +12,8 @@ var Server = (function () {
   var server = express(),
       runningInstance = {};
 
+  var host, port;
+
   function configure() {
     server.get('/', function (req, res) {
       res.status(200).send('ok');
@@ -27,10 +29,19 @@ var Server = (function () {
 
   // Start it up!
   server.init = function(callback) {
+    if(config.NODE_ENV === 'test') {
+      host = config.TEST_HOST;
+      port = config.TEST_PORT;
+    }
+    else {
+      host = config.HOST;
+      port = config.PORT;
+    }
+
     configure();
 
-    runningInstance = server._listen(config.PORT, config.HOST, function() {
-      logger.OK('Express server listening at %s:%d', config.HOST, config.PORT);
+    runningInstance = server._listen(port, host, function() {
+      logger.OK('Express server listening at %s:%d', host, port);
       if(callback && typeof callback == 'function') { return callback(); }
     });
   };
@@ -43,14 +54,14 @@ var Server = (function () {
 
     // Once the server closes, log it and rock the callback
     if(callback && typeof callback == 'function') runningInstance.once('close', function() {
-      logger.OK('Express server closed at %s:%d', config.HOST, config.PORT);
+      logger.OK('Express server closed at %s:%d', host, port);
       callback();
     });
 
     // Stops the server from accepting new connections
     runningInstance.close(function(err) {
       if(err) {
-        logger.error('Tried to close a server that\'s not up on %s:%s', config.HOST, config.PORT);
+        logger.error('Tried to close a server that\'s not up on %s:%s', host, port);
         if(callback && typeof callback == 'function') { return callback(err); }
         else { return; }
       }

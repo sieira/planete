@@ -3,8 +3,9 @@
 var glob = require("glob"),
     util = require("./util");
 
-var exclude = ['.git', 'node_modules','bower_components','sample_module'];
+process.env.NODE_ENV = 'test';
 
+var exclude = ['.git', 'node_modules','bower_components','sample_module'];
 var files = glob.sync("**/test/**/*.js", {});
 
 files = files.filter(function(path) {
