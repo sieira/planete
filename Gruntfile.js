@@ -26,9 +26,17 @@ module.exports = function(grunt) {
       options: {
         overwrite: true
       },
-      explicit: {
-        src: 'core/backend',
-        dest: 'node_modules/_'
+      expanded: {
+        files: [
+          {
+            src: 'core/backend',
+            dest: 'node_modules/_'
+          },
+          {
+            src: 'core/frontend',
+            dest: 'node_modules/#'
+          }
+        ]
       }
     },
 

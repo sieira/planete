@@ -15,8 +15,13 @@ var Server = (function () {
   var host, port;
 
   function configure() {
+    server.set('views', config.FRONTEND_PATH + '/views');
+    server.set('view engine', 'jade');
+
+    server.use(logger.middleware);
+
     server.get('/', function (req, res) {
-      res.status(200).send('ok');
+      res.render('index');
     });
 
     server.get('*', function (req, res) {
