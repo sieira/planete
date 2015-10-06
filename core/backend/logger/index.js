@@ -14,7 +14,7 @@ var Logger = (function _Logger() {
   function colorLogger(tag, color) {
     return function() {
       var args = [].slice.call(arguments);
-      console.log.apply(null, ['%s [%s] %s [%s]: ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
+      console.log.apply(null, ['%s [%s] %s [%s] ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
     }
   }
 
@@ -31,7 +31,16 @@ var Logger = (function _Logger() {
   logger.log = console.log;
   logger.info = colorLogger('i', Color.YELLOW_FG);
   logger.OK = colorLogger('✔', Color.GREEN_FG);
-  logger.error = colorLogger('x', Color.RED);
+  logger.error = colorLogger('x', Color.RED_FG);
+
+  logger.middleware = function(req, res, next) {
+    var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
+    var url = req.originalUrl || req.url;
+
+
+    logger.info('%s %s request from %s ', req.method, url, ip);
+    next();
+  }
 
   return logger;
 })();
