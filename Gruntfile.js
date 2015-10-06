@@ -1,5 +1,21 @@
 'use strict';
 
+var glob = require("glob"),
+    util = require("./util");
+
+var exclude = ['.git', 'node_modules','bower_components','sample_module'];
+
+var files = glob.sync("**/test/**/*.js", {});
+
+files = files.filter(function(path) {
+  return exclude.every(function(regexp) {
+    return path.match(regexp) === null;
+  });
+});
+
+files = util.pathsort(files);
+
+
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -19,7 +35,7 @@ module.exports = function(grunt) {
       local: {},
       options: {
         recursive: true,
-        exclude: ['.git', 'node_modules', 'bower_components', 'sample_module']
+        exclude: exclude
       }
     },
 
@@ -29,16 +45,7 @@ module.exports = function(grunt) {
           quiet: false, // Optionally suppress output to standard out (defaults to false)
           clearRequireCache: true // Optionally clear the require cache before running tests (defaults to false)
         },
-        src: ['**/test/**/*.js'],
-        filter: function(path) {
-          return [
-            'node_modules',
-            'bower_components',
-            'sample_module'
-          ].every(function(regexp) {
-            return path.match(regexp) === null;
-          });
-        }
+        src: files
       }
     }
   });
