@@ -5,36 +5,33 @@ var Logger = (function _Logger() {
 
   var Color = {
     GREEN_FG: '\x1b[32m',
+    MAGENTA_FG: '\x1b[35m',
     RED_FG: '\x1b[31m',
     RESET:  '\x1b[0m',
     YELLOW_FG: '\x1b[33m'
   };
 
-    logger.init = function(callback) {
-      console.log.apply(this, ['%s [✔] %s [%s]: ' + 'Logger is configured', Color.GREEN_FG, Color.RESET, Date(Date.now())]);
-
-      if(callback && typeof callback == 'function') { return callback(); }
-    };
-    logger.close = function() {};
-    logger.log = console.log;
-    logger.info = function() {
+  function colorLogger(tag, color) {
+    return function() {
       var args = [].slice.call(arguments);
+      console.log.apply(null, ['%s [%s] %s [%s]: ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
+    }
+  }
 
-      console.log.apply(this, ['%s [i] %s [%s]: ' + args.shift(), Color.YELLOW_FG, Color.RESET, Date(Date.now())].concat(args));
-    };
-    logger.OK = function() {
-      var args = [].slice.call(arguments);
+  logger.init = function(callback) {
+    logger.OK('Logger is configured');
 
-      console.log.apply(this, ['%s [✔] %s [%s]: ' + args.shift(), Color.GREEN_FG, Color.RESET, Date(Date.now())].concat(args));
-    };
-    logger.error = function() {
-      var args = [].slice.call(arguments);
+    if(callback && typeof callback == 'function') { return callback(); }
+  };
+  logger.close = function() {};
+  logger.new = function() {
+    return new _Logger();
+  };
 
-      console.error.apply(this, ['%s [x] %s [%s]: ' + args.shift(), Color.RED_FG, Color.RESET, Date(Date.now())].concat(args));
-    };
-    logger.new = function() {
-      return new _Logger();
-    };
+  logger.log = console.log;
+  logger.info = colorLogger('i', Color.YELLOW_FG);
+  logger.OK = colorLogger('✔', Color.GREEN_FG);
+  logger.error = colorLogger('x', Color.RED);
 
   return logger;
 })();
