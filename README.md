@@ -40,7 +40,9 @@ To all those who created or contributed to every npm module used by planète. No
  - [Ryan Lienhart Dahl](https://github.com/ry) And all those who contributed on node.js
  - [Strongloop](https://strongloop.com) For the [express module](http://expressjs.com/)
  - [The gruntjs team](https://github.com/orgs/gruntjs/people)
- - [Peter Halliday](https://github.com/pghalliday) For his [grunt-mocha-test module](https://github.com/pghalliday/grunt-mocha-test)
- - [Manabu Shimobe](https://github.com/Manabu-GT) for his very handy [grunt-auto-install](https://github.com/Manabu-GT/grunt-auto-install) module
- - [Brandom Keepers](https://github.com/bkeepers) For his dotenv module, from where the config module took it's parse function
+ - ["Cowboy" Ben Alman](http://benalman.com/) and [Kyle Robinson Young](https://github.com/shama) (among others) For their [grunt-contrib-symlink](https://github.com/gruntjs/grunt-contrib-symlink) module
+ - [Peter Halliday](https://github.com/pghalliday) For his [grunt-mocha-test](https://github.com/pghalliday/grunt-mocha-test) module
+ - [Manabu Shimobe](https://github.com/Manabu-GT) For his very handy [grunt-auto-install](https://github.com/Manabu-GT/grunt-auto-install) module
+ - [Brandom Keepers](https://github.com/bkeepers) For his [dotenv](https://www.npmjs.com/package/dotenv) module
+ - [TJ Holowaychuk](https://github.com/tj) For his ubiquity as well as for his jade module (As well as any person having contributed to any of his project)
  - [Mark Harter](https://strongloop.com/strongblog/author/marc/) Who inspired the modular structure of planete with [this article](https://strongloop.com/strongblog/modular-node-js-express/)

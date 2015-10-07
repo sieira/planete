@@ -10,6 +10,7 @@
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
   "license": "AGPL-3.0",
   "dependencies": {
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "jade": "^1.11.0"
   }
 }
