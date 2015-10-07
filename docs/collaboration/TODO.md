@@ -1,5 +1,6 @@
 ## TODO
 
+ - [ ] Enable SSL for login and registering pages
  - [ ] Create a module prototype with a default behavior for init() and close()
  - [ ] Allow the DB module to register nested models (recursive)
 
