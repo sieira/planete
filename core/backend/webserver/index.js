@@ -19,8 +19,9 @@ This file is part of Planète.
 'use strict';
 
 var express = require('express'),
-    logger = require('_').logger,
-    config = require('_').config;
+    core = require('_'),
+    logger = core.logger,
+    config = core.config;
 
 /**
  * This is the main web server
@@ -34,19 +35,28 @@ var Server = (function () {
   var host, port;
 
   function configure() {
-    server.set('views', config.FRONTEND_PATH + '/views');
-    server.set('view engine', 'jade');
-
+    server.locals.__ = core.i18n.__;
     server.use(logger.middleware);
 
     // Attach frontend routes
-    frontend.registerRoutes(server);
-    logger.OK('Frontend routes registered');
+    var error;
+
+    try {
+      frontend.registerRoutes(server);
+    } catch (err) {
+      error = err;
+      logger.error('Error registering frontend routes: ' + err);
+      logger.error(err.stack);
+    }
+
+    if(!error) { logger.OK('Frontend routes registered'); }
 
     server.post('*', function (req, res) {
       res.status(404).send('nok');
     });
   }
+
+  server.static = express.static;
 
   // Start it up!
   server.init = function(callback) {

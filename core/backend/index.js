@@ -18,7 +18,9 @@ This file is part of Planète.
 **/
 'use strict';
 
-var fs = require('fs');
+var fs = require('fs'),
+    serialRunner = require('../../util').serialRunner,
+    parallelRunner = require('../../util').parallelRunner;
 
 /**
  * This module exports the entire core functionality as object attributes
@@ -34,6 +36,11 @@ var Core = (function() {
   var core = {};
 
   fs.readdirSync(__dirname).forEach(function(filename) {
+    // Ignore the test and the sample_module dirs
+    if(['test', 'sample_module', 'node_modules'].some(function(element) {
+      return element === filename;
+    })) { return; }
+
     var stat = fs.statSync(__dirname + '/' + filename);
     if (!stat.isDirectory()) { return; }
 
@@ -44,60 +51,13 @@ var Core = (function() {
     });
   });
 
- /**
-  * Run a single async function, or an array of async functions,
-  * and resolve the promise when all of them have ended
-  */
-  function parallelRunner() {
-    var tasks = arguments,
-        n = arguments.length;
-
-    return new Promise(function(resolve, reject) {
-      for(var task in tasks) {
-        if(typeof tasks[task] == 'function') {
-          tasks[task](function(err) {
-            if(err) { return reject(err); }
-            if(--n <= 0) {
-              return resolve();
-            }
-          });
-        } else {
-          return reject(Object.keys(tasks[task][0]) + ' is not a function');
-        }
-      }
-    });
-  }
-
- /**
-  * Receives : ([async] | async)*
-  * Async function, array of async functions, an arguments list of both async functions and arrays of async functions
-  * and sequentially run each term of the list.
-  *
-  * Resolves when all the functions have run, and rejects if any of them fails
-  */
-  function serialRunner() {
-    var tasks = Array.prototype.slice.call(arguments);
-
-    return new Promise(function(resolve,reject) {
-      // Gets a single async function, or a list of async functions
-      var paralelTasks = [].concat(tasks.shift());
-      parallelRunner.apply(null, paralelTasks)
-      .then(function() {
-        if(tasks.length) {
-          serialRunner.apply(null, tasks)
-          .then(resolve)
-          .catch(reject);
-        } else {
-          resolve();
-        }
-      })
-      .catch(reject);
-    });
-  }
+  // TODO check if it really is (on the database)
+  core.isInstalled = (function() { return false; })();
 
   core.init = function(callback) {
     serialRunner(
       core.config.init,     // Loads the config file before anything else, so defaults are overriden
+      core.i18n.init,
       core.logger.init,     // Load the logger so output start going to the proper place
       [core.webserver.init, // Start the webserver, so the rest of the modules can register it's routings
       core.db.init],        // Expose all the database models before the authentication system inits

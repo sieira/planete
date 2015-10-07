@@ -16,7 +16,31 @@
       You should have received a copy of the GNU Affero General Public License
       along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 -//
-html
-  head
-  body
-    | Hello world !!
+mixin head
+  meta(charset='utf8')
+  base(href='/')
+  title #{title} - Planète
+  meta(name="viewport", content="width=device-width, initial-scale=1")
+  if block
+    block
+
+mixin baseCss
+  link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
+  link(rel='stylesheet', href='bootstrap/dist/css/bootstrap-theme.min.css')
+  
+mixin baseScripts
+  script(src='jquery/dist/jquery.js')
+  script(src='bootstrap/dist/js/bootstrap.js')
+  script(src='angular/angular.js')
+
+mixin moduleScripts(scripts)
+  if (scripts)
+    each script in scripts
+      script(src=script)
+
+mixin angularInjections(injections)
+  script(type='text/javascript')
+    | var angularInjections = []
+    each injection in injections
+      | .concat("#{injection}".split(','))
+    | ;

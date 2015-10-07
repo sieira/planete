@@ -1,0 +1,71 @@
+//-
+  Copyright © 2015 Luis Sieira Garcia
+
+  This file is part of Planète.
+
+      Planète is free software: you can redistribute it and/or modify
+      it under the terms of the GNU Affero General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+      
+      Planète is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU Affero General Public License for more details.
+
+      You should have received a copy of the GNU Affero General Public License
+      along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+-//
+doctype html
+html
+  include ../../views/utils
+  +head
+    +baseCss
+    +baseScripts
+    +moduleScripts(scripts)
+    +angularInjections(angularInjections)    
+    body
+      div.container(ng-cloak ng-app='setup' ng-controller='setupController')
+          div
+              h1 #{__('Setup your software')}
+
+          div(ng-hide='step != 0')
+              h2 #{__('Welcome to the Planète CMS !')}
+              div
+                  p #{__('Let\'s just configure this thing.')}
+
+              button.btn.pull-right(ng-click='step = step + 1') Next
+
+          div(ng-hide='step != 1')
+              h2 #{__('Create an administrator account')}
+              div
+                div.form-container
+                  form(role="form")
+                    div.form-group
+                      label(for='username') #{__('User name')}
+                      input(ng-model='user.username' ng-change='test.status="none"' type='text' class='form-control' id='username')
+                    div.form-group
+                      label(for='password') #{__('User password')}
+                      input(type='password' ng-model='user.password' ng-change='test.status="none"' class='form-control' id='password')
+                    div.form-group
+                      label(for='name') #{__('First name')}
+                      input(ng-model='user.name' ng-change='test.status="none"' type='text' class='form-control' id='name')
+                    div.form-group
+                      label(for='surname') #{__('Surname')}
+                      input(ng-model='user.surname' ng-change='test.status="none"' type='text' class='form-control' id='surname')
+                    div(ng-show="test.status=='success'")
+                      div.text-success #{__('User successfully created')}
+                    div(ng-show="test.status=='error'")
+                      div.text-danger {{test.err.message}}: {{test.err.details}}
+
+                    button.pull-right.btn.btn-primary(type='button' ng-click='recordUser()')
+                      | {{recordButton.label}}
+
+                    div(ng-show="record.status=='error'")
+                      .pull-right
+                        div.text-danger {{record.err.message}}: {{record.err.details}}
+
+          div(ng-hide='step != 2')
+            div.form-container
+              h2 #{__('Great! The setup is complete')}.
+              p.text-primary #{__('Please reload this page to get started with Planète.')}

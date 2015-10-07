@@ -24,14 +24,10 @@ var i18n = (function () {
       return string;
     },
     init: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
+      if(callback && typeof callback == 'function') { callback(); }
     },
     close: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
+      if(callback && typeof callback == 'function') { callback(); }
     },
   };
 })();

@@ -18,13 +18,19 @@ This file is part of Planète.
 **/
 'use strict';
 
-var core = require('_');
+var core = require('_'),
+    path = require('path');
 
-var Routes = function (server) {
-  server.get('/', function (req, res) {
-    res.render('index');
+
+var Setup = function (server, scriptsInjector) {
+  var viewsdir = path.normalize(path.join(__dirname, '/views'));
+
+  server.get('/', function(req, res, next) {
+    if (core.isInstalled) {
+      return next();
+    }
+    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
   });
-
 };
 
-module.exports = Routes;
+module.exports = Setup;

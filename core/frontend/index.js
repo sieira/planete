@@ -18,23 +18,56 @@ This file is part of Planète.
 **/
 'use strict';
 
-var routes = require('./routes');
+var fs = require('fs'),
+    path = require('path');
 
 var Frontend = (function () {
+  function scriptsInjector(modulePath) {
+    var styles = [],
+        moduleScripts = [],
+        angularInjections = [];
+
+    fs.readdirSync(path.join(modulePath,'js')).forEach(function(filename) {
+      moduleScripts.push(path.join(path.relative(__dirname, modulePath), 'js', filename));
+    });
+
+    fs.readdirSync(path.join(modulePath,'css')).forEach(function(filename) {
+      styles.push(path.join(path.relative(__dirname, modulePath), 'css', filename));
+    });
+
+    //TODO make the module control its own dependencies
+    // angularInjections.push('angularmodule');
+
+    return { styles: styles, scripts: moduleScripts, angularInjections: angularInjections };
+  };
+
   return {
     registerRoutes: function(server) {
-      routes.attachTo(server);
+      server.use(server.static(__dirname));
+      server.set('views', path.join(__dirname,'views'));
+      server.set('view engine', 'jade');
+      server.use(server.static(path.join(__dirname, 'bower_components')));
+
+      fs.readdirSync(__dirname).forEach(function(filename) {
+        // Ignore the non-module dirs
+        if(['routes', 'views', 'js', 'css', 'bower_components', 'node_modules'].some(function(element) {
+          return element === filename;
+        })) return;
+
+        var stat = fs.statSync(__dirname + '/' + filename);
+        if (!stat.isDirectory()) { return; }
+
+        return require('./' + filename)(server, scriptsInjector);
+      });
+
+      require('./routes')(server);
     },
     init: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
+      if(callback && typeof callback == 'function') { return callback(); }
     },
     close: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
-    },
+      if(callback && typeof callback == 'function') { return callback(); }
+    }
   };
 })();
 

@@ -21,14 +21,11 @@ This file is part of Planète.
 var Module = (function () {
   return {
     init: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
+      if(callback && typeof callback == 'function') { return callback(); }
       }
     },
     close: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
+      if(callback && typeof callback == 'function') { return  callback(); }
     },
   };
 })();
