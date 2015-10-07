@@ -26,6 +26,8 @@ process.env.NODE_ENV = 'test';
 var exclude = ['.git', 'node_modules','bower_components','sample_module'];
 var files = glob.sync("**/test/**/*.js", {});
 
+// var cleanFiles = glob.sync("{**/node_modules/!(grunt*)/,**/bower_components}", {});
+
 files = files.filter(function(path) {
   return exclude.every(function(regexp) {
     return path.match(regexp) === null;
@@ -39,6 +41,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+//    clean: cleanFiles,
 
     symlink: {
       options: {
@@ -79,10 +83,12 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-auto-install');
   grunt.loadNpmTasks('grunt-contrib-symlink');
-
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-mocha-test');
 
 
-  grunt.registerTask('build', ['auto_install', 'symlink']);
+  grunt.registerTask('build', ['symlink', 'auto_install']);
   grunt.registerTask('test', ['mochaTest']);
+//  grunt.registerTask('clean', ['clean']);
+//  grunt.registerTask('rebuild', ['clean', 'build']);
 };
