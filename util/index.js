@@ -19,20 +19,20 @@ This file is part of Planète.
 'use strict';
 
 /**
- * Post-order sort of a list of paths
+ * Sort a list of paths
  */
-function pathsort(paths, sep) {
+function pathsort(paths, sep, algorithm) {
   sep = sep || '/'
 
   return paths.map(function(el) {
     return el.split(sep)
-  }).sort(levelSorter).map(function(el) {
+  }).sort(algorithm || levelSorter).map(function(el) {
     return el.join(sep)
   })
 }
 
 /**
- *
+ * Level-order sort of a list of paths
  */
 function levelSorter(a, b) {
   var l = Math.max(a.length, b.length)
@@ -45,6 +45,9 @@ function levelSorter(a, b) {
   }
 }
 
+/**
+ * Post-order sort of a list of paths
+ */
 function postSorter(a, b) {
   var l = Math.max(a.length, b.length)
   for (var i = 0; i < l; i += 1) {
@@ -59,6 +62,57 @@ function postSorter(a, b) {
   }
 }
 
+/**
+ * Run a single async function, or an array of async functions,
+ * and resolve the promise when all of them have ended
+ */
+ function parallelRunner() {
+   var tasks = arguments,
+       n = arguments.length;
+
+   return new Promise(function(resolve, reject) {
+     for(var task in tasks) {
+       if(typeof tasks[task] == 'function') {
+         tasks[task](function(err) {
+           if(err) { return reject(err); }
+           if(--n <= 0) {
+             return resolve();
+           }
+         });
+       } else {
+         return reject(Object.keys(tasks[task][0]) + ' is not a function');
+       }
+     }
+   });
+ }
+
+/**
+ * Receives : ([async] | async)*
+ * Async function, array of async functions, an arguments list of both async functions and arrays of async functions
+ * and sequentially run each term of the list.
+ *
+ * Resolves when all the functions have run, and rejects if any of them fails
+ */
+ function serialRunner() {
+   var tasks = Array.prototype.slice.call(arguments);
+
+   return new Promise(function(resolve,reject) {
+     // Gets a single async function, or a list of async functions
+     var paralelTasks = [].concat(tasks.shift());
+     parallelRunner.apply(null, paralelTasks)
+     .then(function() {
+       if(tasks.length) {
+         serialRunner.apply(null, tasks)
+         .then(resolve)
+         .catch(reject);
+       } else {
+         resolve();
+       }
+     })
+     .catch(reject);
+   });
+ }
+
 function currier() {
   var args = Array.prototype.slice.call(arguments);
   return function() {
@@ -68,5 +122,7 @@ function currier() {
 
 module.exports = {
   pathsort: pathsort,
+  serialRunner: serialRunner,
+  parallelRunner: parallelRunner,
   currier: currier
-}
+};
