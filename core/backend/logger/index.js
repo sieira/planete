@@ -13,8 +13,11 @@ var Logger = (function _Logger() {
 
   function colorLogger(tag, color) {
     return function() {
-      var args = [].slice.call(arguments);
-      console.log.apply(null, ['%s [%s] %s [%s] ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
+      var config = require('_').config;
+      if(config.NODE_ENV != 'test') {
+        var args = [].slice.call(arguments);
+        console.log.apply(null, ['%s [%s] %s [%s] ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
+      }
     }
   }
 
