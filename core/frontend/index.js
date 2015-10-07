@@ -16,3 +16,26 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
+'use strict';
+
+var routes = require('./routes');
+
+var Frontend = (function () {
+  return {
+    registerRoutes: function(server) {
+      routes.attachTo(server);
+    },
+    init: function(callback) {
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() ;
+      }
+    },
+    close: function(callback) {
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() ;
+      }
+    },
+  };
+})();
+
+module.exports = Frontend;

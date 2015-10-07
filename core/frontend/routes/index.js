@@ -18,6 +18,24 @@ This file is part of Planète.
 **/
 'use strict';
 
-server.get('/', function (req, res) {
-  res.render('index');
-});
+var Routes = (function () {
+  return {
+    attachTo: function(server) {
+      server.get('/', function (req, res) {
+        res.render('index');
+      });
+    },
+    init: function(callback) {
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() ;
+      }
+    },
+    close: function(callback) {
+      if(callback && typeof callback == 'function') {
+        return error? callback(error) : callback() ;
+      }
+    },
+  };
+})(require('_').server);
+
+module.exports = Routes;

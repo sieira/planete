@@ -28,7 +28,8 @@ var express = require('express'),
  */
 var Server = (function () {
   var server = express(),
-      runningInstance = {};
+      runningInstance = {},
+      frontend = require('#');
 
   var host, port;
 
@@ -38,7 +39,11 @@ var Server = (function () {
 
     server.use(logger.middleware);
 
-    server.get('*', function (req, res) {
+    // Attach frontend routes
+    frontend.registerRoutes(server);
+    logger.OK('Frontend routes registered');
+
+    server.post('*', function (req, res) {
       res.status(404).send('nok');
     });
   }
