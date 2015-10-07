@@ -22,8 +22,9 @@ var core = require('_'),
 
 // Consider if this could be placed on the core code
 function shutdown(event, logger) {
-  return function() {
+  return function(err) {
     logger('Gracefully exiting on \''+ event +'\' event');
+    if(err) { logger.error(err.stack); }
     core.close(function () {
       process.exit(0);
     });
