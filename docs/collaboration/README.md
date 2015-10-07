@@ -2,7 +2,7 @@
 *Give a look to the [docs index](../README.md) and/or the [main README file](../../README.md) for an overview of the system*
 
 # How can I collaborate?
-Planète is licensed under the [MIT license](../../LICENSE), you can freely copy, fork, modify and redistribute [its github repository](https://github.com/sieira/planete).
+Planète is licensed under the [GNU Affero General Public License](../../LICENSE), you can freely copy, fork, modify and redistribute [its github repository](https://github.com/sieira/planete) under the license conditions.
 
 Please, feel free to report any issues you can think about, or contribute to the code with PR's from this same repository.
 

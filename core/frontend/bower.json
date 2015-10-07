@@ -11,7 +11,7 @@
   "keywords": [
     "CMS"
   ],
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "homepage": "https://github.com/sieira/planete",
   "ignore": [
     "**/.*",

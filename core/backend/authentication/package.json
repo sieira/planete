@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "dependencies": {
     "passport": "^0.3.0",
     "passport-http-bearer": "^1.0.1"

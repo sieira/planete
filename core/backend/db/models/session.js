@@ -18,19 +18,11 @@ This file is part of Planète.
 **/
 'use strict';
 
-var Module = (function () {
-  return {
-    init: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
-    },
-    close: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
-    },
-  };
-})();
+var SessionSchema = new mongoose.Schema({
+  user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
+  token:
+  createdAt: { type: Date, default: Date.now },
+  expireAt: { type: Date, default: undefined }
+});
 
-module.exports = Module;
+module.exports = mongoose.model('Session', SessionSchema);

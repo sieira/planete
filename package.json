@@ -16,7 +16,7 @@
     "modular"
   ],
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/sieira/planete/issues"
   },

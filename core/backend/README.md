@@ -38,11 +38,3 @@ Core modules are singletons, but some allow to create separated instances. This 
 ```
 
 This can be a little tricky, but think about the logger. When you get a new logger, you are writing to the console, whereas when getting the core's logger, you will log according to the current configuration. You should use the first option unless you know what you're doing.
-
-### Test
-Every module has to have it's own test folder
-
-### Docs
-Modules shall be self-documented
-  1. All modules should contain a reference to it's parent's docs
-  2. Each module should contain reference to the related modules docs

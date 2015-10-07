@@ -1,3 +1,21 @@
+/**
+Copyright © 2015 Luis Sieira Garcia
+
+This file is part of Planète.
+
+    Planète is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Planète is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with Foobar.  If not, see <http://www.gnu.org/licenses/>
+**/
 'use strict';
 
 var express = require('express'),
@@ -20,17 +38,10 @@ var Server = (function () {
 
     server.use(logger.middleware);
 
-    server.get('/', function (req, res) {
-      res.render('index');
-    });
-
     server.get('*', function (req, res) {
       res.status(404).send('nok');
     });
   }
-
-  server._listen = server.listen;
-  server.listen = server.init;
 
   // Start it up!
   server.init = function(callback) {
@@ -45,7 +56,7 @@ var Server = (function () {
 
     configure();
 
-    runningInstance = server._listen(port, host, function() {
+    runningInstance = server.listen(port, host, function() {
       logger.OK('Express server listening at %s:%d', host, port);
       if(callback && typeof callback == 'function') { return callback(); }
     });

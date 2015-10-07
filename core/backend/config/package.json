@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "dependencies": {
     "dotenv": "^1.2.0",
     "harmony-reflect": "^1.4.2"
