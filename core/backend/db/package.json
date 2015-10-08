@@ -15,5 +15,10 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "mongoose": "^4.1.9"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3",
+    "mocha-mongoose": "^1.1.0",
+    "mongodb": "^2.0.45"
   }
 }

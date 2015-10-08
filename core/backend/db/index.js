@@ -73,7 +73,7 @@ var Db = (function () {
 
   db.init = function(callback) {
     var dbApp = require('./app');
-    
+
     util.parallelRunner(db.connect, db.exposeModels)
     .then(function() {
       webserver.use('/db', dbApp);
@@ -89,6 +89,21 @@ var Db = (function () {
     mongoose.connection.close(function(err) {
       if(callback && typeof callback == 'function') {
         return err? callback(err) : callback() ;
+      }
+    });
+  };
+
+  db.registerAdminUser = function(data, callback) {
+    db.user.count(function(err, count) {
+      if(err) { return callback(err)}
+
+      if(count == 0) {
+        new db.user(data).save(function(err, data) {
+          if(err) { if(callback && typeof callback == 'function') { return callback(err) } }
+          else { if(callback && typeof callback == 'function') { return callback(); } }
+        });
+      } else {
+        callback(new Error('Unauthorized'));
       }
     });
   };

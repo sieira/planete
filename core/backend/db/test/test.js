@@ -18,15 +18,31 @@ This file is part of Planète.
 **/
 var should = require('chai').should(),
     expect = require('chai').expect,
-    app = require('../app'),
-    request = require('supertest');
+    request = require('supertest'),
+    mongoose = require('mongoose');
 
 var server = require('_').webserver,
+    config = require('_').config,
+    app = require('../app'),
     db = require('_').db;
+
+var mockUser = {
+    username: 'admin',
+    password: 'admin'
+};
 
 // The highest level describe should be the module name.
 // This thing -> \x1b[0m will print the name yellow
 describe('\x1b[33mDatabase\x1b[0m', function() {
+  before(function (done) {
+
+    var dbUri = 'mongodb://' + config.DB_HOST + ':' + config.DB_PORT + '/' + config.TEST_DB;
+    mongoose.connect(dbUri, function() {
+      clearDB = require('mocha-mongoose')(dbUri);
+      clearDB(function() { mongoose.connection.close(done) });
+    });
+  });
+
   after(function(done) {
     db.close(done);
   });
@@ -46,6 +62,22 @@ describe('\x1b[33mDatabase\x1b[0m', function() {
     });
   });
 
+  it('Should be able to register a user when there is none', function(done) {
+    db.registerAdminUser(mockUser, function(err) {
+      expect(err).not.to.exist;
+      done();
+    });
+  });
+
+  it('Should be unable to register a user when there are some', function(done) {
+    db.registerAdminUser(mockUser, function(err) {
+      db.registerAdminUser(mockUser, function(err) {
+        expect(err).to.exist;
+        done();
+      });
+    });
+  });
+
   it('Should disconnect from database server', function(done) {
     db.close(function(err) {
       expect(err).to.not.exist;
@@ -54,7 +86,7 @@ describe('\x1b[33mDatabase\x1b[0m', function() {
     });
   });
 
-  it('should register itself on init', function(done) {
+  it('Should register itself on init', function(done) {
     db.init(function(err) {
       expect(err).not.to.exist;
 
