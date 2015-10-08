@@ -16,21 +16,17 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
-'use strict';
+var express = require('express'),
+    sample_module = require('.');
 
-var Module = (function () {
-  return {
-    init: function(callback) {
-      var moduleApp = require('./app');
-      webserver.use('/sample_module', moduleApp);
-      
-      if(callback && typeof callback == 'function') { return callback(); }
-      }
-    },
-    close: function(callback) {
-      if(callback && typeof callback == 'function') { return  callback(); }
-    },
-  };
+var App = (function() {
+  var app = express();
+
+  app.post('/status', function(req,res) {
+      res.status(200).json(sample_module.isConnected());
+  });
+
+  return app;
 })();
 
-module.exports = Module;
+module.exports = App;

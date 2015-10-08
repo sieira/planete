@@ -19,36 +19,78 @@ This file is part of Planète.
 'use strict';
 
 var fs = require('fs'),
-    logger = require('_').logger;
+    path = require('path'),
+    core = require('_'),
+    logger = core.logger,
+    config = core.config,
+    webserver = core.webserver,
+    util = require('../../../util'),
+    mongoose = require('mongoose');
 
 var Db = (function () {
   var db = {};
 
-  db.init = function(callback) {
-    // Expose all the models as properties
-    fs.readdirSync(__dirname + '/models').forEach(function(filename) {
-      var stat = fs.statSync(__dirname + '/models/' + filename);
-      //TODO make this recursive
-      if (stat.isDirectory()) { return; }
-      var name = filename.substring(0, filename.lastIndexOf('.'));
+  db.connect = function (callback) {
+    var db = config.NODE_ENV == 'test'? config.TEST_DB : config.DB,
+        db_URL = 'mongodb://' + path.join(config.DB_HOST+':'+config.DB_PORT,db);
 
-      //TODO this probably shouldn't be configurable
-      Object.defineProperty(db, name, {
-        get: function() {
-          return require('./models/' + name);
-        },
-        configurable: true
-      });
+    mongoose.connect(db_URL, function(err) {
+      if(err) {
+        logger.error('Failed to connect database on ' + db_URL);
+        if(callback && typeof callback == 'function') { return callback(err) }
+      } else {
+        logger.OK('Connected to database on ' + db_URL);
+        if(callback && typeof callback == 'function') { return callback() }
+      }
     });
-    logger.OK('Database models exposed');
+  };
 
-    if(callback && typeof callback == 'function') { return callback(); }
+  db.isConnected = function() {
+    return mongoose.connection.readyState == 1;
+  };
+
+  db.exposeModels = function(callback) {
+    // Expose all the models as properties
+    fs.readdir(__dirname + '/models', function(err, files) {
+      files.forEach(function(filename) {
+        var stat = fs.statSync(__dirname + '/models/' + filename);
+        //TODO make this recursive
+        if (stat.isDirectory()) { return; }
+        var name = filename.substring(0, filename.lastIndexOf('.'));
+
+        //TODO this probably shouldn't be configurable
+        Object.defineProperty(db, name, {
+          get: function() {
+            return require('./models/' + name);
+          },
+          configurable: true
+        });
+      });
+      logger.OK('Database models exposed');
+      if(callback && typeof callback == 'function') { return callback(); }
+    });
+  };
+
+  db.init = function(callback) {
+    var dbApp = require('./app');
+    
+    util.parallelRunner(db.connect, db.exposeModels)
+    .then(function() {
+      webserver.use('/db', dbApp);
+      if(callback && typeof callback == 'function') { return callback(); }
+    })
+    .catch(function(err) {
+      if(callback && typeof callback == 'function') { return callback(err) }
+      else { throw err };
+    });
   };
 
   db.close = function(callback) {
-    if(callback && typeof callback == 'function') {
-      return error? callback(error) : callback() ;
-    }
+    mongoose.connection.close(function(err) {
+      if(callback && typeof callback == 'function') {
+        return err? callback(err) : callback() ;
+      }
+    });
   };
 
   return db;

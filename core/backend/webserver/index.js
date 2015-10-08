@@ -50,10 +50,6 @@ var Server = (function () {
     }
 
     if(!error) { logger.OK('Frontend routes registered'); }
-
-    server.post('*', function (req, res) {
-      res.status(404).send('nok');
-    });
   }
 
   server.static = express.static;
