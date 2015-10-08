@@ -22,10 +22,13 @@ var angularInjections = angularInjections || [];
 
 angular.module('setup', [].concat(angularInjections))
 
-.controller('setupController', ['$scope', '$log', function($scope, $log) {
+.controller('setupController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+  $scope.dbTest;
+
   $scope.user = {};
   $scope.user.username = null;
   $scope.user.password = null;
+  $scope.user.email = null;
   $scope.user.name= null;
   $scope.user.surname= null;
   $scope.step = 0;
@@ -39,20 +42,22 @@ angular.module('setup', [].concat(angularInjections))
   $scope.recordButton = {
     label: 'Next',
     notRunning: 'Next',
-    running: 'Recording user on the server...'
+    running: 'Registering user...'
   };
 
-  function onError(data, err, type) {
-    $scope[type].status = 'error';
-    if (data.error && data.error.message && data.error.details) {
-      $scope[type].err = data.error;
-    } else {
-      $scope[type].err = {
-        message: err,
-        details: data
-      };
-    }
+  function testDb() {
+    $http({
+      method: 'POST',
+      url: '/db/status'
+    })
+    .then(function(response) {
+      $scope.dbTest = response.data ? 'OK' : 'FAIL';
+    });
   }
+
+  $scope.testsOk = function() {
+    return $scope.dbTest === 'OK';
+  };
 
   $scope.infocomplete = function() {
     return $scope.user.username && $scope.user.password;
@@ -62,10 +67,29 @@ angular.module('setup', [].concat(angularInjections))
     $scope.record.running = true;
     $scope.recordButton.label = $scope.recordButton.running;
 
-    $scope.step++;
+    $http({
+      method: 'POST',
+      url: '/db/register-admin-user',
+      data: $scope.user
+    })
+    .then(function(response) {
+      $log.debug('respuesta', response);
+      $scope.step++;
 
-    $scope.record.running = false;
-    $scope.recordButton.label = $scope.recordButton.notRunning;
+      $scope.record.running = false;
+      $scope.recordButton.label = $scope.recordButton.notRunning;
+    },
+    function(response) {
+      $scope.record.running = false;
+      $scope.recordButton.label = $scope.recordButton.notRunning;
+
+      $scope.record.status = "error";
+      $scope.record.err = {
+        message: response.status,
+        details: response.data
+      }
+    });
   };
 
+  testDb();
 }]);
