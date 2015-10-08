@@ -32,46 +32,49 @@ html
           p #{__('The CMS that rocks the callback')}
       .container(ng-cloak ng-app='setup' ng-controller='setupController')
           .panel.panel-primary(ng-hide='step != 0')
-            .panel-heading #[h2 #{__('Let\'s configure this thing up')}]
+            .panel-heading #[h3 #{__('Let\'s configure this thing up')}]
             .panel-body.clearfix
               p #{__('This installation wizard will help you create an administrator account, so you can get started using planète.')}
               h4 #{__('But first, we\'ll just check some stuff.')}
               .container
                 ul.list-unstyled
-                  li #[i.fa(ng-class="{RUNNING : 'fa-cog fa-spin', OK: 'fa-check text-success', FAIL: 'fa-exclamation-triangle text-danger'}[dbTest]")] #{__('Your database is running')} #[p.text-danger(ng-show="dbTest=='FAIL'" ng-cloak) #{__('Oops!! Looks like your database is not running')}]
+                  li #[i.fa(ng-class="{RUNNING : 'fa-cog fa-spin', OK: 'fa-check text-success', FAIL: 'fa-exclamation-triangle text-danger'}[dbTest]")]
+                    |  #[span(ng-show="dbTest=='RUNNING'" ng-cloak) #{__('Testing database connection')}]
+                    |  #[span(ng-show="dbTest=='OK'" ng-cloak) #{__('Your database is running')}]
+                    |  #[span.text-danger(ng-show="dbTest=='FAIL'" ng-cloak) #{__('Oops!! Looks like your database is not running')}]
               button.btn.pull-right(ng-click='step = step + 1', ng-disabled='!testsOk()') Next
 
           .panel.panel-primary(ng-hide='step != 1')
-              .panel-heading #[h2 #{__('Create an administrator account')}]
-              .alert.alert-danger(ng-show="record.status=='error'")
-                .container
-                  h4 #{__('Something didn\'t go as expected... did you try turning it off, and on again?')}
-                  ul.list-unstyled
-                    li Error {{record.err.message}}: {{record.err.details}}
-              .panel-body.form-container.clearfix
-                form(name="form" role="form" novalidate)
-                  .form-group(ng-class="{'has-error': form.username.$dirty && form.username.$invalid}")
-                    label(for='username') #{__('User name')}
-                    input(ng-model='user.username' type='text' class='form-control' name='username', id='username' required)
-                  .form-group
-                    label(for='password') #{__('User password')}
-                    input(ng-model='user.password' type='password' class='form-control' id='password' required)
-                  .form-group
-                    label(for='passwordConfirmation') #{__('The obnoxious please repeat your password field')}
-                    input(ng-model='user.passwordConfirmation' type='password' class='form-control' id='passwordConfirmation' required)
-                  .form-group(ng-class="{'has-error': form.email.$dirty && form.email.$invalid}")
-                    label(for='email') #{__('Your email')}
-                    input(ng-model='user.email' type='email' name='email' class='form-control' id='email' required)
-                  .form-group
-                    label(for='name') #{__('First name')}
-                    input(ng-model='user.name' type='text' class='form-control' id='name')
-                  .form-group
-                    label(for='surname') #{__('Surname')}
-                    input(ng-model='user.surname' type='text' class='form-control' id='surname')
+            .panel-heading #[h3 #{__('Create an administrator account')}]
+            .alert.alert-danger(ng-show="record.status=='error'")
+              .container
+                h4 #{__('Something didn\'t go as expected... did you try turning it off, and on again?')}
+                ul.list-unstyled
+                  li Error {{record.err.message}}: {{record.err.details}}
+            .panel-body.form-container.clearfix
+              form(name="form" role="form" novalidate)
+                .form-group(ng-class="{'has-error': form.username.$dirty && form.username.$invalid}")
+                  label(for='username') #{__('User name')}
+                  input(ng-model='user.username' type='text' class='form-control' name='username', id='username' required)
+                .form-group
+                  label(for='password') #{__('User password')}
+                  input(ng-model='user.password' type='password' class='form-control' id='password' required)
+                .form-group
+                  label(for='passwordConfirmation') #{__('The obnoxious please repeat your password field')}
+                  input(ng-model='user.passwordConfirmation' type='password' class='form-control' id='passwordConfirmation' required)
+                .form-group(ng-class="{'has-error': form.email.$dirty && form.email.$invalid}")
+                  label(for='email') #{__('Your email')}
+                  input(ng-model='user.email' type='email' name='email' class='form-control' id='email' required)
+                .form-group
+                  label(for='name') #{__('First name')}
+                  input(ng-model='user.name' type='text' class='form-control' id='name')
+                .form-group
+                  label(for='surname') #{__('Surname')}
+                  input(ng-model='user.surname' type='text' class='form-control' id='surname')
 
                 button.pull-right.btn.btn-primary(type='button' ng-click='recordUser()') #[i.fa.fa-cog.fa-spin(ng-show='record.running')] #[{{recordButton.label}}]
 
           div(ng-hide='step != 2')
-            div.form-container
+            .form-container
               h2 #{__('Great! The setup is complete')}.
-              p.text-primary #{__('Please reload this page to get started with Planète.')}
+              .text-primary #{__('Please reload this page to get started with Planète.')}
