@@ -46,7 +46,6 @@ describe('\x1b[33mConfig\x1b[0m', function() {
   it('Non-default variables should be registered', function() {
     expect(config.DB_HOST).to.exist;
     expect(config.DB_PORT).to.exist;
-    expect(config.DB_URL).to.exist;
     expect(config.DB_USER).to.exist;
     expect(config.DB_PASSWORD).to.exist;
     expect(config.DB).to.exist;
