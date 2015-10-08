@@ -46,6 +46,8 @@ angular.module('setup', [].concat(angularInjections))
   };
 
   function testDb() {
+    $scope.dbTest = 'RUNNING';
+    
     $http({
       method: 'POST',
       url: '/db/status'
