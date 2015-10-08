@@ -24,7 +24,7 @@ var core = require('_'),
 function shutdown(event, logger) {
   return function(err) {
     logger('Gracefully exiting on \''+ event +'\' event');
-    if(err) { logger.error(err.stack); }
+    if(err && err.stack) { logger(err.stack); }
     core.close(function () {
       process.exit(0);
     });
@@ -38,8 +38,9 @@ process.on('uncaughtException', shutdown('uncaughtException', logger.error));
 core.init(function(err) {
   if(err) {
     logger.error('Error loading core: ' + err);
+    process.emit('uncaughtException', err);
   }
-  if (!err) {
+  else {
     logger.info('Planète\'s core bootstraped, configured in %s mode', config.NODE_ENV);
   }
 });
