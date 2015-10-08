@@ -53,15 +53,15 @@ html
                   li Error {{record.err.message}}: {{record.err.details}}
             .panel-body.form-container.clearfix
               form(name="form" role="form" novalidate)
-                .form-group(ng-class="{'has-error': form.username.$dirty && form.username.$invalid}")
+                .form-group(ng-class="{'has-error': form.username.$touched && form.username.$invalid}")
                   label(for='username') #{__('User name')}
                   input(ng-model='user.username' type='text' class='form-control' name='username', id='username' required)
-                .form-group
+                .form-group(ng-class="{'has-error': form.password.$touched && form.password.$invalid}")
                   label(for='password') #{__('User password')}
-                  input(ng-model='user.password' type='password' class='form-control' id='password' required)
-                .form-group
+                  input(ng-model='user.password' type='password' class='form-control' name='password' id='password' required)
+                .form-group(ng-class="{'has-error': form.passwordConfirmation.$touched && form.passwordConfirmation.$invalid}")
                   label(for='passwordConfirmation') #{__('The obnoxious please repeat your password field')}
-                  input(ng-model='user.passwordConfirmation' type='password' class='form-control' id='passwordConfirmation' required)
+                  input(ng-model='user.passwordConfirmation' type='password' class='form-control' name='passwordConfirmation' id='passwordConfirmation' equals='{{user.password}}' required)
                 .form-group(ng-class="{'has-error': form.email.$dirty && form.email.$invalid}")
                   label(for='email') #{__('Your email')}
                   input(ng-model='user.email' type='email' name='email' class='form-control' id='email' required)
@@ -72,7 +72,9 @@ html
                   label(for='surname') #{__('Surname')}
                   input(ng-model='user.surname' type='text' class='form-control' id='surname')
 
-                button.pull-right.btn.btn-primary(type='button' ng-click='recordUser()') #[i.fa.fa-cog.fa-spin(ng-show='record.running')] #[{{recordButton.label}}]
+                button.pull-right.btn.btn-primary(type='button' ng-disabled='!form.$valid' ng-click='form.$valid && recordUser()')
+                  i.fa.fa-cog.fa-spin(ng-show='record.running')
+                  |  {{recordButton.label}}
 
           div(ng-hide='step != 2')
             .form-container
