@@ -20,6 +20,7 @@ This file is part of Planète.
 
 var express = require('express'),
     core = require('_'),
+    bodyParser = require('body-parser'),
     logger = core.logger,
     config = core.config;
 
@@ -37,6 +38,10 @@ var Server = (function () {
   function configure() {
     server.locals.__ = core.i18n.__;
     server.use(logger.middleware);
+
+    server.use(bodyParser.urlencoded({ extended: false }));
+    server.use(bodyParser.json());
+
 
     // Attach frontend routes
     var error;
