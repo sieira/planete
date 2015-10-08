@@ -66,7 +66,10 @@ var Core = (function() {
     .then(function() {
       if(callback && typeof callback == 'function') { return callback(); }
     })
-    .catch(this.logger.error);
+    .catch(function(err) {
+      if(callback && typeof callback == 'function') { return callback(err); }
+      else { throw err; }
+    });
   };
 
  /**
