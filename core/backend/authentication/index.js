@@ -18,38 +18,42 @@ This file is part of Planète.
 **/
 'use strict';
 
-var passport = require('passport'),
-    logger = require('_').logger,
-    User = require('_').db.user,
+var CoreModule = require('_/core-module');
+
+var logger = require('_').logger,
+    db = require('_').db,
+    passport = require('passport'),
     BearerStrategy = require('passport-http-bearer').Strategy;
 
 var Authentication = (function () {
-  var strategy = new BearerStrategy(
-    function(token, done) {
-      User.findOne({ token: token }, function (err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        return done(null, user, { scope: 'all' });
-      });
-    }
-  );
+  var auth = new CoreModule(__dirname);
 
-  return {
-    strategy: strategy,
-    middleware: passport.authenticate('bearer', { session: false }),
-    init: function(callback) {
-      passport.use(strategy);
-      logger.OK('Authentication strategy registered');
-      if(callback && typeof callback == 'function') {
-        return callback() ;
-      }
-    },
-    close: function(callback) {
-      if(callback && typeof callback == 'function') {
-        return error? callback(error) : callback() ;
-      }
-    },
+  auth.middleware = passport.authenticate('bearer', { session: false });
+
+  auth.init = function(callback) {
+    var User = db.user;
+
+    var strategy = new BearerStrategy(
+      function(token, done) {
+        User.findOne({ token: token }, function (err, user) {
+          if (err) { return done(err); }
+          if (!user) { return done(null, false); }
+          return done(null, user, { scope: 'all' });
+        });
+      });
+
+    passport.use(strategy);
+    logger.OK('Authentication strategy registered');
+    if(callback && typeof callback == 'function') { return callback() ; }
   };
+
+  auth.close = function(callback) {
+    if(callback && typeof callback == 'function') {
+      return callback() ;
+    }
+  };
+
+  return auth;
 })();
 
 module.exports = Authentication;

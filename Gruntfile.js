@@ -18,6 +18,8 @@ This file is part of Planète.
 **/
 'use strict';
 
+var Reflect = require('harmony-reflect');
+
 var glob = require("glob"),
     util = require("./util");
 

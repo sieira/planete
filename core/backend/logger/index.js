@@ -18,8 +18,11 @@ This file is part of Planète.
 **/
 'use strict';
 
+var CoreModule = require('_/core-module'),
+    config = require('_').config;
+
 var Logger = (function _Logger() {
-  var logger = {};
+  var logger = new CoreModule(__dirname);
 
   var Color = {
     GREEN_FG: '\x1b[32m',
@@ -31,7 +34,6 @@ var Logger = (function _Logger() {
 
   function colorLogger(tag, color) {
     return function() {
-      var config = require('_').config;
       if(config.NODE_ENV != 'test') {
         var args = [].slice.call(arguments);
         console.log.apply(null, ['%s [%s] %s [%s] ' + args.shift(), color, tag, Color.RESET, Date(Date.now())].concat(args));
@@ -41,7 +43,6 @@ var Logger = (function _Logger() {
 
   logger.init = function(callback) {
     logger.OK('Logger is configured');
-
     if(callback && typeof callback == 'function') { return callback(); }
   };
   logger.close = function() {};

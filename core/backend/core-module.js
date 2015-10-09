@@ -16,24 +16,18 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
-var express = require('express'),
-    db = require('.');
+'use strict';
 
-var App = (function() {
-  var app = express();
+function CoreModule(dir) {
+  this.dir = dir;
 
-  app.post('/status', function(req,res) {
-    res.status(200).json(db.isConnected());
-  });
+  try {
+    this.config = require(dir +'/planete.json');
+  } catch(error) {
+    throw new Error('Couldn\'t find planete.json config file on '+ dir);
+  }
 
-  app.post('/register-admin-user', function(req,res) {
-    db.registerAdminUser(req.body, function(err) {
-      if(err) { res.status(401).send('Unauthorized'); }
-      else { res.status(200).send(); };
-    });
-  });
+  this.dependencies = this.config.dependencies;
+}
 
-  return app;
-})();
-
-module.exports = App;
+module.exports = CoreModule;

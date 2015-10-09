@@ -63,46 +63,50 @@ function postSorter(a, b) {
 }
 
 /**
- * Run a single async function, or an array of async functions,
- * and resolve the promise when all of them have ended
+ * Run an async function, array of async functions, or all the provided async functions
  */
- function parallelRunner() {
-   var tasks = arguments,
-       n = arguments.length;
+ function parallelRunner(tasks) {
+   if(arguments.length > 1) tasks = Array.prototype.slice.call(arguments);
+   tasks = [].concat(tasks);
+
+   var n = tasks.length;
 
    return new Promise(function(resolve, reject) {
-     for(var task in tasks) {
-       if(typeof tasks[task] == 'function') {
-         tasks[task](function(err) {
+     tasks.forEach(function (task) {
+       if(typeof task == 'function') {
+         task(function(err) {
            if(err) { return reject(err); }
            if(--n <= 0) {
              return resolve();
            }
          });
        } else {
-         return reject(Object.keys(tasks[task][0]) + ' is not a function');
+         return reject(Object.keys(task[0]) + ' is not a function');
        }
-     }
+     });
    });
  }
 
 /**
- * Receives : ([async] | async)*
- * Async function, array of async functions, an arguments list of both async functions and arrays of async functions
- * and sequentially run each term of the list.
+ * Receives : A generator of serial tasks
+ *
+ * Each element is an array of paralelisable tasks
  *
  * Resolves when all the functions have run, and rejects if any of them fails
  */
- function serialRunner() {
-   var tasks = Array.prototype.slice.call(arguments);
+ function serialRunner(generator) {
+   var next = generator.next(),
+       tasks = next.value;
+
+//       console.log('serial');
+//       console.log(next);
 
    return new Promise(function(resolve,reject) {
      // Gets a single async function, or a list of async functions
-     var paralelTasks = [].concat(tasks.shift());
-     parallelRunner.apply(null, paralelTasks)
+     parallelRunner(next.value)
      .then(function() {
-       if(tasks.length) {
-         serialRunner.apply(null, tasks)
+       if(!next.done) {
+         serialRunner(generator)
          .then(resolve)
          .catch(reject);
        } else {

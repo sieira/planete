@@ -20,6 +20,7 @@ This file is part of Planète.
 
 var express = require('express'),
     core = require('_'),
+    CoreModule = require('_/core-module'),
     bodyParser = require('body-parser'),
     logger = core.logger,
     config = core.config;
@@ -29,25 +30,27 @@ var express = require('express'),
  * it creates an instance of
  */
 var Server = (function () {
-  var server = express(),
+  var server = new CoreModule(__dirname);
+
+  var app = express(),
       runningInstance = {},
       frontend = require('#');
 
   var host, port;
 
   function configure() {
-    server.locals.__ = core.i18n.__;
-    server.use(logger.middleware);
+    app.locals.__ = core.i18n.__;
+    app.use(logger.middleware);
 
-    server.use(bodyParser.urlencoded({ extended: false }));
-    server.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
 
 
     // Attach frontend routes
     var error;
 
     try {
-      frontend.registerRoutes(server);
+      frontend.registerRoutes(app);
     } catch (err) {
       error = err;
       logger.error('Error registering frontend routes: ' + err);
@@ -57,10 +60,10 @@ var Server = (function () {
     if(!error) { logger.OK('Frontend routes registered'); }
   }
 
-  server.static = express.static;
+  app.static = express.static;
 
   // Start it up!
-  server.init = function(callback) {
+  app.init = function(callback) {
     if(config.NODE_ENV === 'test') {
       host = config.TEST_HOST;
       port = config.TEST_PORT;
@@ -72,14 +75,16 @@ var Server = (function () {
 
     configure();
 
-    runningInstance = server.listen(port, host, function() {
+    runningInstance = app.listen(port, host, function() {
+      //TODO guess what happened with this
+      app.address = runningInstance.address;
       logger.OK('Express server listening at %s:%d', host, port);
       if(callback && typeof callback == 'function') { return callback(); }
     });
   };
 
   /** This has to be reviewed, but well... it works. */
-  server.close = function(callback) {
+  app.close = function(callback) {
     if(!runningInstance.close) {
       logger.error('Tried to close a server that\'s not up on %s:%s', host, port);
       throw new Error('Not running');
@@ -97,7 +102,15 @@ var Server = (function () {
     });
   };
 
-  return server;
+  return new Proxy(server, {
+    /**
+     * When calling any property, checks if it is part of the core-module functionality,
+     * and if it is not, return the app equivalent
+     */
+     get: function(target, property, receiver) {
+       return server[property] === undefined ? app[property] : server[property];
+     }
+   });
 })();
 
 module.exports = Server;

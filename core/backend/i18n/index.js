@@ -18,18 +18,22 @@ This file is part of Planète.
 **/
 'use strict';
 
-var i18n = (function () {
-  return {
-    __: function(string) {
-      return string;
-    },
-    init: function(callback) {
-      if(callback && typeof callback == 'function') { callback(); }
-    },
-    close: function(callback) {
-      if(callback && typeof callback == 'function') { callback(); }
-    },
+var CoreModule = require('_/core-module');
+
+var I18n = (function () {
+  var i18n =  new CoreModule(__dirname);
+
+  i18n.__ = function(string) {
+    return string;
+  },
+  i18n.init = function(callback) {
+    if(callback && typeof callback == 'function') { callback(); }
   };
+  i18n.close= function(callback) {
+    if(callback && typeof callback == 'function') { callback(); }
+  };
+
+  return i18n;
 })();
 
-module.exports = i18n;
+module.exports = I18n;

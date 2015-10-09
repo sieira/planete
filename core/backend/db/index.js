@@ -18,17 +18,17 @@ This file is part of Planète.
 **/
 'use strict';
 
-var fs = require('fs'),
+var CoreModule = require('_/core-module'),
+    fs = require('fs'),
     path = require('path'),
     core = require('_'),
     logger = core.logger,
     config = core.config,
-    webserver = core.webserver,
     util = require('../../../util'),
     mongoose = require('mongoose');
 
 var Db = (function () {
-  var db = {};
+  var db =  new CoreModule(__dirname);
 
   db.connect = function (callback) {
     var db = config.NODE_ENV == 'test'? config.TEST_DB : config.DB,
@@ -76,7 +76,7 @@ var Db = (function () {
 
     util.parallelRunner(db.connect, db.exposeModels)
     .then(function() {
-      webserver.use('/db', dbApp);
+      core.webserver.use('/db', dbApp);
       if(callback && typeof callback == 'function') { return callback(); }
     })
     .catch(function(err) {

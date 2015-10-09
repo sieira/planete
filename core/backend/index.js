@@ -28,41 +28,72 @@ var fs = require('fs'),
  * The returned object contains every module referenced by an attribute
  * with the same name than the directory it's contained into.
  *
- *
- * Please, note that since there exist interdependencies among the modules,
- * they should be loaded in a particular order, and this is not still automathised
  */
 var Core = (function() {
-  var core = {};
+  var core = {
+    dependencies: []
+  };
 
+  /**
+   * Register Planete Modules as core object properties
+   */
   fs.readdirSync(__dirname).forEach(function(filename) {
-    // Ignore the test and the sample_module dirs
-    if(['test', 'sample_module', 'node_modules'].some(function(element) {
-      return element === filename;
-    })) { return; }
-
     var stat = fs.statSync(__dirname + '/' + filename);
-    if (!stat.isDirectory()) { return; }
 
-    Object.defineProperty(core, filename, {
-      get: function() {
-        return require('./' + filename);
-      }
+    if (!stat.isDirectory()) { return; } // Ignore files
+
+    var isPlaneteModule = fs.readdirSync(__dirname + '/' + filename).some(function(name) {
+      return name == 'planete.json'; // Ignore directories that do not contain a 'planete.json' file
     });
+
+    if(isPlaneteModule) {
+/*      let mod = require('./' + filename);
+
+      if(!(mod instanceof CoreModule)) {
+        throw new Error('Module '+ filename + ' contains a planete.json file, but does not extend CoreModule prototype');
+      }*/
+
+      core.dependencies.push(filename);
+
+      Object.defineProperty(core, filename, { // Define property
+        get: function() {
+          return require('./' + filename);
+        }
+      });
+    }
   });
 
+  var initChain = (function* () {
+    let ret = [];
+    let done = [];
+    let toGo = core.dependencies.slice();
+
+    do {
+      ret = [];
+
+      toGo.forEach(function(dependency, index) {
+        let dependenciesMet = core[dependency].dependencies.every(x => done.indexOf(x) != -1);
+
+        if(dependenciesMet) {
+          ret.push(core[dependency].init);
+          done.push(dependency);
+          toGo.splice(index,1);
+        }
+      });
+
+      if(!ret.length) throw new Error('Dependencies unmet for modules [' + toGo + ']');
+
+      yield ret;
+    } while (toGo.length > 0);
+
+    return [];
+  })();
+
   // TODO check if it really is (on the database)
-  core.isInstalled = (function() { return false; })();
+  core.isInstalled = false;
 
   core.init = function(callback) {
-    serialRunner(
-      core.config.init,     // Loads the config file before anything else, so defaults are overriden
-      core.i18n.init,
-      core.logger.init,     // Load the logger so output start going to the proper place
-      [core.webserver.init, // Start the webserver, so the rest of the modules can register it's routings
-      core.db.init],        // Expose all the database models before the authentication system inits
-      core.authentication.init
-    )
+    serialRunner(initChain)
     .then(function() {
       if(callback && typeof callback == 'function') { return callback(); }
     })

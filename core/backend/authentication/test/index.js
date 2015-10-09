@@ -27,7 +27,7 @@ chai.use(require('chai-passport-strategy'));
 var authentication = require('_/authentication');
 
 describe('\x1b[33mAuthentication\x1b[0m', function() {
-  it('Init should not fail', function(done) {
+/*  it('Init should not fail', function(done) {
     authentication.init(function(err) {
       expect(err).to.not.exist;
       done();
@@ -63,6 +63,5 @@ describe('\x1b[33mAuthentication\x1b[0m', function() {
      expect(info.scope).to.equal('read');
    });
  });
-
-
+*/
 });

@@ -16,8 +16,10 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
+var Reflect = require('harmony-reflect');
+
 var core = require('_'),
-    logger = core.logger,
+    logger = core.logger;
     config = core.config;
 
 // Consider if this could be placed on the core code

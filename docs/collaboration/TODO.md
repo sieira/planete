@@ -1,9 +1,11 @@
 ## TODO
 
  - [ ] Enable SSL for login and registering pages
- - [ ] Create a module prototype with a default behavior for init() and close()
  - [ ] Allow the DB module to register nested models (recursive)
 
+ - [x] Create a module prototype
+
+   ✔ Done by adding a CoreModule prototype
  - [x] Allow the modules to log to the core logger as well as its own
 
    ✔ Done by adding a new() method to logger module on 05/10/2015
@@ -22,4 +24,6 @@ Improvements that are as feasible as riding unicorns
 
 These are things that, although will be convenient, don't add so much value, requiring a big effort or major changes that make them not of utmost importance at all.
 
+ - [ ] Bind to a drupal database
+ - [ ] Allow to import a drupal articles
  - [ ] Override the npm install process, so local dependencies are ignored when already present in the project root
