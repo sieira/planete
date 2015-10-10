@@ -21,7 +21,8 @@ This file is part of Planète.
 var Reflect = require('harmony-reflect');
 
 var glob = require("glob"),
-    util = require("./util");
+  //TODO, put this function in a more handy place
+    util = require("./core/backend/util");
 
 process.env.NODE_ENV = 'test';
 
