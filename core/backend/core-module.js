@@ -21,17 +21,45 @@ This file is part of Planète.
 var fs = require('fs');
 
 function CoreModule(dir) {
+  /**
+   * The dir argument is the path where the modules and app
+   * will be seeked, usually, it should be the __dirname of
+   * the module.
+   */
   this.dir = dir;
+  this.dependencies = [];
+
+  /**
+   * Register SubModules as object properties,
+   * and add their names to the dependecy list
+   */
+  let modulesDir = this.dir + '/modules/';
+
+  if(fs.existsSync(modulesDir)) {
+    fs.readdirSync(modulesDir).forEach(function(filename) {
+      var stat = fs.statSync(modulesDir + filename);
+      if (!stat.isDirectory()) { return; } // Ignore files
+      this.dependencies.push(filename);
+
+      Object.defineProperty(this, filename, { // Define property
+        get: function() {
+          let mod = require('_/modules/' + filename);
+          if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' of '+ dir +' this can be caused by a circular dependency, or the module returning an empty object');
+          return  mod;
+        }
+      });
+    }, this);
+  };
 
   /**
    * Register the app as a property, but don't require it yet
-   * to avoid a circular dependency when requiring the module
+   * to avoid a circular dependencies when requiring the module
    */
   if(fs.existsSync(this.dir + '/app.js')) {
     Object.defineProperty(this, 'app', { // Define property
       get: function() {
         let mod =  require(this.dir + '/app');
-        if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' this can be caused by a circular dependency, or the module returning an empty object');
+        if(!Object.keys(mod).length) throw new Error('Error loading app of ' + dir);
         return  mod;
       }
     });

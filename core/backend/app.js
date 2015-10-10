@@ -19,7 +19,7 @@ This file is part of Planète.
 var express = require('express'),
     bodyParser = require('body-parser');
 
-var App = function() {
+var App = (function() {
   var core = require('_'),
       logger = core.logger,
       config = core.config,
@@ -88,6 +88,6 @@ var App = function() {
   };
 
   return app;
-};
+})();
 
 module.exports = App;

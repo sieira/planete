@@ -18,10 +18,6 @@ This file is part of Planète.
 **/
 'use strict';
 
-var fs = require('fs'),
-    util = require('_/util'),
-    app = require('./app');
-
 /**
  * This module exports the entire core functionality as object attributes
  *
@@ -30,32 +26,11 @@ var fs = require('fs'),
  *
  */
 var Core = (function() {
-  var core = {
-    dependencies: [],
-    webserver: {}
-  };
+  var fs = require('fs'),
+      util = require('_/util'),
+      CoreModule = require('_/core-module');
 
-  /**
-   * Register Planete Modules as core object properties
-   */
-  fs.readdirSync(__dirname + '/modules/').forEach(function(filename) {
-    var stat = fs.statSync(__dirname + '/modules/' + filename);
-
-    if (!stat.isDirectory()) { return; } // Ignore files
-
-
-    //TODO it would be approrpriate to register apps and middleware here
-    core.dependencies.push(filename);
-
-    Object.defineProperty(core, filename, { // Define property
-      get: function() {
-        let mod = require('_/modules/' + filename);
-        //TODO check if it is a planete module
-        if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' this can be caused by a circular dependency, or the module returning an empty object');
-        return  mod;
-      }
-    });
-  });
+  var core = new CoreModule(__dirname);
 
   // TODO check if it really is (on the database)
   core.isInstalled = false;
@@ -65,7 +40,7 @@ var Core = (function() {
 
     core.dependencies.forEach(function(name) {
       if(core[name].app) {
-        let task = util.currier(core.webserver, core.webserver.use, '/' + name, core[name].app);
+        let task = util.currier(core.app, core.app.use, '/' + name, core[name].app);
         let message = util.currier(null, core.logger.info, 'Register ' + name + ' module apps');
         tasks.push([task, message]);
       }
@@ -75,11 +50,10 @@ var Core = (function() {
   };
 
   core.init = function(callback) {
-    core.webserver = app();
     util.parallelRunner(moduleApps())
     .then(function() {
-      core.webserver.init(core.webserver.get('port'), core.webserver.get('host'), function() {
-        core.logger.OK('Express server listening at %s:%d', core.webserver.get('host'), core.webserver.get('port'));
+      core.app.init(core.app.get('port'), core.app.get('host'), function() {
+        core.logger.OK('Express server listening at %s:%d', core.app.get('host'), core.app.get('port'));
         if(callback && typeof callback == 'function') { return callback(); }
       });
     })
@@ -90,7 +64,7 @@ var Core = (function() {
   * Gracefully close the core
   */
   core.close = function(callback) {
-    return this.webserver.close(callback);
+    return this.app.close(callback);
   }
 
   return core;
