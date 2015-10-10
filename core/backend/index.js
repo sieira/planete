@@ -19,8 +19,8 @@ This file is part of Planète.
 'use strict';
 
 var fs = require('fs'),
-    serialRunner = require('../../util').serialRunner,
-    parallelRunner = require('../../util').parallelRunner;
+    util = require('_/util'),
+    app = require('./app');
 
 /**
  * This module exports the entire core functionality as object attributes
@@ -31,76 +31,59 @@ var fs = require('fs'),
  */
 var Core = (function() {
   var core = {
-    dependencies: []
+    dependencies: [],
+    webserver: {}
   };
 
   /**
    * Register Planete Modules as core object properties
    */
-  fs.readdirSync(__dirname).forEach(function(filename) {
-    var stat = fs.statSync(__dirname + '/' + filename);
+  fs.readdirSync(__dirname + '/modules/').forEach(function(filename) {
+    var stat = fs.statSync(__dirname + '/modules/' + filename);
 
     if (!stat.isDirectory()) { return; } // Ignore files
 
-    var isPlaneteModule = fs.readdirSync(__dirname + '/' + filename).some(function(name) {
-      return name == 'planete.json'; // Ignore directories that do not contain a 'planete.json' file
+
+    //TODO it would be approrpriate to register apps and middleware here
+    core.dependencies.push(filename);
+
+    Object.defineProperty(core, filename, { // Define property
+      get: function() {
+        let mod = require('_/modules/' + filename);
+        //TODO check if it is a planete module
+        if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' this can be caused by a circular dependency, or the module returning an empty object');
+        return  mod;
+      }
     });
-
-    if(isPlaneteModule) {
-/*      let mod = require('./' + filename);
-
-      if(!(mod instanceof CoreModule)) {
-        throw new Error('Module '+ filename + ' contains a planete.json file, but does not extend CoreModule prototype');
-      }*/
-
-      core.dependencies.push(filename);
-
-      Object.defineProperty(core, filename, { // Define property
-        get: function() {
-          return require('./' + filename);
-        }
-      });
-    }
   });
-
-  var initChain = (function* () {
-    let ret = [];
-    let done = [];
-    let toGo = core.dependencies.slice();
-
-    do {
-      ret = [];
-
-      toGo.forEach(function(dependency, index) {
-        let dependenciesMet = core[dependency].dependencies.every(x => done.indexOf(x) != -1);
-
-        if(dependenciesMet) {
-          ret.push(core[dependency].init);
-          done.push(dependency);
-          toGo.splice(index,1);
-        }
-      });
-
-      if(!ret.length) throw new Error('Dependencies unmet for modules [' + toGo + ']');
-
-      yield ret;
-    } while (toGo.length > 0);
-
-    return [];
-  })();
 
   // TODO check if it really is (on the database)
   core.isInstalled = false;
 
-  core.init = function(callback) {
-    serialRunner(initChain)
-    .then(function() {
-      if(callback && typeof callback == 'function') { return callback(); }
-    })
-    .catch(function(err) {
-      if(callback && typeof callback == 'function') { return callback(err); }
-      else { throw err; }
+  function moduleApps() {
+    var tasks = [];
+
+    core.dependencies.forEach(function(name) {
+      if(core[name].app) {
+        let task = util.currier(core.webserver, core.webserver.use, '/' + name, core[name].app);
+        let message = util.currier(null, core.logger.info, 'Register ' + name + ' module apps');
+        tasks.push([task, message]);
+      }
     });
+
+    return tasks;
+  };
+
+  core.init = function(callback) {
+    core.webserver = app();
+    util.parallelRunner(moduleApps())
+    .then(function() {
+      core.webserver.init(core.webserver.get('port'), core.webserver.get('host'), function() {
+        core.logger.OK('Express server listening at %s:%d', core.webserver.get('host'), core.webserver.get('port'));
+        if(callback && typeof callback == 'function') { return callback(); }
+      });
+    })
+    .catch(core.logger.error);
   };
 
  /**

@@ -18,16 +18,24 @@ This file is part of Planète.
 **/
 'use strict';
 
+var fs = require('fs');
+
 function CoreModule(dir) {
   this.dir = dir;
 
-  try {
-    this.config = require(dir +'/planete.json');
-  } catch(error) {
-    throw new Error('Couldn\'t find planete.json config file on '+ dir);
+  /**
+   * Register the app as a property, but don't require it yet
+   * to avoid a circular dependency when requiring the module
+   */
+  if(fs.existsSync(this.dir + '/app.js')) {
+    Object.defineProperty(this, 'app', { // Define property
+      get: function() {
+        let mod =  require(this.dir + '/app');
+        if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' this can be caused by a circular dependency, or the module returning an empty object');
+        return  mod;
+      }
+    });
   }
-
-  this.dependencies = this.config.dependencies;
 }
 
 module.exports = CoreModule;

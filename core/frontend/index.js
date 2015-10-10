@@ -42,11 +42,11 @@ var Frontend = (function () {
   };
 
   return {
-    registerRoutes: function(server) {
-      server.use(server.static(__dirname));
-      server.set('views', path.join(__dirname,'views'));
-      server.set('view engine', 'jade');
-      server.use(server.static(path.join(__dirname, 'bower_components')));
+    registerRoutes: function(app, server) {
+      app.use(server.static(__dirname));
+      app.set('views', path.join(__dirname,'views'));
+      app.set('view engine', 'jade');
+      app.use(server.static(path.join(__dirname, 'bower_components')));
 
       fs.readdirSync(__dirname).forEach(function(filename) {
         // Ignore the non-module dirs
@@ -57,10 +57,10 @@ var Frontend = (function () {
         var stat = fs.statSync(__dirname + '/' + filename);
         if (!stat.isDirectory()) { return; }
 
-        return require('./' + filename)(server, scriptsInjector);
+        return require('./' + filename)(app, scriptsInjector);
       });
 
-      require('./routes')(server);
+      require('./routes')(app);
     },
     init: function(callback) {
       if(callback && typeof callback == 'function') { return callback(); }

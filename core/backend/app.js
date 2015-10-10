@@ -16,72 +16,57 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
-'use strict';
-
 var express = require('express'),
-    core = require('_'),
-    CoreModule = require('_/core-module'),
-    bodyParser = require('body-parser'),
-    logger = core.logger,
-    config = core.config;
+    bodyParser = require('body-parser');
 
-/**
- * This is the main web server
- * it creates an instance of
- */
-var Server = (function () {
-  var server = new CoreModule(__dirname);
+var App = function() {
+  var core = require('_'),
+      logger = core.logger,
+      config = core.config,
+      i18n = core.i18n;
 
   var app = express(),
       runningInstance = {},
       frontend = require('#');
 
   var host, port;
-
-  function configure() {
-    app.locals.__ = core.i18n.__;
-    app.use(logger.middleware);
-
-    app.use(bodyParser.urlencoded({ extended: false }));
-    app.use(bodyParser.json());
-
-
-    // Attach frontend routes
-    var error;
-
-    try {
-      frontend.registerRoutes(app);
-    } catch (err) {
-      error = err;
-      logger.error('Error registering frontend routes: ' + err);
-      logger.error(err.stack);
-    }
-
-    if(!error) { logger.OK('Frontend routes registered'); }
+  if(config.NODE_ENV === 'test') {
+    host = config.TEST_HOST;
+    port = config.TEST_PORT;
+  }
+  else {
+    host = config.HOST;
+    port = config.PORT;
   }
 
-  app.static = express.static;
+  app.set('host', host);
+  app.set('port', port);
 
-  // Start it up!
+  app.locals.__ = i18n.__;
+  app.use(logger.middleware);
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
+
+  // Attach frontend routes
+  var error;
+
+  try {
+    frontend.registerRoutes(app, express);
+  } catch (err) {
+    error = err;
+    logger.error('Error registering frontend routes: ' + err);
+    logger.stack(err.stack);
+  }
+
+  if(!error) { logger.OK('Frontend routes registered'); }
+
   app.init = function(callback) {
-    if(config.NODE_ENV === 'test') {
-      host = config.TEST_HOST;
-      port = config.TEST_PORT;
-    }
-    else {
-      host = config.HOST;
-      port = config.PORT;
-    }
-
-    configure();
-
     runningInstance = app.listen(port, host, function() {
-      //TODO guess what happened with this
-      app.address = runningInstance.address;
       logger.OK('Express server listening at %s:%d', host, port);
       if(callback && typeof callback == 'function') { return callback(); }
     });
-  };
+  }
 
   /** This has to be reviewed, but well... it works. */
   app.close = function(callback) {
@@ -102,15 +87,7 @@ var Server = (function () {
     });
   };
 
-  return new Proxy(server, {
-    /**
-     * When calling any property, checks if it is part of the core-module functionality,
-     * and if it is not, return the app equivalent
-     */
-     get: function(target, property, receiver) {
-       return server[property] === undefined ? app[property] : server[property];
-     }
-   });
-})();
+  return app;
+};
 
-module.exports = Server;
+module.exports = App;

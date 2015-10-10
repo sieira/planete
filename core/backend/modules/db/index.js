@@ -18,16 +18,16 @@ This file is part of Planète.
 **/
 'use strict';
 
-var CoreModule = require('_/core-module'),
-    fs = require('fs'),
-    path = require('path'),
-    core = require('_'),
-    logger = core.logger,
-    config = core.config,
-    util = require('../../../util'),
-    mongoose = require('mongoose');
-
 var Db = (function () {
+  var CoreModule = require('_/core-module'),
+      fs = require('fs'),
+      path = require('path'),
+      core = require('_'),
+      logger = core.logger,
+      config = core.config,
+      util = require('_/util'),
+      mongoose = require('mongoose');
+
   var db =  new CoreModule(__dirname);
 
   db.connect = function (callback) {
@@ -71,20 +71,6 @@ var Db = (function () {
     });
   };
 
-  db.init = function(callback) {
-    var dbApp = require('./app');
-
-    util.parallelRunner(db.connect, db.exposeModels)
-    .then(function() {
-      core.webserver.use('/db', dbApp);
-      if(callback && typeof callback == 'function') { return callback(); }
-    })
-    .catch(function(err) {
-      if(callback && typeof callback == 'function') { return callback(err) }
-      else { throw err };
-    });
-  };
-
   db.close = function(callback) {
     mongoose.connection.close(function(err) {
       if(callback && typeof callback == 'function') {
@@ -107,6 +93,8 @@ var Db = (function () {
       }
     });
   };
+
+  util.parallelRunner(db.connect, db.exposeModels);
 
   return db;
 })();

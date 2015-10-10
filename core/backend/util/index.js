@@ -63,64 +63,77 @@ function postSorter(a, b) {
 }
 
 /**
- * Run an async function, array of async functions, or all the provided async functions
+ * Parallell run a list of async tasks
+ *
+ * Input: Either an array of Parallel tasks, or a series of parallel tasks
+ * as arguments.
+ *
+ *   async, async, ...
+ * or
+ *   [async, async, async]
+ *
+ * An async task can be a list of serial async tasks
+ *
+ * async, [async, async], ...
+ *
+ * Those will be serially run
  */
- function parallelRunner(tasks) {
-   if(arguments.length > 1) tasks = Array.prototype.slice.call(arguments);
-   tasks = [].concat(tasks);
+function parallelRunner(tasks) {
+  if(arguments.length > 1) tasks = Array.prototype.slice.call(arguments);
+  var n = tasks.length;
 
-   var n = tasks.length;
+  var taskIterator = tasks.entries();
 
-   return new Promise(function(resolve, reject) {
-     tasks.forEach(function (task) {
-       if(typeof task == 'function') {
-         task(function(err) {
-           if(err) { return reject(err); }
-           if(--n <= 0) {
-             return resolve();
-           }
-         });
-       } else {
-         return reject(Object.keys(task[0]) + ' is not a function');
-       }
-     });
-   });
- }
+  return new Promise(function(resolve, reject) {
+    for(let task of taskIterator) {
+      serialRunner([].concat(task[1]).entries())
+      .then(function() {
+        if(--n <= 0) { return resolve(); }
+      })
+      .catch(function(err) {
+        return reject(err);
+      });
+    }
+  });
+}
 
 /**
  * Receives : A generator of serial tasks
  *
- * Each element is an array of paralelisable tasks
+ * Each element should be a valid input for the parallelRunner
  *
  * Resolves when all the functions have run, and rejects if any of them fails
  */
  function serialRunner(generator) {
    var next = generator.next(),
-       tasks = next.value;
-
-//       console.log('serial');
-//       console.log(next);
+       tasks = [].concat(next.value[1]);
 
    return new Promise(function(resolve,reject) {
-     // Gets a single async function, or a list of async functions
-     parallelRunner(next.value)
-     .then(function() {
-       if(!next.done) {
-         serialRunner(generator)
-         .then(resolve)
-         .catch(reject);
-       } else {
-         resolve();
-       }
-     })
-     .catch(reject);
+     if(tasks.length > 1) {
+       parallelRunner(tasks)
+       .then(function() {
+         if(!next.done) {
+           serialRunner(generator)
+           .then(resolve)
+           .catch(reject);
+         } else {
+           resolve();
+         }
+       })
+       .catch(reject);
+     } else {
+       next.value[1](resolve, reject);
+     }
    });
  }
 
-function currier() {
-  var args = Array.prototype.slice.call(arguments);
-  return function() {
-    args.shift().apply(this, args);
+function currier(that, fn) {
+  var args = [].slice.call(arguments, 2);
+
+  return function(callback) {
+    let ret = fn.apply(that, args);
+    if(callback && typeof callback == 'function') { callback(); }
+    return ret;
   }
 }
 

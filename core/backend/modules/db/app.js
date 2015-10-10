@@ -16,24 +16,24 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
-'use strict';
+var App = (function() {
+  var express = require('express'),
+      app = express(),
+      db = require('_').db;
 
-var CoreModule = require('_/core-module');
 
-var I18n = (function () {
-  var i18n =  new CoreModule(__dirname);
+  app.post('/status', function(req,res) {
+    res.status(200).json(db.isConnected());
+  });
 
-  i18n.__ = function(string) {
-    return string;
-  },
-  i18n.init = function(callback) {
-    if(callback && typeof callback == 'function') { callback(); }
-  };
-  i18n.close= function(callback) {
-    if(callback && typeof callback == 'function') { callback(); }
-  };
+  app.post('/register-admin-user', function(req,res) {
+    db.registerAdminUser(req.body, function(err) {
+      if(err) { res.status(401).send('Unauthorized'); }
+      else { res.status(200).send(); };
+    });
+  });
 
-  return i18n;
+  return app;
 })();
 
-module.exports = I18n;
+module.exports = App;

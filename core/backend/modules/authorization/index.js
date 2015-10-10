@@ -18,12 +18,12 @@ This file is part of Planète.
 **/
 'use strict';
 
-var oauth2orize = require('oauth2orize'),
+/*var oauth2orize = require('oauth2orize'),
     logger = require('_').logger,
-
+*/
 var Authorization = (function () {
-  var server = oauth2orize.createServer();
-
+  var server = { a: 'test'};
+/*
   server.serializeClient(function(client, done) {
     var clientId = client._id || client;
     return done(null, clientId);
@@ -56,8 +56,8 @@ var Authorization = (function () {
       return done(null, code);
     });
 }));
-
+*/
   return server;
-)();
+})();
 
-module.exports = Authorization;
+module.exports = 'Authorization';

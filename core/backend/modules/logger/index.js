@@ -18,10 +18,10 @@ This file is part of Planète.
 **/
 'use strict';
 
-var CoreModule = require('_/core-module'),
-    config = require('_').config;
-
 var Logger = (function _Logger() {
+  var CoreModule = require('_/core-module'),
+      config = require('_').config;
+      
   var logger = new CoreModule(__dirname);
 
   var Color = {
@@ -41,10 +41,6 @@ var Logger = (function _Logger() {
     }
   }
 
-  logger.init = function(callback) {
-    logger.OK('Logger is configured');
-    if(callback && typeof callback == 'function') { return callback(); }
-  };
   logger.close = function() {};
   logger.new = function() {
     return new _Logger();
@@ -54,6 +50,7 @@ var Logger = (function _Logger() {
   logger.info = colorLogger('i', Color.YELLOW_FG);
   logger.OK = colorLogger('✔', Color.GREEN_FG);
   logger.error = colorLogger('x', Color.RED_FG);
+  logger.stack = logger.error;
 
   logger.middleware = function(req, res, next) {
     var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
@@ -63,6 +60,8 @@ var Logger = (function _Logger() {
     logger.info('%s %s request from %s ', req.method, url, ip);
     next();
   }
+
+  logger.OK('Logger is configured');
 
   return logger;
 })();

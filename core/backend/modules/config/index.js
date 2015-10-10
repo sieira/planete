@@ -18,9 +18,6 @@ This file is part of Planète.
 **/
 'use strict';
 
-var fs = require('fs'),
-    logger = require('_').logger;
-
 /**
  * Welcome to ES6 Proxies :-)
  *
@@ -33,9 +30,10 @@ var fs = require('fs'),
  * point of view.
  *
  */
-var CoreModule = require('_/core-module');
-
 var Config = (function () {
+  var CoreModule = require('_/core-module'),
+      fs = require('fs');
+
   var config = new CoreModule(__dirname);
 
   // Default values,
@@ -43,15 +41,10 @@ var Config = (function () {
   config.HOST = 'localhost',
   config.PORT = 8080,
   config.TEST_HOST = 'localhost',
-  config.TEST_PORT = 8080,
+  config.TEST_PORT = 8080;
 
-  config.init = function(callback) {
-    var logger = require('_/logger');
-
-    require('dotenv').load();
-    logger.OK('Configuration loaded');
-    if(callback && typeof callback == 'function') { return callback(); }
-  };
+  require('dotenv').load();
+  console.log('Configuration loaded');
 
   config.close = function(callback) {
     if(callback && typeof callback == 'function') { return callback(); }
