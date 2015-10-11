@@ -24,7 +24,7 @@ var chai = require('chai'),
 
 chai.use(require('chai-passport-strategy'));
 
-var authentication = require('_/authentication');
+var authentication = require('..');
 
 describe('\x1b[33mAuthentication\x1b[0m', function() {
 /*  it('Init should not fail', function(done) {

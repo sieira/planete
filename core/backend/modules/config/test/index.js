@@ -21,7 +21,7 @@ This file is part of Planète.
 var should = require('chai').should(),
     expect = require('chai').expect;
 
-var config = require('_/config');
+var config = require('..');
 
 describe('\x1b[33mConfig\x1b[0m', function() {
   it('Default variables should exist', function() {
@@ -30,12 +30,6 @@ describe('\x1b[33mConfig\x1b[0m', function() {
     expect(config.PORT).to.exist;
     expect(config.TEST_HOST).to.exist;
     expect(config.TEST_PORT).to.exist;
-  });
-
-  it('Loading variables should not fail', function() {
-    config.init(function(err) {
-      expect(err).to.not.exist;
-    });
   });
 
   /**

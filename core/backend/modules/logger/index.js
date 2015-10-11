@@ -21,7 +21,7 @@ This file is part of Planète.
 var Logger = (function _Logger() {
   var CoreModule = require('_/core-module'),
       config = require('_').config;
-      
+
   var logger = new CoreModule(__dirname);
 
   var Color = {

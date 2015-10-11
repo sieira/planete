@@ -21,9 +21,8 @@ var should = require('chai').should(),
     request = require('supertest'),
     mongoose = require('mongoose');
 
-var config = require('_').config,
-    app = require('../app'),
-    db = require('_').db;
+var app = require('../app'),
+    db = require('..');
 
 var mockUser = {
     username: 'admin',
@@ -33,11 +32,8 @@ var mockUser = {
 // The highest level describe should be the module name.
 // This thing -> \x1b[0m will print the name yellow
 describe('\x1b[33mDatabase\x1b[0m', function() {
-  before(function(done) {
-    config.init(done);
-  });
-
   before(function (done) {
+    var config = require('_').config;
     var dbUri = 'mongodb://' + config.DB_HOST + ':' + config.DB_PORT + '/' + config.TEST_DB;
     mongoose.connect(dbUri, function() {
       clearDB = require('mocha-mongoose')(dbUri);
@@ -89,13 +85,9 @@ describe('\x1b[33mDatabase\x1b[0m', function() {
   });
 
   it('Should report its status', function(done) {
-    db.init(function(err) {
-      expect(err).not.to.exist;
-
-      request(app)
-      .post('/status')
-      .expect(200, done);
-    });
+    request(app)
+    .post('/status')
+    .expect(200, done);
   });
 
 });
