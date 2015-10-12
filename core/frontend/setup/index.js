@@ -26,10 +26,10 @@ var Setup = function (server, scriptsInjector) {
   var viewsdir = path.normalize(path.join(__dirname, '/views'));
 
   server.get('/', function(req, res, next) {
-    if (core.isInstalled) {
-      return next();
-    }
-    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
+    core.isInstalled(function(err, itIs) {
+      if(itIs) { next(); }
+      else { res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname)); }
+    });
   });
 };
 

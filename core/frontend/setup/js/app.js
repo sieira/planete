@@ -71,7 +71,7 @@ angular.module('setup', [].concat(angularInjections))
 
     $http({
       method: 'POST',
-      url: '/db/register-admin-user',
+      url: '/db/register-root-user',
       data: $scope.user
     })
     .then(function(response) {

@@ -26,8 +26,8 @@ var App = (function() {
     res.status(200).json(db.isConnected());
   });
 
-  app.post('/register-admin-user', function(req,res) {
-    db.registerAdminUser(req.body, function(err) {
+  app.post('/register-root-user', function(req,res) {
+    db.registerRootUser(req.body, function(err) {
       if(err) { res.status(401).send('Unauthorized'); }
       else { res.status(200).send(); };
     });

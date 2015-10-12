@@ -79,7 +79,7 @@ var Db = (function () {
     });
   };
 
-  db.registerAdminUser = function(data, callback) {
+  db.registerRootUser = function(data, callback) {
     db.user.count(function(err, count) {
       if(err) { return callback(err)}
 
@@ -90,6 +90,15 @@ var Db = (function () {
         });
       } else {
         callback(new Error('Unauthorized'));
+      }
+    });
+  };
+
+  db.hasUsers = function(callback) {
+    db.user.count(function(err,count) {
+      if(callback && typeof callback == 'function') {
+        if(err) { return callback(err); }
+        else { return callback(null, count > 0); }
       }
     });
   };

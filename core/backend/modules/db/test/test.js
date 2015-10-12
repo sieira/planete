@@ -61,15 +61,15 @@ describe('\x1b[33mDatabase\x1b[0m', function() {
   });
 
   it('Should be able to register a user when there is none', function(done) {
-    db.registerAdminUser(mockUser, function(err) {
+    db.registerRootUser(mockUser, function(err) {
       expect(err).not.to.exist;
       done();
     });
   });
 
   it('Should be unable to register a user when there are some', function(done) {
-    db.registerAdminUser(mockUser, function(err) {
-      db.registerAdminUser(mockUser, function(err) {
+    db.registerRootUser(mockUser, function(err) {
+      db.registerRootUser(mockUser, function(err) {
         expect(err).to.exist;
         done();
       });

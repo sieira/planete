@@ -32,8 +32,9 @@ var Core = (function() {
 
   var core = new CoreModule(__dirname);
 
-  // TODO check if it really is (on the database)
-  core.isInstalled = false;
+  core.isInstalled = function(callback) {
+    core.db.hasUsers(callback);
+  }
 
   function moduleApps() {
     var tasks = [];
