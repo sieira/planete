@@ -52,12 +52,9 @@ var Core = (function() {
   core.init = function(callback) {
     util.parallelRunner(moduleApps())
     .then(function() {
-      core.app.init(core.app.get('port'), core.app.get('host'), function() {
-        core.logger.OK('Express server listening at %s:%d', core.app.get('host'), core.app.get('port'));
-        if(callback && typeof callback == 'function') { return callback(); }
-      });
+      core.app.init(callback);
     })
-    .catch(core.logger.error);
+    .catch(callback);
   };
 
  /**

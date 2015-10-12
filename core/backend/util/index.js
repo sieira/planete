@@ -100,7 +100,7 @@ function parallelRunner(tasks) {
 /**
  * Receives : A generator of serial tasks
  *
- * Each element should be a valid input for the parallelRunner
+ * Each element should be a function, or a valid input for the parallelRunner
  *
  * Resolves when all the functions have run, and rejects if any of them fails
  */
