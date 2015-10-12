@@ -20,9 +20,8 @@ This file is part of Planète.
 
 var angularInjections = angularInjections || [];
 
-angular
-.module('planete', [].concat(angularInjections))
-.config(function($provide) {
+var app = angular.module('planete', [].concat(angularInjections))
+.config(function($ocLazyLoadProvider, $provide, $httpProvider) {
   // register the interceptor as a service
   $provide.factory('authInterceptor', function($q, $log) {
     return {
@@ -45,10 +44,9 @@ angular
       }
     };
   });
+  $httpProvider.interceptors.push('authInterceptor');
 
-/*  $httpProvider.interceptors.push('myHttpInterceptor');
-
-// alternatively, register the interceptor via an anonymous factory
+/*// alternatively, register the interceptor via an anonymous factory
 $httpProvider.interceptors.push(function($q, dependency1, dependency2) {
   return {
    'request': function(config) {
@@ -61,18 +59,15 @@ $httpProvider.interceptors.push(function($q, dependency1, dependency2) {
 });*/
 
 })
-.controller('planeteController', function($scope, $uibModal, $log) {
+.controller('planeteController', function($scope, $ocLazyLoad, $log) {
   $scope.login = function() {
-    var dialogOpts = {
-      animation: true,
-      templateUrl: '/login'
-    }
-    //Ouverture de la fenêtre
-    $uibModal.open(dialogOpts).result
-    .then(function (selected) {
-      $scope.selected = selected;
-    }, function () {
-      $log.info('Modal dismissed at: ' + new Date());
-    });
+    $ocLazyLoad.load({
+      cache: false,
+      rerun: true,
+      files: ['modules/auth/js/app.js']
+    })
+    .then(function(data){
+      $log.debug('data', data);
+    })
   };
 });

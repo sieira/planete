@@ -18,33 +18,16 @@ This file is part of Planète.
 **/
 'use strict';
 
-var angularInjections = angularInjections || [];
+var Setup = function (server, scriptsInjector) {
+  var core = require('_'),
+      auth = core.authentication,
+      path = require('path');
 
-var modal;
+  var viewsdir = path.normalize(path.join(__dirname, '/views'));
 
-var app = angular
-.module('auth', [].concat(angularInjections))
-.controller('loginController', ['$scope', function($scope) {
-  $scope.ok = function () {
-    modal.close('OK');
-  };
+  server.get('/admin', auth.middleware, function(req, res, next) {
+    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
+  });
+};
 
-  $scope.cancel = function () {
-    modal.close('cancel');
-  };
-}])
-.run(['$uibModal', '$log', function($uibModal, $log) {
-    var dialogOpts = {
-      animation: true,
-      templateUrl: '/login'
-    }
-
-    modal = $uibModal.open(dialogOpts);
-
-    modal.result
-    .then(function (selected) {
-      alert(selected);
-    }, function () {
-      alert('Modal dismissed at: ' + new Date());
-    });
-}]);
+module.exports = Setup;

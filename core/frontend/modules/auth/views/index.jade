@@ -20,7 +20,7 @@
 include ../../../views/utils
 +moduleScripts(scripts)
 
-div(ng-app='auth', ng-controller='loginController')
+#login-modal(ng-app = 'auth', ng-controller = 'loginController')
   .modal-header
     h2 #{__('You are not authorized to acess this ressource')}
     .modal-body
