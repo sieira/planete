@@ -25,6 +25,7 @@ var Logger = (function _Logger() {
   var logger = new CoreModule(__dirname);
 
   var Color = {
+    BLUE_FG: '\x1b[34m',
     GREEN_FG: '\x1b[32m',
     MAGENTA_FG: '\x1b[35m',
     RED_FG: '\x1b[31m',
@@ -50,14 +51,16 @@ var Logger = (function _Logger() {
   logger.info = colorLogger('i', Color.YELLOW_FG);
   logger.OK = colorLogger('✔', Color.GREEN_FG);
   logger.error = colorLogger('x', Color.RED_FG);
+  logger.http = colorLogger('ǁ', Color.BLUE_FG);
   logger.stack = logger.error;
 
   logger.middleware = function(req, res, next) {
     var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
     var url = req.originalUrl || req.url;
 
-
-    logger.info('%s %s request from %s ', req.method, url, ip);
+    req.on('end', function() {
+      logger.http('%s - "%s %s" %d', ip, req.method, url, res.statusCode);
+    });
     next();
   }
 
