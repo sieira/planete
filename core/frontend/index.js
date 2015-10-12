@@ -27,46 +27,40 @@ var Frontend = (function () {
         moduleScripts = [],
         angularInjections = [];
 
-    fs.readdirSync(path.join(modulePath,'js')).forEach(function(filename) {
-      moduleScripts.push(path.join(path.relative(__dirname, modulePath), 'js', filename));
-    });
+    if(fs.existsSync(path.join(modulePath,'js'))) {
+      fs.readdirSync(path.join(modulePath,'js')).forEach(function(filename) {
+        moduleScripts.push(path.join(path.relative(__dirname, modulePath), 'js', filename));
+      });
+    };
 
-    fs.readdirSync(path.join(modulePath,'css')).forEach(function(filename) {
-      styles.push(path.join(path.relative(__dirname, modulePath), 'css', filename));
-    });
+    if(fs.existsSync(path.join(modulePath,'css'))) {
+      fs.readdirSync(path.join(modulePath,'css')).forEach(function(filename) {
+        styles.push(path.join(path.relative(__dirname, modulePath), 'css', filename));
+      });
+    }
 
     //TODO make the module control its own dependencies
-    // angularInjections.push('angularmodule');
+    angularInjections.push('ui.bootstrap');
 
     return { styles: styles, scripts: moduleScripts, angularInjections: angularInjections };
   };
 
   return {
+    scriptsInjector: scriptsInjector,
     registerRoutes: function(app, server) {
       app.use(server.static(__dirname));
       app.set('views', path.join(__dirname,'views'));
       app.set('view engine', 'jade');
       app.use(server.static(path.join(__dirname, 'bower_components')));
 
-      fs.readdirSync(__dirname).forEach(function(filename) {
-        // Ignore the non-module dirs
-        if(['routes', 'views', 'js', 'css', 'bower_components', 'node_modules'].some(function(element) {
-          return element === filename;
-        })) return;
-
-        var stat = fs.statSync(__dirname + '/' + filename);
+      fs.readdirSync(__dirname + '/modules/').forEach(function(filename) {
+        var stat = fs.statSync(__dirname + '/modules/' + filename);
         if (!stat.isDirectory()) { return; }
 
-        return require('./' + filename)(app, scriptsInjector);
+        return require('./modules/' + filename)(app, scriptsInjector);
       });
 
       require('./routes')(app);
-    },
-    init: function(callback) {
-      if(callback && typeof callback == 'function') { return callback(); }
-    },
-    close: function(callback) {
-      if(callback && typeof callback == 'function') { return callback(); }
     }
   };
 })();

@@ -24,6 +24,8 @@
     "angular": "~1.4.7",
     "jquery": "~2.1.4",
     "bootstrap": "~3.3.5",
-    "font-awesome": "fontawesome#~4.4.0"
+    "font-awesome": "fontawesome#~4.4.0",
+    "angular-bootstrap": "~0.14.1",
+    "oclazyload": "~1.0.6"
   }
 }

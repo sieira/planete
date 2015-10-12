@@ -27,13 +27,7 @@ chai.use(require('chai-passport-strategy'));
 var authentication = require('..');
 
 describe('\x1b[33mAuthentication\x1b[0m', function() {
-/*  it('Init should not fail', function(done) {
-    authentication.init(function(err) {
-      expect(err).to.not.exist;
-      done();
-    })
-  });
-
+/*  
   describe('Handling a request with valid credential in header', function() {
     var user,
         info;

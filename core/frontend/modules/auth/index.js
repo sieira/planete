@@ -19,17 +19,15 @@ This file is part of Planète.
 'use strict';
 
 var core = require('_'),
-    front = require('#'),
-    path = require('path'),
-    auth = core.authentication;
+    path = require('path');
 
-var Routes = function (server) {
-  var rootDir = __dirname.slice(0, __dirname.lastIndexOf('/')),
-      viewsdir = path.normalize(path.join(rootDir, '/views'));
 
-  server.get('/', function (req, res) {
-      res.render(path.join(viewsdir,'index'), front.scriptsInjector(rootDir));
+var Auth = function (server, scriptsInjector) {
+  var viewsdir = path.normalize(path.join(__dirname, '/views'));
+
+  server.get('/login', function(req, res, next) {
+    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
   });
 };
 
-module.exports = Routes;
+module.exports = Auth;

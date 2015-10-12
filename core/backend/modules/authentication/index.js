@@ -18,39 +18,43 @@ This file is part of Planète.
 **/
 'use strict';
 
-var CoreModule = require('_/core-module');
-
-var logger = require('_').logger,
-    db = require('_').db,
-    passport = require('passport'),
-    BearerStrategy = require('passport-http-bearer').Strategy;
-
 var Authentication = (function () {
+  var CoreModule = require('_/core-module');
+
+  var logger = require('_').logger,
+      db = require('_').db,
+      User = db.user,
+      passport = require('passport'),
+      BearerStrategy = require('passport-http-bearer').Strategy;
+
   var auth = new CoreModule(__dirname);
 
+  var strategy = new BearerStrategy(function(token, done) {
+    User.findOne({ token: token }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      return done(null, user, { scope: 'all' });
+    });
+  });
+
+  passport.use(strategy);
   auth.middleware = passport.authenticate('bearer', { session: false });
-
-  auth.init = function(callback) {
-    var User = db.user;
-
-    var strategy = new BearerStrategy(
-      function(token, done) {
-        User.findOne({ token: token }, function (err, user) {
-          if (err) { return done(err); }
-          if (!user) { return done(null, false); }
-          return done(null, user, { scope: 'all' });
-        });
-      });
-
-    passport.use(strategy);
-    logger.OK('Authentication strategy registered');
-    if(callback && typeof callback == 'function') { return callback() ; }
-  };
+  logger.OK('Authentication strategy registered');
 
   auth.close = function(callback) {
     if(callback && typeof callback == 'function') {
       return callback() ;
     }
+  };
+
+  auth.login = function(user, password, callback) {
+    console.log('User: '+ user);
+    console.log('Password: %s', password);
+    callback({ user: user, token: 'token' });
+    // Comprobar si el usuario existe
+    // comprobar si es la contrasena
+    // generar token
+    // devolver usuario y token
   };
 
   return auth;

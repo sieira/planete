@@ -16,7 +16,15 @@
       You should have received a copy of the GNU Affero General Public License
       along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 -//
+
+doctype html
 html
-  head
-  body
-    | Hello world !!
+  include ./utils
+  +head
+    +baseCss
+    +baseScripts
+    +angularInjections(angularInjections)
+    +moduleScripts(scripts)
+    body(ng-app='planete' ng-controller= 'planeteController')
+      button.btn(ng-click='login()') Login
+      {{selected}}

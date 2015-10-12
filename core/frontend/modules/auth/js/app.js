@@ -18,18 +18,8 @@ This file is part of Planète.
 **/
 'use strict';
 
-var core = require('_'),
-    front = require('#'),
-    path = require('path'),
-    auth = core.authentication;
+var angularInjections = angularInjections || [];
 
-var Routes = function (server) {
-  var rootDir = __dirname.slice(0, __dirname.lastIndexOf('/')),
-      viewsdir = path.normalize(path.join(rootDir, '/views'));
-
-  server.get('/', function (req, res) {
-      res.render(path.join(viewsdir,'index'), front.scriptsInjector(rootDir));
-  });
-};
-
-module.exports = Routes;
+angular
+.module('auth', [].concat(angularInjections))
+});

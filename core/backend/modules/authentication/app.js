@@ -16,20 +16,18 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>
 **/
-'use strict';
+var App = (function() {
+  var express = require('express'),
+      app = express(),
+      auth = require('_').auth;
 
-var core = require('_'),
-    front = require('#'),
-    path = require('path'),
-    auth = core.authentication;
 
-var Routes = function (server) {
-  var rootDir = __dirname.slice(0, __dirname.lastIndexOf('/')),
-      viewsdir = path.normalize(path.join(rootDir, '/views'));
-
-  server.get('/', function (req, res) {
-      res.render(path.join(viewsdir,'index'), front.scriptsInjector(rootDir));
+  app.post('/login', function(req,res) {
+    console.log(req);
+    res.status(404).send();
   });
-};
 
-module.exports = Routes;
+  return app;
+})();
+
+module.exports = App;

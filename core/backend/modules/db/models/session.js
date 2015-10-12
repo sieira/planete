@@ -20,9 +20,9 @@ This file is part of Planète.
 
 var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
-  token:
+  token: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  expireAt: { type: Date, default: undefined }
+  expireAt: { type: Date, default: moment().add(30,'seconds') }
 });
 
 module.exports = mongoose.model('Session', SessionSchema);
