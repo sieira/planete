@@ -42,7 +42,6 @@ var Logger = (function _Logger() {
     }
   }
 
-  logger.close = function() {};
   logger.new = function() {
     return new _Logger();
   };
