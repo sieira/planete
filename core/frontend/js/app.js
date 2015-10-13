@@ -20,13 +20,11 @@ This file is part of Planète.
 
 var angularInjections = angularInjections || [];
 
-var login;
-
 var app = angular.module('planete', [].concat(angularInjections))
 .config(function($routeProvider, $httpProvider) {
   $httpProvider.interceptors.push('authInterceptor');
 })
-.factory('authInterceptor', function($q, $log, $location) {
+.factory('authInterceptor', function($q, $log, $rootScope) {
   return {
     response: function(response) {
       if (response.status === 401) {
@@ -37,15 +35,15 @@ var app = angular.module('planete', [].concat(angularInjections))
     responseError: function(rejection) {
       if (rejection.status === 401) {
         $log.debug("Response Error 401",rejection);
-        login();
+        $rootScope.$broadcast('unauthorized');
       }
       return $q.reject(rejection);
     }
   };
 })
-.controller('planeteController', function($scope, $ocLazyLoad, $log, $http) {
-  login = $scope.login = function() {
-    $ocLazyLoad.load({
+.controller('planeteController', function($rootScope, $scope, $ocLazyLoad, $http) {
+  $scope.login = function() {
+    return $ocLazyLoad.load({
       cache: false,
       rerun: true,
       files: ['modules/auth/js/app.js']
@@ -55,4 +53,8 @@ var app = angular.module('planete', [].concat(angularInjections))
   $scope.admin = function() {
     $http({method: 'GET', url: '/admin'});
   }
+
+  $rootScope.$on('unauthorized', function() {
+    $scope.login();
+  });
 });
