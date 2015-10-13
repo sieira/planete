@@ -1,17 +1,35 @@
 # Logger
-*This module is part of planète's core backend, whose docs can be found [here](../README.md)*
+*This module is part of planète's core backend, whose docs can be found [here](../../README.md)*
 
-## Defaults
-The logger will by default print on the console, unless `NODE_ENV` is set to `test`
+## Description
+This module will handle logging.
+The logger will by default print on the console, unless `NODE_ENV` is set to `test`, no other logging method has been implemented yet
 
-## Custom logger
-This logger module allows to retrieve custom loggers
+## Properties
+This module does not expose any property
 
-```js
-  require('_/logger').new()
-```
-Returns a new instance of the logger that you can configure independently, allowing you to use separated loggers for each module
+![Baked potato with butter](https://cloud.githubusercontent.com/assets/13233859/10263240/01ad3a84-69e7-11e5-8406-7e0848b24015.jpg)
 
-## Middleware
-Logger provides a middleware that will log every request (according to the configuration options) on the format
-`:request-type :url request from :origin-ip`
+
+## Methods
+***Output***
+
+  - `log` same as console.log
+  - `info` Prints a yellow [i] token, and then the rest of the parameters
+  - `OK` Prints a green [✔] token, and then the rest of the parameters
+  - `error` Prints a red [x] token, and then the rest of the parameters
+  - `http` Prints a blue [ǁ] token, and then the rest of the parameters
+  - `stack` Same as error
+
+***Others***
+
+  - `new` Allows to retrieve a custom logger that other modules will be able to configure by themselves
+    returns: A new logger module
+
+### Middleware
+  - `middleware` Provides a middleware that will log every request (according to the configuration options) on the format
+  `[ǁ] :client-ip - ":method :url" :response-status`
+
+
+## API
+This module does not expose any endpoint

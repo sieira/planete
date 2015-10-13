@@ -16,14 +16,13 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
-var express = require('express'),
-    sample_module = require('.');
-
 var App = (function() {
-  var app = express();
+  var express = require('express'),
+      app = express(),
+      mod = require('.');
 
-  app.post('/status', function(req,res) {
-      res.status(200).json(sample_module.isConnected());
+  app.post('/someroute', function(req,res) {
+    res.status(200).json(mod.something());
   });
 
   return app;

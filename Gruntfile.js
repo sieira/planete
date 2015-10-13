@@ -26,7 +26,7 @@ var glob = require("glob"),
 
 process.env.NODE_ENV = 'test';
 
-var exclude = ['.git', 'node_modules','bower_components','sample_module'];
+var exclude = ['.git', 'node_modules','bower_components','sample-module'];
 var files = glob.sync("**/test/**/*.js", {});
 
 var cleanFiles = glob.sync("{node_modules/!(grunt*|glob*),!(node_modules)/**/node_modules/,**/bower_components}");

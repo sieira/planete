@@ -16,15 +16,26 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
-var should = require('chai').should(),
-    expect = require('chai').expect;
+'use strict';
 
-var sample_module = require('_/sample_module');
+var Module = (function () {
+  var CoreModule = require('_/core-module'),
+      core = require('_'),
+      logger = core.logger;
 
-// The highest level describe should be the module name.
-// This thing -> \x1b[0m will print the name yellow
-describe('\x1b[33mSample module\x1b[0m', function() {
-  it('Not implemented', function() {
-    should.fail(0,1,'Test not implemented');
-  });
-});
+  var mod =  new CoreModule(__dirname);
+
+  mod.attribute = 'value';
+
+  logger.info('You are instantiating a module. If the logger had a dependency (on instantiation time) on this module, this would provoke a circular dependency exception');
+
+  mod.method = function (callback) {
+    var safeLogger = core.logger;
+    safeLogger.info('You called a method. You can use the logger here no matter what');
+    if(callback && typeof callback == 'function') { return callback() }
+  };
+
+  return mod;
+})();
+
+module.exports = Module;

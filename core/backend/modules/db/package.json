@@ -1,15 +1,5 @@
 {
-  "name": "db",
-  "version": "1.0.0",
-  "description": "*This module is part of planète's core backend, whose docs can be found [here](../README.md)*",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
   "license": "AGPL-3.0",
   "dependencies": {
