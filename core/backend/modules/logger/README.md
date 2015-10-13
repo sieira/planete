@@ -8,9 +8,6 @@ The logger will by default print on the console, unless `NODE_ENV` is set to `te
 ## Properties
 This module does not expose any property
 
-![Baked potato with butter](https://cloud.githubusercontent.com/assets/13233859/10263240/01ad3a84-69e7-11e5-8406-7e0848b24015.jpg)
-
-
 ## Methods
 ***Output***
 
