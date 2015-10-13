@@ -20,54 +20,39 @@ This file is part of Planète.
 
 var angularInjections = angularInjections || [];
 
-var app = angular.module('planete', [].concat(angularInjections))
-.config(function($ocLazyLoadProvider, $provide, $httpProvider) {
-  // register the interceptor as a service
-  $provide.factory('authInterceptor', function($q, $log) {
-    return {
-      // optional method
-     'requestError': function(rejection) {
-        $log.debug('requestError');
-        if (canRecover(rejection)) {
-          return 'responseOrNewPromise'
-        }
-        return $q.reject(rejection);
-      },
-      // optional method
-     'responseError': function(rejection) {
-        // do something on error
-        $log.debug('responseError');
-        if (canRecover(rejection)) {
-          return 'responseOrNewPromise'
-        }
-        return $q.reject(rejection);
-      }
-    };
-  });
-  $httpProvider.interceptors.push('authInterceptor');
+var login;
 
-/*// alternatively, register the interceptor via an anonymous factory
-$httpProvider.interceptors.push(function($q, dependency1, dependency2) {
+var app = angular.module('planete', [].concat(angularInjections))
+.config(function($routeProvider, $httpProvider) {
+  $httpProvider.interceptors.push('authInterceptor');
+})
+.factory('authInterceptor', function($q, $log, $location) {
   return {
-   'request': function(config) {
-       // same as above
+    response: function(response) {
+      if (response.status === 401) {
+        $log.debug("Response 401");
+      }
+      return response || $q.when(response);
     },
-      'response': function(response) {
-       // same as above
+    responseError: function(rejection) {
+      if (rejection.status === 401) {
+        $log.debug("Response Error 401",rejection);
+        login();
+      }
+      return $q.reject(rejection);
     }
   };
-});*/
-
 })
-.controller('planeteController', function($scope, $ocLazyLoad, $log) {
-  $scope.login = function() {
+.controller('planeteController', function($scope, $ocLazyLoad, $log, $http) {
+  login = $scope.login = function() {
     $ocLazyLoad.load({
       cache: false,
       rerun: true,
       files: ['modules/auth/js/app.js']
-    })
-    .then(function(data){
-      $log.debug('data', data);
-    })
+    });
   };
+
+  $scope.admin = function() {
+    $http({method: 'GET', url: '/admin'});
+  }
 });

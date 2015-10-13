@@ -44,7 +44,5 @@ var app = angular
     modal.result
     .then(function (selected) {
       alert(selected);
-    }, function () {
-      alert('Modal dismissed at: ' + new Date());
     });
 }]);
