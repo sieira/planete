@@ -30,26 +30,7 @@ var Db = (function () {
 
   var db =  new CoreModule(__dirname);
 
-  db.connect = function (callback) {
-    var db = config.NODE_ENV == 'test'? config.TEST_DB : config.DB,
-        db_URL = 'mongodb://' + path.join(config.DB_HOST+':'+config.DB_PORT,db);
-
-    mongoose.connect(db_URL, function(err) {
-      if(err) {
-        logger.error('Failed to connect database on ' + db_URL);
-        if(callback && typeof callback == 'function') { return callback(err) }
-      } else {
-        logger.OK('Connected to database on ' + db_URL);
-        if(callback && typeof callback == 'function') { return callback() }
-      }
-    });
-  };
-
-  db.isConnected = function() {
-    return mongoose.connection.readyState == 1;
-  };
-
-  db.exposeModels = function(callback) {
+  function exposeModels(callback) {
     // Expose all the models as properties
     fs.readdir(__dirname + '/models', function(err, files) {
       files.forEach(function(filename) {
@@ -71,6 +52,25 @@ var Db = (function () {
     });
   };
 
+  db.connect = function (callback) {
+    var db = config.NODE_ENV == 'test'? config.TEST_DB : config.DB,
+        db_URL = 'mongodb://' + path.join(config.DB_HOST+':'+config.DB_PORT,db);
+
+    mongoose.connect(db_URL, function(err) {
+      if(err) {
+        logger.error('Failed to connect database on ' + db_URL);
+        if(callback && typeof callback == 'function') { return callback(err) }
+      } else {
+        logger.OK('Connected to database on ' + db_URL);
+        if(callback && typeof callback == 'function') { return callback() }
+      }
+    });
+  };
+
+  db.isConnected = function() {
+    return mongoose.connection.readyState == 1;
+  };
+
   db.close = function(callback) {
     mongoose.connection.close(function(err) {
       if(callback && typeof callback == 'function') {
@@ -79,6 +79,15 @@ var Db = (function () {
     });
   };
 
+  db.hasUsers = function(callback) {
+    db.user.count(function(err,count) {
+      if(callback && typeof callback == 'function') {
+        if(err) { return callback(err); }
+        else { return callback(null, count > 0); }
+      }
+    });
+  };
+  
   db.registerRootUser = function(data, callback) {
     db.user.count(function(err, count) {
       if(err) { return callback(err)}
@@ -94,16 +103,7 @@ var Db = (function () {
     });
   };
 
-  db.hasUsers = function(callback) {
-    db.user.count(function(err,count) {
-      if(callback && typeof callback == 'function') {
-        if(err) { return callback(err); }
-        else { return callback(null, count > 0); }
-      }
-    });
-  };
-
-  util.parallelRunner(db.connect, db.exposeModels);
+  util.parallelRunner(db.connect, exposeModels);
 
   return db;
 })();

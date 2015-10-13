@@ -18,6 +18,10 @@ This file is part of Planète.
 **/
 'use strict';
 
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    moment = require('moment');
+
 var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
   token: { type: String, required: true },

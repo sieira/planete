@@ -45,11 +45,9 @@ describe('\x1b[33mDatabase\x1b[0m', function() {
     db.close(done);
   });
 
-  it('Should expose database models', function(done) {
-    db.exposeModels(function() {
-      expect(db.user).to.exist;
-      done();
-    });
+  it('Should expose database models', function() {
+    expect(db.user).to.exist;
+    expect(db.session).to.exist;
   });
 
   it('Should connect to database server', function(done) {

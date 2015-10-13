@@ -28,7 +28,7 @@ var App = (function() {
 
   app.post('/register-root-user', function(req,res) {
     db.registerRootUser(req.body, function(err) {
-      if(err) { res.status(401).send('Unauthorized'); }
+      if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
       else { res.status(200).send(); };
     });
   });
