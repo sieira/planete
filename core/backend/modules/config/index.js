@@ -46,10 +46,6 @@ var Config = (function () {
   require('dotenv').load();
   console.log('Configuration loaded');
 
-  config.close = function(callback) {
-    if(callback && typeof callback == 'function') { return callback(); }
-  };
-
 var proxy = new Proxy(config, {
   /**
    * When calling any property, checks if it exists on the environment
