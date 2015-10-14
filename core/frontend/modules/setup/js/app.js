@@ -75,7 +75,6 @@ angular.module('setup', [].concat(angularInjections))
       data: $scope.user
     })
     .then(function(response) {
-      $log.debug('respuesta', response);
       $scope.step++;
 
       $scope.record.running = false;
