@@ -20,29 +20,90 @@ This file is part of Planète.
 
 var angularInjections = angularInjections || [];
 
-var modal;
-
 var app = angular
 .module('auth', [].concat(angularInjections))
-.controller('loginController', ['$scope', function($scope) {
-  $scope.ok = function () {
-    modal.close('OK');
+.constant('AUTH_EVENTS', {
+  loginSuccess: 'auth-login-success',
+  loginFailed: 'auth-login-failed',
+  logoutSuccess: 'auth-logout-success',
+  sessionTimeout: 'auth-session-timeout',
+  notAuthenticated: 'auth-not-authenticated',
+  notAuthorized: 'auth-not-authorized'
+})
+.service('Session', function () {
+  this.create = function (userId, token) {
+    this.userId = userId;
+    this.token = token;
+  };
+  this.destroy = function () {
+    delete this.userId;
+    delete this.token;
+  };
+})
+.factory('$auth', function ($http, Session, $log) {
+  var $auth = {};
+
+  $auth.login = function (credentials) {
+    return $http
+      .post('/authentication/login', credentials)
+      .then(function (res) {
+        Session.create(res.data.userId,
+                       res.data.token);
+        return res.data;
+      });
   };
 
-  $scope.cancel = function () {
-    modal.close('cancel');
+  $auth.isAuthenticated = function () {
+    return !!Session.userId;
+  };
+
+  $auth.isAuthorized = function (authorizedRoles) {
+    if (!angular.isArray(authorizedRoles)) {
+      authorizedRoles = [authorizedRoles];
+    }
+    return ($auth.isAuthenticated() &&
+      authorizedRoles.indexOf(Session.userRole) !== -1);
+  };
+
+  return $auth;
+})
+.factory('$login', ['$uibModal', '$log', function($uibModal, $log) {
+  var modal;
+  var isOpen = false;
+
+  return {
+    modal: function () {
+      var dialogOpts = {
+        animation: true,
+        templateUrl: '/login'
+      }
+      if(!isOpen) {
+        modal = $uibModal.open(dialogOpts);
+        isOpen = true;
+      }
+    },
+    closeModal: function () {
+      modal.close();
+      isOpen = false;
+    }
   };
 }])
-.run(['$uibModal', '$log', function($uibModal, $log) {
-    var dialogOpts = {
-      animation: true,
-      templateUrl: '/login'
-    }
+.controller('loginController', ['$scope', '$rootScope', 'AUTH_EVENTS', '$auth', '$login', function($scope, $rootScope, AUTH_EVENTS, $auth, $login) {
+  $scope.credentials = {
+    username: '',
+    password: ''
+  };
 
-    modal = $uibModal.open(dialogOpts);
-
-    modal.result
-    .then(function (selected) {
-      alert(selected);
+  $scope.login = function(credentials) {
+    $auth.login(credentials).then(function (user) {
+      delete $scope.error;
+      $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+      $login.closeModal();
+    }, function () {
+      $scope.error = 'Wrong user or password';
+      $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
     });
+  };
+
+  $scope.cancel = $login.closeModal;
 }]);

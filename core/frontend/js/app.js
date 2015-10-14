@@ -18,23 +18,27 @@ This file is part of Planète.
 **/
 'use strict';
 
-var angularInjections = angularInjections || [];
-
 var app = angular.module('planete', [].concat(angularInjections))
 .config(function($httpProvider) {
+
   $httpProvider.interceptors.push('authInterceptor');
 })
-.run(function($rootScope, $ocLazyLoad) {
-  var popLogin = $rootScope.popLogin = function () {
-    return $ocLazyLoad.load({
-      cache: false,
-      rerun: true,
-      files: ['modules/auth/js/app.js']
-    });
-  };
+.run(function($rootScope, $ocLazyLoad, $injector) {
+  $ocLazyLoad.load({
+    files: ['modules/auth/js/app.js']
+  })
+  .then(function() {
+    var $auth = $injector.get("$auth");
+    var $login = $injector.get("$login");
+    var Session = $injector.get("Session");
 
-  $rootScope.$on('unauthorized', function() {
-    popLogin();
+    $rootScope.isAuthenticated = $auth.isAuthenticated;
+    $rootScope.popLogin = $login.modal;
+    $rootScope.Session = Session;
+
+    $rootScope.$on('unauthorized', function() {
+      return $rootScope.popLogin();
+    });
   });
 })
 .factory('authInterceptor', function($rootScope, $q, $log) {
@@ -56,7 +60,13 @@ var app = angular.module('planete', [].concat(angularInjections))
   };
 })
 .controller('planeteController', function($rootScope, $scope, $http) {
-  $scope.login = $rootScope.popLogin;
+  $scope.session = function () {
+    return $rootScope.Session;
+  }
+
+  $scope.login = function() {
+    $rootScope.popLogin();
+  }
 
   $scope.admin = function() {
     $http({method: 'GET', url: '/admin'});

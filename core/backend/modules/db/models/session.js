@@ -38,12 +38,14 @@ SessionSchema.pre('validate', function(next) {
 });
 
 SessionSchema.pre('save', function(next, done) {
+  var logger = require('_').logger;
+  
   var self = this;
   SessionModel.find({ user : self.user }, function (err, docs) {
     if (!docs.length){
       next();
     } else {
-      console.info('Extending token validity for user %s', self.user);
+      logger.info('Extending token validity for user %s', self.user);
       SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') }, function(err, session) {
         if(err) { return done(err); }
         return done(null, self);
