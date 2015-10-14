@@ -40,7 +40,7 @@ var Authentication = (function () {
   auth.middleware = passport.authenticate('bearer', { session: false });
   logger.OK('Authentication strategy registered');
 
-  auth.login = function(username, password, callback) {
+  auth.login = function(ip, username, password, callback) {
     db.user.findOne({ username: username }, function (err, user) {
       if(err) { return callback(err); }
       if(!user) { return callback(new Error('Authentication failed')); } // No user with this username
@@ -48,12 +48,13 @@ var Authentication = (function () {
       user.comparePassword(password, function(err, isMatch) {
         if(err) { return callback(err); }
         if(!isMatch) { // Password do not match
-          // TODO add unsuccessful login attempt
+          user.loginFailure(ip);
           return callback(new Error('Authentication failed'));
         }
 
         new db.session({ user: user._id }).save(function(err, session) {
           if(err) callback(err);
+          user.loginSuccess(ip);
           logger.info('Session created for user %s', session.user);
           callback(null, { userId: session.user, token: session.token });
         });

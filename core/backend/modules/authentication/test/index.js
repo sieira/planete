@@ -26,6 +26,8 @@ chai.use(require('chai-passport-strategy'));
 
 var authentication = require('..');
 
+var mockIp = '127.0.0.1';
+
 var mockUserName = 'user',
     mockWrongUserName = 'looser',
     mockPassword = 'password',
@@ -38,24 +40,24 @@ describe('\x1b[33mAuthentication\x1b[0m', function() {
   });
 
   it('Should fail with wrong user', function(done) {
-    authentication.login(mockWrongUserName, mockWrongPassword, function(err) {
+    authentication.login(mockIp, mockWrongUserName, mockWrongPassword, function(err) {
       expect(err).to.exist;
       done();
     });
   });
 
   it('Should fail with wrong password', function(done) {
-    authentication.login(mockUserName, mockWrongPassword, function(err) {
+    authentication.login(mockIp, mockUserName, mockWrongPassword, function(err) {
       expect(err).to.exist;
       done();
     });
   });
 
   it('Should return user and token with proper credentials', function(done) {
-    authentication.login(mockUserName, mockPassword, function(err, user) {
+    authentication.login(mockIp, mockUserName, mockPassword, function(err, user) {
       expect(err).to.not.exist;
       expect(user).to.exist;
-      expect(user.username).to.exist;
+      expect(user.userId).to.exist;
       expect(user.token).to.exist;
       done();
     });

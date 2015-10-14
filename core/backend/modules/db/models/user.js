@@ -30,10 +30,14 @@ var UserSchema = new mongoose.Schema({
     creation: {type: Date, default: Date.now}
   },
   login: {
-    failures: {
-      type: [Date]
-    },
-    success: {type: Date}
+    failures: [{
+      date: { type: [Date] },
+      ip: { type: [Number]}
+    }],
+    successes: [{
+      date: { type: [Date] },
+      ip: { type: [Number]}
+    }]
   }
 });
 
@@ -67,14 +71,13 @@ UserSchema.methods = {
     });
   },
 
-  loginFailure: function(callback) {
-    this.login.failures.push(new Date());
+  loginFailure: function(ip, callback) {
+    this.login.failures.push({ date: new Date(), ip: ip });
     this.save(callback);
   },
 
-  loginSuccess: function(callback) {
-    this.login.success = new Date();
-    this.login.failures = [];
+  loginSuccess: function(ip, callback) {
+    this.login.successes.push({ date: new Date(), ip: ip });
     this.save(callback);
   },
 

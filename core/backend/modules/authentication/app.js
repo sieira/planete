@@ -23,7 +23,9 @@ var App = (function() {
 
 
   app.post('/login', function(req,res) {
-    auth.login(req.body.username, req.body.password, function(err, user) {
+    var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
+
+    auth.login(ip, req.body.username, req.body.password, function(err, user) {
       if(err) { return res.status(401).send(); }
       res.status(200).json(user);
     });
