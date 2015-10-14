@@ -37,7 +37,7 @@ SessionSchema.pre('validate', function(next) {
   next();
 });
 
-SessionSchema.pre('save', function(next) {
+SessionSchema.pre('save', function(next, done) {
   var self = this;
   SessionModel.find({ user : self.user }, function (err, docs) {
     if (!docs.length){
@@ -45,6 +45,7 @@ SessionSchema.pre('save', function(next) {
     } else {
       console.info('Extending token validity for %s user', self.user);
       SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') })
+      done();
     }
   });
 });
