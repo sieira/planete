@@ -20,7 +20,8 @@ This file is part of Planète.
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    moment = require('moment');
+    moment = require('moment'),
+    crypto = require('crypto');
 
 var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
@@ -29,4 +30,23 @@ var SessionSchema = new mongoose.Schema({
   expireAt: { type: Date, default: moment().add(30,'seconds') }
 });
 
-module.exports = mongoose.model('Session', SessionSchema);
+var SessionModel = mongoose.model('SessionModel', SessionSchema);
+
+SessionSchema.pre('validate', function(next) {
+  this.token = crypto.randomBytes(16).toString('base64');
+  next();
+});
+
+SessionSchema.pre('save', function(next) {
+  var self = this;
+  SessionModel.find({ user : self.user }, function (err, docs) {
+    if (!docs.length){
+      next();
+    } else {
+      console.info('Extending token validity for %s user', self.user);
+      SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') })
+    }
+  });
+});
+
+module.exports = SessionModel;

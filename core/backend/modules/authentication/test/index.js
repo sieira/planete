@@ -26,36 +26,38 @@ chai.use(require('chai-passport-strategy'));
 
 var authentication = require('..');
 
+var mockUserName = 'user',
+    mockWrongUserName = 'looser',
+    mockPassword = 'password',
+    mockWrongPassword = 'pas';
+
 describe('\x1b[33mAuthentication\x1b[0m', function() {
-/*  
-  describe('Handling a request with valid credential in header', function() {
-    var user,
-        info;
+  before(function () {
+    var db = require('_').db;
+    db.registerRootUser({ username: mockUserName, password: mockPassword });
+  });
 
-   before(function(done) {
-     require('_').db.init();
+  it('Should fail with wrong user', function(done) {
+    authentication.login(mockWrongUserName, mockWrongPassword, function(err) {
+      expect(err).to.exist;
+      done();
+    });
+  });
 
-     chai.passport.use(authentication.strategy)
-     .success(function(u, i) {
-       user = u;
-       info = i;
-       done();
-     })
-     .req(function(req) {
-       req.headers.authorization = 'Bearer vF9dft4qmT';
-     })
-     .authenticate();
-   });
+  it('Should fail with wrong password', function(done) {
+    authentication.login(mockUserName, mockWrongPassword, function(err) {
+      expect(err).to.exist;
+      done();
+    });
+  });
 
-   it('Should supply user', function() {
-     expect(user).to.be.an.object;
-     expect(user.id).to.equal('1234');
-   });
-
-   it('Should supply info', function() {
-     expect(info).to.be.an.object;
-     expect(info.scope).to.equal('read');
-   });
- });
-*/
+  it('Should return user and token with proper credentials', function(done) {
+    authentication.login(mockUserName, mockPassword, function(err, user) {
+      expect(err).to.not.exist;
+      expect(user).to.exist;
+      expect(user.username).to.exist;
+      expect(user.token).to.exist;
+      done();
+    });
+  });
 });

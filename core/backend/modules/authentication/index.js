@@ -23,7 +23,6 @@ var Authentication = (function () {
 
   var logger = require('_').logger,
       db = require('_').db,
-      User = db.user,
       passport = require('passport'),
       BearerStrategy = require('passport-http-bearer').Strategy;
 
@@ -41,20 +40,26 @@ var Authentication = (function () {
   auth.middleware = passport.authenticate('bearer', { session: false });
   logger.OK('Authentication strategy registered');
 
-  auth.close = function(callback) {
-    if(callback && typeof callback == 'function') {
-      return callback() ;
-    }
-  };
+  auth.login = function(username, password, callback) {
+    db.user.findOne({ username: username }, function (err, user) {
+      if(err) { return callback(err); }
+      if(!user) { return callback(new Error('Authentication failed')); } // No user with this username
 
-  auth.login = function(user, password, callback) {
-    console.log('User: '+ user);
-    console.log('Password: %s', password);
-    callback({ user: user, token: 'token' });
-    // Comprobar si el usuario existe
-    // comprobar si es la contrasena
-    // generar token
-    // devolver usuario y token
+      user.comparePassword(password, function(err, isMatch) {
+        if(err) { return callback(err); }
+        if(!isMatch) { // Password do not match
+          // TODO add unsuccessful login attempt
+          return callback(new Error('Authentication failed'));
+        }
+
+        new db.session({ user: user._id }).save(function(err) {
+          if(err) callback(err);
+          // devolver usuario y token
+          logger.info('Session created for user %s', user._id);
+          callback(null, { username: user, token: 'token' });
+        });
+      });
+    });
   };
 
   return auth;

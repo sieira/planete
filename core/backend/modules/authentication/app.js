@@ -19,12 +19,14 @@ This file is part of Planète.
 var App = (function() {
   var express = require('express'),
       app = express(),
-      auth = require('_').auth;
+      auth = require('.');
 
 
   app.post('/login', function(req,res) {
-    console.log(req);
-    res.status(404).send();
+    auth.login(req.body.username, req.body.password, function(err, user) {
+      if(err) { return res.status(401).send(); }
+      res.status(200).json(user);
+    });
   });
 
   return app;
