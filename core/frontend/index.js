@@ -39,8 +39,7 @@ var Frontend = (function () {
       });
     }
 
-    //TODO make the module control its own dependencies
-    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'ngRoute');
+    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'auth');
 
     return { styles: styles, scripts: moduleScripts, angularInjections: angularInjections };
   };

@@ -19,56 +19,15 @@ This file is part of Planète.
 'use strict';
 
 var app = angular.module('planete', [].concat(angularInjections))
-.config(function($httpProvider) {
-
-  $httpProvider.interceptors.push('authInterceptor');
-})
-.run(function($rootScope, $ocLazyLoad, $injector) {
-  $ocLazyLoad.load({
-    files: ['modules/auth/js/app.js']
-  })
-  .then(function() {
-    var $auth = $injector.get("$auth");
-    var $login = $injector.get("$login");
-    var Session = $injector.get("Session");
-
-    $rootScope.isAuthenticated = $auth.isAuthenticated;
-    $rootScope.popLogin = $login.modal;
-    $rootScope.Session = Session;
-
-    $rootScope.$on('unauthorized', function() {
-      return $rootScope.popLogin();
-    });
-  });
-})
-.factory('authInterceptor', function($rootScope, $q, $log) {
-  return {
-    response: function(response) {
-      if (response.status === 401) {
-        $log.debug("Response 401");
-        $rootScope.$broadcast('unauthorized');
-      }
-      return response || $q.when(response);
-    },
-    responseError: function(rejection) {
-      if (rejection.status === 401) {
-        $log.debug("Response Error 401",rejection);
-        $rootScope.$broadcast('unauthorized');
-      }
-      return $q.reject(rejection);
-    }
-  };
-})
-.controller('planeteController', function($rootScope, $scope, $http) {
-  $scope.session = function () {
-    return $rootScope.Session;
-  }
+.controller('planeteController', function($scope, $loginModal, $auth, $http, Session) {
+  $scope.isAuthenticated = $auth.isAuthenticated;
+  $scope.session = Session;
 
   $scope.login = function() {
-    $rootScope.popLogin();
-  }
+    $loginModal.pop();
+  };
 
   $scope.admin = function() {
     $http({method: 'GET', url: '/admin'});
-  }
+  };
 });

@@ -27,16 +27,22 @@ mixin head
 
 mixin baseCss
   link(rel='stylesheet', href='bootstrap/dist/css/bootstrap.min.css')
-  link(rel='stylesheet', href='bootstrap/dist/css/bootstrap-theme.min.css')
+  link(rel='stylesheet', href='Bootflat/bootflat/css/bootflat.css')
   link(rel='stylesheet', href='font-awesome/css/font-awesome.min.css')
   
 mixin baseScripts
   script(src='jquery/dist/jquery.js')
+  
   script(src='bootstrap/dist/js/bootstrap.js')
+  script(src='Bootflat/bootflat/js/icheck.min.js')
+  // Bootflat docs -> bootflat http://bootflat.github.io/documentation.html
+  //  script(src='Bootflat/bootflat/js/jquery.fs.selecter.min.js')
+  //  script(src='Bootflat/bootflat/js/jquery.fs.stepper.min.js')
   script(src='angular/angular.js')
-  script(src='angular-route/angular-route.js')
   script(src='angular-bootstrap/ui-bootstrap-tpls.js')
   script(src='oclazyload/dist/ocLazyLoad.js')
+  
+  script(src='modules/auth/js/app.js')
 
 mixin moduleScripts(scripts)
   if (scripts)

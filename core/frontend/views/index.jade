@@ -29,4 +29,4 @@ html
       button.btn.btn-success(ng-click='login()') #[.fa.fa-key] Login
       button.btn.btn-primary(ng-click='admin()') #[.fa.fa-lock] Admin
 
-      span(ng-show='$rootScope.isAuthenticated()')| Logged in as {{session()}}
+      span(ng-show='isAuthenticated()')| Logged in as {{session}}

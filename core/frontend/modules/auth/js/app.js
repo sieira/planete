@@ -30,6 +30,32 @@ var app = angular
   notAuthenticated: 'auth-not-authenticated',
   notAuthorized: 'auth-not-authorized'
 })
+.config(function($httpProvider) {
+  $httpProvider.interceptors.push('authInterceptor');
+})
+.run(function($rootScope, $loginModal, AUTH_EVENTS) {
+    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
+      return $loginModal.pop();
+    });
+})
+.factory('authInterceptor', function($rootScope, $q, $log, AUTH_EVENTS) {
+  return {
+    response: function(response) {
+      if (response.status === 401) {
+        $log.debug("Response 401");
+        $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+      }
+      return response || $q.when(response);
+    },
+    responseError: function(rejection) {
+      if (rejection.status === 401) {
+        $log.debug("Response Error 401",rejection);
+        $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+      }
+      return $q.reject(rejection);
+    }
+  };
+})
 .service('Session', function () {
   this.create = function (userId, token) {
     this.userId = userId;
@@ -67,28 +93,30 @@ var app = angular
 
   return $auth;
 })
-.factory('$login', ['$uibModal', '$log', function($uibModal, $log) {
-  var modal;
-  var isOpen = false;
+.factory('$loginModal', ['$uibModal', '$log', function($uibModal, $log) {
+  var modal = {
+    isOpen: false
+  };
 
   return {
-    modal: function () {
+    pop: function () {
       var dialogOpts = {
+        controller: 'loginController',
+        backdrop: false,
         animation: true,
         templateUrl: '/login'
       }
-      if(!isOpen) {
+      if(!modal.isOpen) {
         modal = $uibModal.open(dialogOpts);
-        isOpen = true;
+        modal.isOpen = true;
       }
     },
-    closeModal: function () {
+    close: function () {
       modal.close();
-      isOpen = false;
     }
   };
 }])
-.controller('loginController', ['$scope', '$rootScope', 'AUTH_EVENTS', '$auth', '$login', function($scope, $rootScope, AUTH_EVENTS, $auth, $login) {
+.controller('loginController', ['$scope', '$rootScope', '$modalInstance', 'AUTH_EVENTS', '$auth', '$loginModal', function($scope, $rootScope, $modalInstance, AUTH_EVENTS, $auth, $loginModal) {
   $scope.credentials = {
     username: '',
     password: ''
@@ -98,12 +126,16 @@ var app = angular
     $auth.login(credentials).then(function (user) {
       delete $scope.error;
       $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-      $login.closeModal();
+      $loginModal.close();
     }, function () {
       $scope.error = 'Wrong user or password';
       $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
     });
   };
 
-  $scope.cancel = $login.closeModal;
+  $scope.$on('modal.closing', function () {
+    $modalInstance.isOpen = false;
+  });
+
+  $scope.cancel = $loginModal.close;
 }]);
