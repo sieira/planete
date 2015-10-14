@@ -137,9 +137,38 @@ function currier(that, fn) {
   }
 }
 
+/**
+ * Converts an IP as string to a number
+ */
+function iPStringToInt(ip) {
+  var parts = ip.split("."),
+      ret = 0;
+
+  ret += (parseInt(parts[0], 10) << 24) >>> 0;
+  ret += (parseInt(parts[1], 10) << 16) >>> 0;
+  ret += (parseInt(parts[2], 10) << 8) >>> 0;
+  ret += parseInt(parts[3], 10) >>> 0;
+
+  return ret;
+};
+
+/**
+ * Converts an IP as a number to a string
+ */
+ function iPIntToString(num) {
+  var part1 = num & 255;
+  var part2 = ((num >> 8) & 255);
+  var part3 = ((num >> 16) & 255);
+  var part4 = ((num >> 24) & 255);
+
+  return part4 + "." + part3 + "." + part2 + "." + part1;
+}
+
 module.exports = {
   pathsort: pathsort,
   serialRunner: serialRunner,
   parallelRunner: parallelRunner,
-  currier: currier
+  currier: currier,
+  iPStringToInt: iPStringToInt,
+  iPIntToString: iPIntToString
 };
