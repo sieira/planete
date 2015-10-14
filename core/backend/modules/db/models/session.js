@@ -43,9 +43,11 @@ SessionSchema.pre('save', function(next, done) {
     if (!docs.length){
       next();
     } else {
-      console.info('Extending token validity for %s user', self.user);
-      SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') })
-      done();
+      console.info('Extending token validity for user %s', self.user);
+      SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') }, function(err, session) {
+        if(err) { return done(err); }
+        return done(null, self);
+      })
     }
   });
 });

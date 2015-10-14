@@ -52,11 +52,10 @@ var Authentication = (function () {
           return callback(new Error('Authentication failed'));
         }
 
-        new db.session({ user: user._id }).save(function(err) {
+        new db.session({ user: user._id }).save(function(err, session) {
           if(err) callback(err);
-          // devolver usuario y token
-          logger.info('Session created for user %s', user._id);
-          callback(null, { username: user, token: 'token' });
+          logger.info('Session created for user %s', session.user);
+          callback(null, { userId: session.user, token: session.token });
         });
       });
     });
