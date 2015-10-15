@@ -85,6 +85,7 @@ function parallelRunner(tasks) {
   var taskIterator = tasks.entries();
 
   return new Promise(function(resolve, reject) {
+    if(!n) return resolve();
     for(let task of taskIterator) {
       serialRunner([].concat(task[1]).entries())
       .then(function() {
