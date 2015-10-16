@@ -39,7 +39,7 @@ var Frontend = (function () {
       });
     }
 
-    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'auth');
+    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'auth', 'ngRoute');
 
     return { styles: styles, scripts: moduleScripts, angularInjections: angularInjections };
   };

@@ -19,15 +19,18 @@ This file is part of Planète.
 'use strict';
 
 var app = angular.module('planete', [].concat(angularInjections))
-.controller('planeteController', function($scope, $loginModal, $auth, $http, Session) {
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider
+  .when('/admin', {
+    templateUrl: "/admin"
+  })
+  .otherwise({ redirectTo: '/' });
+}])
+.controller('planeteController', function($scope, $loginModal, $auth, $http, Session, $location) {
   $scope.isAuthenticated = $auth.isAuthenticated;
   $scope.session = Session;
 
-  $scope.login = function() {
+  $scope.login = function () {
     $loginModal.pop();
-  };
-
-  $scope.admin = function() {
-    $http({method: 'GET', url: '/admin'});
   };
 });
