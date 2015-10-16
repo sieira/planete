@@ -19,7 +19,8 @@ This file is part of Planète.
 'use strict';
 
 var bcrypt = require('bcrypt-nodejs'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    util = require('_/util');
 
 var UserSchema = new mongoose.Schema({
   username: {type: String, trim: true, unique: true, required: true },
@@ -72,12 +73,12 @@ UserSchema.methods = {
   },
 
   loginFailure: function(ip, callback) {
-    this.login.failures.push({ date: new Date(), ip: ip });
+    this.login.failures.push({ date: new Date(), ip: util.iPStringToInt(ip) });
     this.save(callback);
   },
 
   loginSuccess: function(ip, callback) {
-    this.login.successes.push({ date: new Date(), ip: ip });
+    this.login.successes.push({ date: new Date(), ip: util.iPStringToInt(ip) });
     this.save(callback);
   },
 

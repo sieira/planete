@@ -27,10 +27,10 @@ var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
   token: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  expireAt: { type: Date, default: moment().add(30,'seconds') }
+  expireAt: { type: Date, default: moment().add(15,'minutes') }
 });
 
-var SessionModel = mongoose.model('SessionModel', SessionSchema);
+var SessionModel = mongoose.model('Session', SessionSchema);
 
 SessionSchema.pre('validate', function(next) {
   this.token = crypto.randomBytes(16).toString('base64');
@@ -39,16 +39,16 @@ SessionSchema.pre('validate', function(next) {
 
 SessionSchema.pre('save', function(next, done) {
   var logger = require('_').logger;
-  
+
   var self = this;
-  SessionModel.find({ user : self.user }, function (err, docs) {
-    if (!docs.length){
+  SessionModel.findOne({ user : self.user }, function (err, session) {
+    if (!session){
       next();
     } else {
-      logger.info('Extending token validity for user %s', self.user);
-      SessionModel.update({ user : self.user}, { expireAt: moment().add(30,'seconds') }, function(err, session) {
+      logger.info('Extending session validity for user %s', self.user);
+      SessionModel.update({ user : self.user }, { expireAt: moment().add(15,'minutes') }, function(err, docs) {
         if(err) { return done(err); }
-        return done(null, self);
+        return done(null, session);
       })
     }
   });

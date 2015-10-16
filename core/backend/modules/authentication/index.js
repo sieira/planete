@@ -29,7 +29,7 @@ var Authentication = (function () {
   var auth = new CoreModule(__dirname);
 
   var strategy = new BearerStrategy(function(token, done) {
-    User.findOne({ token: token }, function (err, user) {
+    db.session.findOne({ token: token }, function (err, user) {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
       return done(null, user, { scope: 'all' });
