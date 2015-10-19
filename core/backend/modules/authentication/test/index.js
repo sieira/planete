@@ -62,4 +62,19 @@ describe('\x1b[33mAuthentication\x1b[0m', function() {
       done();
     });
   });
+
+  it('Should log out', function(done) {
+    authentication.login(mockIp, mockUserName, mockPassword, function(err, user) {
+      expect(err).to.not.exist;
+      expect(user).to.exist;
+      expect(user.userId).to.exist;
+      expect(user.token).to.exist;
+
+      authentication.logout(user.userId, user.token, function() {
+        should.fail(0,1, 'not implemented');
+        done();
+      });
+    });
+  });
+
 });

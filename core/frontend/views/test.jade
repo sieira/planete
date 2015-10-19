@@ -1,7 +1,7 @@
-/**
-Copyright © 2015 Luis Sieira Garcia
+//-
+  Copyright © 2015 Luis Sieira Garcia
 
-This file is part of Planète.
+  This file is part of Planète.
 
     Planète is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -15,25 +15,13 @@ This file is part of Planète.
 
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
-**/
-'use strict';
+-//
 
-var core = require('_'),
-    front = require('#'),
-    path = require('path'),
-    auth = core.authentication;
-
-var Routes = function (server) {
-  var rootDir = __dirname.slice(0, __dirname.lastIndexOf('/')),
-      viewsdir = path.normalize(path.join(rootDir, '/views'));
-
-  server.get('/', function (req, res) {
-      res.render(path.join(viewsdir,'index'), front.scriptsInjector(rootDir));
-  });
-
-  server.get('/test', function (req, res) {
-      res.render(path.join(viewsdir,'test'), front.scriptsInjector(rootDir));
-  });
-};
-
-module.exports = Routes;
+.container
+  .jumbotron
+    .jumbotron-contents
+      h1 HELLO WORLD
+      p This is just a test that should be painfully deleted at some point
+      strong Oh, yes, and here you are a potato
+    .jumbotron-photo
+      img(src='https://cloud.githubusercontent.com/assets/13233859/10263240/01ad3a84-69e7-11e5-8406-7e0848b24015.jpg', style='width: 555px;')

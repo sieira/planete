@@ -24,13 +24,19 @@ var app = angular.module('planete', [].concat(angularInjections))
   .when('/admin', {
     templateUrl: "/admin"
   })
+  .when('/test', {
+    templateUrl: "/test"
+  })
   .otherwise({ redirectTo: '/' });
 }])
-.controller('planeteController', function($scope, $loginModal, $auth, $http, Session, $location) {
+.controller('planeteController', function($scope, $loginModal, $auth, Session, $location) {
   $scope.isAuthenticated = $auth.isAuthenticated;
   $scope.session = Session;
 
   $scope.login = function () {
     $loginModal.pop();
   };
+
+  $scope.logout = $auth.logout;
+
 });

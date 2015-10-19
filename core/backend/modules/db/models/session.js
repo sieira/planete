@@ -24,7 +24,7 @@ var mongoose = require('mongoose'),
     crypto = require('crypto');
 
 var SessionSchema = new mongoose.Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User', unique: true },
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   token: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   expireAt: { type: Date, default: moment().add(15,'minutes') }

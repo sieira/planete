@@ -36,42 +36,76 @@ var app = angular
                  onSuccess: function () {},
                  onCancel: function () {}
 })
+.service('Session', function () {
+  this.create = function (userId, token) {
+    this.userId = userId;
+    this.token = "Bearer " + token;
+  };
+  this.destroy = function () {
+    delete this.userId;
+    delete this.token;
+  };
+})
 .config(function($httpProvider) {
   $httpProvider.interceptors.push('authInterceptor');
 })
-.run(function($rootScope, $loginModal, AUTH_EVENTS, lock, $log) {
-    // Lock the interceptor when logging, so it doesn't
-    // react to the login itself
-    $rootScope.$on(AUTH_EVENTS.loginStarted, function() {
-      lock.locked = true;
-      $log.debug('login started: ', 'lock=' + lock.locked);
-    });
+.run(function($rootScope, $loginModal, AUTH_EVENTS, lock, $log, $location, $window) {
+  /*
+   * Keep track of route changes so we can go back to the previous one if the login
+   * fails or is dismissed
+   */
+  $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+    var routeData = {};
+    routeData.urls = {};
 
-    // Catch the norAuthenticated event, and open the modal
-    $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
-      $log.debug('not authenticated: ', 'lock=' + lock.locked);
-      if(!lock.locked) { $loginModal.pop(); }
-    });
+    if(current && current.originalPath){
+      routeData.urls.curr = current.originalPath;
+    }
+    else {
+      routeData.urls.curr = '/';
+    }
 
-    // Unlock on success
-    $rootScope.$on(AUTH_EVENTS.loginSuccess, function() {
-      lock.locked = false;
-      $log.debug('login success: ', 'lock=' + lock.locked);
-      lock.onSuccess();
-    });
+    if(next && next.originalPath){
+      routeData.urls.next = next.originalPath;
+    }
 
-    // Unlock on cancel
-    $rootScope.$on(AUTH_EVENTS.loginCancelled, function() {
-      lock.locked = false;
-      $log.debug('login cancelled: ', 'lock=' + lock.locked);
-      lock.onCancel();
-    });
+    $rootScope.urls = routeData.urls;
+  });
+
+  /* Lock the interceptor when logging, so it doesn't
+   * react to the login itself
+   */
+  $rootScope.$on(AUTH_EVENTS.loginStarted, function() {
+    lock.locked = true;
+  });
+
+  // Catch the norAuthenticated event, and open the modal
+  $rootScope.$on(AUTH_EVENTS.notAuthenticated, function() {
+    if(!lock.locked) { $loginModal.pop(); }
+  });
+
+  // Unlock on success
+  $rootScope.$on(AUTH_EVENTS.loginSuccess, function() {
+    lock.locked = false;
+    lock.onSuccess();
+  });
+
+  // Unlock on cancel
+  $rootScope.$on(AUTH_EVENTS.loginCancelled, function() {
+    lock.locked = false;
+    lock.onCancel();
+  });
+
+  // Reload the current page on logout, so caches are cleared
+  $rootScope.$on(AUTH_EVENTS.logoutSuccess, function() {
+    $window.location.reload();
+  });
 })
-.factory('authInterceptor', function($rootScope, Session, lock, $q, $log, AUTH_EVENTS, $injector) {
+.factory('authInterceptor', function($rootScope, Session, lock, $q, $log, AUTH_EVENTS, $injector, $location) {
   return {
     // Append the authentication headers to every request
     request: function(config) {
-      if(Session.exist) {
+      if(Session.token) {
         config.headers.Authorization = Session.token;
       }
       return config || $q.when(config);
@@ -81,6 +115,7 @@ var app = angular
 
       if (rejection.status === 401) {
         $log.debug("Response Error 401", rejection.config.url);
+
         if(!lock.locked) {
           $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
         } else {
@@ -90,13 +125,23 @@ var app = angular
 
         // Wait until the login succeeds before retrying the request
         lock.onSuccess = function() {
+          // Restore the default values
+          lock.onSuccess = function () {};
+          lock.onCancel = function () {};
+
           var $http = $injector.get('$http');
           deferred.resolve($http(rejection.config));
         };
 
         // Reject on login cancel
         lock.onCancel = function() {
-          deferred.reject(rejection);
+          // Restore the default values
+          lock.onSuccess = function () {};
+          lock.onCancel = function () {};
+
+          // Stay on the current path
+          var $http = $injector.get('$http');
+          deferred.resolve($location.path($rootScope.urls.curr));
         };
       } else {
         // Pass the rejection if it's another kind of error
@@ -107,20 +152,6 @@ var app = angular
     }
   };
 })
-.service('Session', [function ($log) {
-  this.exist = false;
-
-  this.create = function (userId, token) {
-    this.userId = userId;
-    this.token = "Bearer " + token;
-    this.exist = true;
-  };
-  this.destroy = function () {
-    delete this.userId;
-    delete this.token;
-    this.exist = false;
-  };
-}])
 .factory('$auth', function ($rootScope, AUTH_EVENTS, $http, Session, $log) {
   var $auth = {};
 
@@ -141,12 +172,21 @@ var app = angular
       });
   };
 
+  $auth.logout = function () {
+    return $http
+      .post('/authentication/logout', Session)
+      .then(function() {
+        Session.destroy();
+        $rootScope.$broadcast(AUTH_EVENTS.logoutSuccess);
+      });
+  }
+
   $auth.cancel = function () {
     $rootScope.$broadcast(AUTH_EVENTS.loginCancelled);
   };
 
   $auth.isAuthenticated = function () {
-    return !!Session.userId;
+    return Session && Session.token;
   };
 
   $auth.isAuthorized = function (authorizedRoles) {

@@ -31,6 +31,13 @@ var App = (function() {
     });
   });
 
+  app.post('/logout', function(req,res) {
+    auth.logout(req.body.userId, req.body.token, function(err) {
+      if(err) { return res.status(401).send(); }
+      res.status(200).send();
+    });
+  });
+
   return app;
 })();
 

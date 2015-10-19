@@ -62,6 +62,13 @@ var Authentication = (function () {
     });
   };
 
+  auth.logout = function(userid, token, callback) {
+    db.session.remove({ user: userid, token: token }, function() {
+      logger.info('User %s logged out from session with token %s', userid, token);
+      callback();
+    });
+  };
+
   return auth;
 })();
 
