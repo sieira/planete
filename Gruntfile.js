@@ -17,8 +17,7 @@ This file is part of Planète.
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
 'use strict';
-aaaa //TODO HAZ EL LOGO con esto. Ayer. http://codepen.io/kyledws/pen/Gvelt/
-      // U esto http://tympanus.net/Tutorials/CircleHoverEffects/index5.html
+
 var Reflect = require('harmony-reflect');
 
 var glob = require("glob"),
