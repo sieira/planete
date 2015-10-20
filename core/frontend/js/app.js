@@ -19,17 +19,43 @@ This file is part of Planète.
 'use strict';
 
 var app = angular.module('planete', [].concat(angularInjections))
-.config(['$routeProvider', function($routeProvider) {
+.config(['$routeProvider', '$ocLazyLoadProvider', function($routeProvider, $ocLazyLoadProvider) {
   $routeProvider
   .when('/admin', {
-    templateUrl: "/admin"
+    controller: 'adminController',
+    resolve: {
+      loadService: ['$ocLazyLoad', '$uibModal', '$templateRequest', '$q', '$location', '$rootScope', function($ocLazyLoad, $uibModal, $templateRequest, $q, $location, $rootScope) {
+        return $ocLazyLoad.load('modules/admin/js/app.js')
+        .then(function () {
+          return $templateRequest('/admin')
+        })
+        .then(function(tpl) {
+          if (tpl) {
+            $uibModal.open({
+              animation: true,
+              template: tpl,
+              size: 'lg',
+              controller: 'adminController'
+            })
+            .result
+            .then(function() {
+              $location.path($rootScope.urls.curr);
+            },function() {
+              $location.path($rootScope.urls.curr);
+            });
+          }
+          // Always reject the promise so the url does not change
+          return $q.reject();
+        });
+      }]
+    }
   })
   .when('/test', {
     templateUrl: "/test"
   })
   .otherwise({ redirectTo: '/' });
 }])
-.controller('planeteController', function($scope, $loginModal, $auth, Session, $location, $uibModal, $templateRequest) {
+.controller('planeteController', function($scope, $loginModal, $auth, Session) {
   $scope.isAuthenticated = $auth.isAuthenticated;
   $scope.session = Session;
 
@@ -38,15 +64,4 @@ var app = angular.module('planete', [].concat(angularInjections))
   };
 
   $scope.logout = $auth.logout;
-
-  $scope.popadmin = function() {
-    $templateRequest('/admin', false)
-    .then(function(tmpl) {
-      $uibModal.open({
-        animation: true,
-        template: tmpl,
-        size: 'lg'
-      });
-    });
-  };
 });

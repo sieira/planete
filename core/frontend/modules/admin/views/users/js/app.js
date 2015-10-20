@@ -18,13 +18,18 @@ This file is part of Planète.
 **/
 'use strict';
 
-var angularInjections = angularInjections || [];
-
 var app = angular
-.module('admin', [].concat(angularInjections))
-/*.config(['$ocLazyLoad', function ($ocLazyLoad) {
-  $ocLazyLoad.load('users/js/app.js');
-}])*/
-.controller('adminController', ['$scope', '$log', function($scope, $log) {
-  $log.debug('LOADED');
-}]);
+
+.module('admin.users')
+.controller('adminUsersController', function() {
+  $scope.users = [
+    { name: 'Chuck Norris',
+      roles: 'God',
+      creationDate: '01/01/0001'
+    },
+    { name: 'Philip J. Fry',
+      roles: 'Delivery boy',
+      creationDate: '14/08/1974'
+    }
+  ]
+});

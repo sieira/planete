@@ -21,12 +21,11 @@
   .container-fluid
     h3 Welcome to the almighty administration panel
     hr
-    ul.nav.nav-tabs.nav-justified
-      li.active
-        a(data-toggle='tab') #[i.fa.fa-users] Users
-      li.active
-        a(data-toggle='tab') #[i.fa.fa-cog] Config
-    .tab-content
-      p Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus vitae suscipit justo. Maecenas id molestie tellus. Praesent eleifend purus ac velit placerat, ut lacinia nulla faucibus. Ut eget elementum leo. Mauris ut euismod sem. Praesent augue quam, luctus posuere varius eu, efficitur id purus. Nam in enim condimentum, efficitur enim cursus, mattis diam. Morbi quis mi rutrum ex condimentum suscipit. In sit amet quam interdum, iaculis erat tempus, mollis nulla.
-      p Nunc sed ligula nibh. Aenean ut diam non dui scelerisque lacinia id in nulla. Nullam consectetur tellus ut pharetra bibendum. Sed facilisis malesuada fermentum. Donec faucibus magna interdum, scelerisque risus vel, gravida nisl. Vestibulum vel porttitor enim, in consequat ligula. Morbi eleifend mi vitae sapien maximus, ac pretium erat mattis. Nulla facilisi. Morbi efficitur urna eget suscipit consectetur. Maecenas blandit lectus sed felis sagittis, nec aliquet magna aliquam.
-      p Quisque eget leo venenatis, porta ante vitae, tempor ipsum. Cras eget orci egestas, blandit lacus vel, gravida ex. Etiam bibendum ultrices ante, sit amet accumsan massa semper id. Curabitur eget nisl est. Sed venenatis quam a tellus congue viverra. Phasellus et cursus turpis. Vestibulum ac quam ut mi convallis finibus. Quisque tincidunt arcu at enim faucibus imperdiet. Maecenas tempus augue non ipsum varius, in laoreet nibh vestibulum. Donec congue, risus eu mollis maximus, sapien nisl bibendum lacus, in tristique orci urna id sapien. In eu auctor ante, non posuere ex. Nullam viverra rutrum nisl, sed laoreet purus posuere lacinia.
+    uib-tabset
+      include users/index.jade
+
+      uib-tab
+        uib-tab-heading #[i.fa.fa-cog] Config
+        
+        p Vivamus ex massa, vestibulum eget nisl pulvinar, tristique molestie est. Quisque tristique sit amet nisl sit amet luctus. Nam eget erat ultricies, pellentesque est vitae, viverra metus. Nullam scelerisque auctor est, eu dictum tortor. Aliquam sed porttitor mi. Integer a facilisis tortor. Sed ultricies mauris sit amet orci viverra, a facilisis arcu tincidunt. Aenean eleifend leo turpis, at sollicitudin magna pretium ac. Integer cursus vestibulum augue, vel feugiat sem faucibus nec.
+        p Aenean cursus leo et nisl maximus commodo. Fusce placerat nibh sed nunc dignissim, at blandit eros faucibus. Aenean non lorem accumsan, pellentesque nibh sed, sagittis justo. Phasellus sollicitudin tincidunt sem, at blandit nisi dignissim vel. Quisque ligula massa, auctor id massa id, lobortis elementum velit. Nulla pulvinar nisl dui, non mollis orci hendrerit at. Fusce efficitur auctor iaculis. Nullam eleifend lacus ac risus ultricies, vel malesuada libero vulputate. 
