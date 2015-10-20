@@ -18,10 +18,22 @@
 -//
 
 
-uib-tab()
+uib-tab
   uib-tab-heading #[i.fa.fa-users] Users
-
-  .container-fluid
-    button.btn.btn-primary #[i.fa.fa-user] New user
-    div(ng-repeat='user in users')
-      {{user.name}}
+  
+  div(oc-lazy-load='modules/admin/views/users/js/app.js')  
+    .container-fluid(ng-controller='adminUsersController')
+      button.btn.btn-primary #[i.fa.fa-user] New user
+      .container-fluid
+        table.table.table-striped.table-hover
+          thead
+            tr
+              th(ng-repeat='attribute in attributes') {{attribute}}
+              th
+          tbody
+            tr(ng-repeat='user in users')
+              td {{ user.name }}
+              td {{ user.roles }}
+              td {{ user.creationDate }}
+              td #[i.fa.fa-2x.fa-pencil-square-o]
+          

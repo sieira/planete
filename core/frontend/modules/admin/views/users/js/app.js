@@ -20,8 +20,10 @@ This file is part of Planète.
 
 var app = angular
 
-.module('admin.users')
-.controller('adminUsersController', function() {
+.module('admin.users', [])
+.controller('adminUsersController', ['$scope', '$log', function($scope, $log) {
+  $log.debug('LOADED ADMIN USERS');
+
   $scope.users = [
     { name: 'Chuck Norris',
       roles: 'God',
@@ -32,4 +34,6 @@ var app = angular
       creationDate: '14/08/1974'
     }
   ]
-});
+
+  $scope.attributes = ['name', 'roles', 'creationDate'];
+}]);

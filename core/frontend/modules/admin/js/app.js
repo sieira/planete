@@ -22,9 +22,5 @@ var angularInjections = angularInjections || [];
 
 var app = angular
 .module('admin', [].concat(angularInjections))
-/*.config(['$ocLazyLoad', function ($ocLazyLoad) {
-  $ocLazyLoad.load('users/js/app.js');
-}])*/
 .controller('adminController', ['$scope', '$log', function($scope, $log) {
-  $log.debug('LOADED');
 }]);
