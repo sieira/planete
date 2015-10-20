@@ -29,7 +29,7 @@ html
     a.btn.btn-warning(href='#/hole') #[.fa.fa-home] Home
     button.btn.btn-success(ng-click='login()', ng-hide='isAuthenticated()') #[.fa.fa-key] Login
     button.btn.btn-danger(ng-click='logout()', ng-show='isAuthenticated()') #[.fa.fa-sign-out] Logout
-    a.btn.btn-primary(href='#/admin') #[.fa.fa-lock] Admin
+    button.btn.btn-primary(ng-click='popadmin()') #[.fa.fa-lock] Admin
 
     span(ng-show='isAuthenticated()')| Logged in as {{session}}
     ng-view

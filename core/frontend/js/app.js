@@ -29,7 +29,7 @@ var app = angular.module('planete', [].concat(angularInjections))
   })
   .otherwise({ redirectTo: '/' });
 }])
-.controller('planeteController', function($scope, $loginModal, $auth, Session, $location) {
+.controller('planeteController', function($scope, $loginModal, $auth, Session, $location, $uibModal, $templateRequest) {
   $scope.isAuthenticated = $auth.isAuthenticated;
   $scope.session = Session;
 
@@ -39,4 +39,14 @@ var app = angular.module('planete', [].concat(angularInjections))
 
   $scope.logout = $auth.logout;
 
+  $scope.popadmin = function() {
+    $templateRequest('/admin', false)
+    .then(function(tmpl) {
+      $uibModal.open({
+        animation: true,
+        template: tmpl,
+        size: 'lg'
+      });
+    });
+  };
 });
