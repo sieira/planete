@@ -36,13 +36,18 @@ var app = angular
                  onSuccess: function () {},
                  onCancel: function () {}
 })
-.service('Session', function () {
+.service('Session', function ($window) {
+  this.userId = $window.sessionStorage.userId;
+  this.token = $window.sessionStorage.token;
+
   this.create = function (userId, token) {
-    this.userId = userId;
-    this.token = "Bearer " + token;
+    this.userId = $window.sessionStorage.userId = userId;
+    this.token = $window.sessionStorage.token = "Bearer " + token;
   };
   this.destroy = function () {
+    delete $window.sessionStorage.userId;
     delete this.userId;
+    delete $window.sessionStorage.token;
     delete this.token;
   };
 })
