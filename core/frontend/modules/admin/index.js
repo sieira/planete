@@ -18,16 +18,12 @@ This file is part of Planète.
 **/
 'use strict';
 
-var Setup = function (server, scriptsInjector) {
-  var core = require('_'),
-      auth = core.authentication,
-      path = require('path');
+var Admin = (function () {
+  var CoreModule = require('#/core-module');
 
-  var viewsdir = path.normalize(path.join(__dirname, '/views'));
+  var admin = new CoreModule(__dirname);
 
-  server.get('/admin', auth.middleware, function(req, res, next) {
-    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
-  });
-};
+  return admin;
+})();
 
-module.exports = Setup;
+module.exports = Admin;

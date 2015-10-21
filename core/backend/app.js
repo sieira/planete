@@ -52,7 +52,7 @@ var App = (function() {
   var error;
 
   try {
-    frontend.registerRoutes(app, express);
+    app.use('/', frontend.routes);
   } catch (err) {
     error = err;
     logger.error('Error registering frontend routes: ' + err);

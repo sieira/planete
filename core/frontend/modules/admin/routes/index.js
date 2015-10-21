@@ -16,3 +16,19 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
+'use strict';
+
+var express = require('express');
+
+var core = require('_'),
+    auth = core.authentication;
+
+var Routes = (function () {
+  var router = express.Router();
+
+  router.use(auth.middleware);
+
+  return router;
+})();
+
+module.exports = Routes;

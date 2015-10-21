@@ -18,22 +18,24 @@ This file is part of Planète.
 **/
 'use strict';
 
-var core = require('_'),
-    front = require('#'),
-    path = require('path'),
-    auth = core.authentication;
+var express = require('express');
 
-var Routes = function (server) {
-  var rootDir = __dirname.slice(0, __dirname.lastIndexOf('/')),
-      viewsdir = path.normalize(path.join(rootDir, '/views'));
+var core = require('_');
 
-  server.get('/', function (req, res) {
-      res.render(path.join(viewsdir,'index'), front.scriptsInjector(rootDir));
+var Routes = (function () {
+  var router = express.Router();
+
+  /**
+   * Redirect to setup if planète is not installed
+   */
+  router.get('/', function (req, res, next) {
+    core.isInstalled(function (err, itIs) {
+      if(itIs) { next(); }
+      else { res.redirect('/setup'); }
+    });
   });
 
-  server.get('/test', function (req, res) {
-      res.render(path.join(viewsdir,'test'), front.scriptsInjector(rootDir));
-  });
-};
+  return router;
+})();
 
 module.exports = Routes;

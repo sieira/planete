@@ -16,18 +16,15 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
+
 'use strict';
 
-var core = require('_'),
-    path = require('path');
+var Auth = (function () {
+  var CoreModule = require('#/core-module');
 
+  var auth = new CoreModule(__dirname);
 
-var Auth = function (server, scriptsInjector) {
-  var viewsdir = path.normalize(path.join(__dirname, '/views'));
-
-  server.get('/login', function(req, res, next) {
-    res.render(path.join(viewsdir,'index'), scriptsInjector(__dirname));
-  });
-};
+  return auth;
+})();
 
 module.exports = Auth;
