@@ -65,4 +65,4 @@ The core module exposes one property per sub-module, whose name is the directory
   - `close` Gracefully closes every module that need to perform som task when an exception happens, or a SIGKILL or a SIGTERM is received
 
 ## API
-The core app exposes no endpoints by its own. In exchange, it allows the frontend to register its own. This is a risky design desition, but allows different frontends to be attached to the backend without constraining them to use a particular set of documents. Please check the [fronted docs](../frontend/README.md) for further information
+Check any module documentation for an overview of the available endpoints. The backend is suppossed to not expose any get method. In exchange, it allows the frontend to register its owns. This is a risky design decission, but allows different frontends to be attached to the backend without constraining them to use a particular set of documents. Please check the [fronted docs](../frontend/README.md) for further information
