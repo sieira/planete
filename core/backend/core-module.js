@@ -43,7 +43,7 @@ function CoreModule(dir) {
 
       Object.defineProperty(this, filename, { // Define property
         get: function() {
-          let mod = require('_/modules/' + filename);
+          let mod = require(this.dir + '/modules/' + filename);
           if(!Object.keys(mod).length) throw new Error('Error loading module ' + filename + ' of '+ dir +' this can be caused by a circular dependency, or the module returning an empty object');
           return  mod;
         }
