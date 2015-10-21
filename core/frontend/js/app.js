@@ -50,10 +50,11 @@ var app = angular.module('planete', [].concat(angularInjections))
       }]
     }
   })
-  .when('/test', {
-    templateUrl: "/test"
-  })
-  .otherwise({ redirectTo: '/' });
+  .when('/:whatever', {
+    templateUrl: function($routeParams) {
+        return '/' + $routeParams.whatever;
+    }
+  });
 }])
 .controller('planeteController', function($scope, $loginModal, $auth, Session) {
   $scope.isAuthenticated = $auth.isAuthenticated;
