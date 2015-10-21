@@ -60,11 +60,25 @@ var app = angular
    * fails or is dismissed
    */
   $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+    /*
+     * Get the current path as-is, instead of the router regexp
+     */
+    function buildPathFromRoute(routeObj) {
+      var path = routeObj.$$route.originalPath;
+      for (var property in routeObj.pathParams) {
+        if (routeObj.pathParams.hasOwnProperty(property)) {
+          var regEx = new RegExp(":" + property, "gi");
+          path = path.replace(regEx, routeObj.pathParams[property].toString());
+        }
+      }
+      return path;
+    }
+
     var routeData = {};
     routeData.urls = {};
 
     if(current && current.originalPath){
-      routeData.urls.curr = current.originalPath;
+      routeData.urls.curr = buildPathFromRoute(current);
     }
     else {
       routeData.urls.curr = '/';
@@ -215,7 +229,7 @@ var app = angular
           controller: 'loginController',
           backdrop: false,
           animation: true,
-          templateUrl: '/login',
+          templateUrl: '/auth',
         }
         $uibModal.open(dialogOpts);
       }
