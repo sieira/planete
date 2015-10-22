@@ -21,10 +21,56 @@ This file is part of Planète.
 var app = angular
 
 .module('admin.users', [])
-.controller('adminUsersController', ['$scope', '$log', function($scope, $log) {
-  $log.debug('LOADED ADMIN USERS');
+.service('users', ['$http', '$log', function ($http) {
+  this.retrieve = function (callback) {
+    $http({
+      method: 'POST',
+      url: '/db/get-users',
+    })
+    .then(function(data) {
+      callback(data.data);
+    });
+  }
+}])
+.controller('adminUsersController', ['$scope', '$log', '$http', 'users', function($scope, $log, $http, users) {
 
-  $scope.users = [
+  $scope.newUser = function () {
+    $scope.user = {};
+    $scope.user.username = 'user' + Math.floor(Math.random() * 10000);
+    $scope.user.password = 'password';
+    $scope.user.email = 'email@mail.com';
+    $scope.user.name= 'Name';
+    $scope.user.surname= 'Surname';
+
+    $http({
+      method: 'POST',
+      url: '/db/register-user',
+      data: $scope.user
+    })
+    .then(function () {
+      users.retrieve(function (data) {
+        $scope.users = data;
+      });
+    });
+  }
+
+  $scope.deleteUser = function (user) {
+    $http({
+      method: 'DELETE',
+      url: '/db/user/' + user._id
+    })
+    .then(function () {
+      users.retrieve(function (data) {
+        $scope.users = data;
+      });
+    });
+  }
+
+  users.retrieve(function (data) {
+    $log.debug(data);
+    $scope.users = data;
+  });
+/*  $scope.users = [
     { name: 'Chuck Norris',
       roles: 'God',
       creationDate: '01/01/0001'
@@ -33,7 +79,7 @@ var app = angular
       roles: 'Delivery boy',
       creationDate: '14/08/1974'
     }
-  ]
+  ]*/
 
   $scope.attributes = ['name', 'roles', 'creationDate'];
 }]);

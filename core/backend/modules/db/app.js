@@ -19,18 +19,51 @@ This file is part of Planète.
 var App = (function() {
   var express = require('express'),
       app = express(),
-      db = require('_').db;
+      db = require('_').db
+      logger = require('_').logger;
 
 
-  app.post('/status', function(req,res) {
+  app.post('/status', function(req, res) {
     res.status(200).json(db.isConnected());
   });
 
-  app.post('/register-root-user', function(req,res) {
-    db.registerRootUser(req.body, function(err) {
-      if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
+  app.post('/register-root-user', function(req, res) {
+    db.registerRootUser(req.body)
+    .then(res.status(200).json)
+    .catch(function(err) {
+      logger.error(err);
+      if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); };
+    });
+  });
+
+//TODO authorization
+  app.post('/register-user', function(req, res) {
+    new db.user(req.body).save(function(err) {
+      if(err) {
+        logger.stack('Error registering user: %s', err);
+        db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
       else { res.status(200).send(); };
     });
+  });
+
+//TODO authorization
+  app.post('/get-users', function(req, res) {
+    db.user.find(function(err, data) {
+      if(err) {
+        logger.stack('Error registering user: %s', err);
+        db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
+      else { res.status(200).send(data); };
+    });
+  });
+
+  app.delete('/user/:userId', function(req, res) {
+    logger.info('Deleting user: %s', req.params);
+    db.user.remove({ _id: req.params.userId}, function (err) {
+      if(err) {
+        logger.stack('Error deleting user: %s', err);
+        db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
+      else { res.status(204).send(); };
+    })
   });
 
   return app;

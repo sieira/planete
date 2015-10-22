@@ -26,6 +26,7 @@ var Db = (function () {
       logger = core.logger,
       config = core.config,
       util = require('_/util'),
+      q = require('q'),
       mongoose = require('mongoose');
 
   var db =  new CoreModule(__dirname);
@@ -87,20 +88,26 @@ var Db = (function () {
       }
     });
   };
-  
-  db.registerRootUser = function(data, callback) {
-    db.user.count(function(err, count) {
-      if(err) { return callback(err)}
 
-      if(count == 0) {
-        new db.user(data).save(function(err, data) {
-          if(err) { if(callback && typeof callback == 'function') { return callback(err) } }
-          else { if(callback && typeof callback == 'function') { return callback(); } }
-        });
-      } else {
-        callback(new Error('Unauthorized'));
-      }
-    });
+  db.registerRootUser = function(user) {
+    var deferred = q.defer();
+
+    q(db.user.count().exec())
+    .then(function(count) {
+      if(!count) { return db.role.init(); }
+      else { throw new Error('There are already users !'); }
+    })
+    .then(function () {
+      return q(db.role.findOne({ name: 'Root' }).exec());
+    })
+    .then(function (role) {
+      user.roles = [role._id];
+      return new db.user(user).save();
+    })
+    .then(deferred.resolve)
+    .catch(deferred.reject);
+
+    return deferred.promise;
   };
 
   util.parallelRunner(db.connect, exposeModels);

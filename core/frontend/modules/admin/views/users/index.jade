@@ -22,7 +22,7 @@ uib-tab
   
   div(oc-lazy-load='modules/admin/views/users/js/app.js')  
     .container-fluid(ng-controller='adminUsersController')
-      button.btn.btn-primary #[i.fa.fa-user] New user
+      button.btn.btn-primary(ng-click='newUser()') #[i.fa.fa-user] New user
       .container-fluid
         table.table.table-striped.table-hover
           thead
@@ -31,8 +31,9 @@ uib-tab
               th
           tbody
             tr(ng-repeat='user in users')
-              td {{ user.name }}
+              td {{user.username}}
               td {{ user.roles }}
-              td {{ user.creationDate }}
-              td #[i.fa.fa-2x.fa-pencil-square-o]
+              td {{ user.timestamps.creation | date }}
+              td.text-right
+                .btn-group #[button.btn.btn-default.fa.fa-pencil-square-o] #[button.btn.btn-default.fa.fa-trash-o(ng-click = 'deleteUser(user)')]
           

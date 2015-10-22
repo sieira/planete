@@ -20,6 +20,7 @@ This file is part of Planète.
 
 var bcrypt = require('bcrypt-nodejs'),
     mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     util = require('_/util');
 
 var UserSchema = new mongoose.Schema({
@@ -27,6 +28,7 @@ var UserSchema = new mongoose.Schema({
   firstname: {type: String, trim: true},
   lastname: {type: String, trim: true},
   password: {type: String},
+  roles: {type: [Schema.Types.ObjectId], ref: 'Role', required: true},
   timestamps: {
     creation: {type: Date, default: Date.now}
   },

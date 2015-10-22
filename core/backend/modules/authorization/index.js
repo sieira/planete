@@ -18,46 +18,41 @@ This file is part of Planète.
 **/
 'use strict';
 
-/*var oauth2orize = require('oauth2orize'),
-    logger = require('_').logger,
-*/
 var Authorization = (function () {
-  var server = { a: 'test'};
-/*
-  server.serializeClient(function(client, done) {
-    var clientId = client._id || client;
-    return done(null, clientId);
-  });
+  var CoreModule = require('_/core-module');
+  
+  var auth = new CoreModule(__dirname);
 
-  server.deserializeClient(function(id, done) {
-    OAuthClient.findById(id, function(error, client) {
-      if (error) {
-        return done(error);
-      }
-      return done(null, client);
-    });
-  });
+  // Generates a middleware authorizating only the given roles
+  auth.middleware = function(roles) {
+    // TODO
+    // get the user from the request
+    // check if the user has ANY of the given roles
+    // return the function if he does, 403 if not
+    return function(req, res, next) {
+      // check if the user passes ALL of the restrictions
+      // OR any of the allows
+      req.on('end', function() {
+        res.status(403).send();
+      });
+    }
+  };
 
-  server.grant(oauth2orize.grant.code(function(client, redirectUri, user, ares, done) {
-    var code = randomstring.generate(16);
-    var userId = user._id || user;
-    var clientId = client._id || client;
-    var oauthAuthorizationCode = new OAuthAuthorizationCode({
-      code: code,
-      redirectUri: redirectUri,
-      userId: userId,
-      clientId: clientId
-    });
-    logger.debug('OAuth: grant authorizationcode: clientId', clientId, 'userId', userId, 'redirectUri', redirectUri);
-    oauthAuthorizationCode.save(function(error, result) {
-      if (error) {
-        return done(error);
-      }
-      return done(null, code);
-    });
-}));
-*/
-  return server;
+  /*
+   * Takes a request, and add restrictions to it
+   */
+  auth.restrict = function(req, roles) {
+    req.restrictTo.concat([].concat(roles));
+  };
+
+  /*
+   * Takes a request, and add restrictions to it
+   */
+  auth.allow = function(req, roles) {
+    req.allowTo.concat([].concat(roles));
+  };
+
+  return auth;
 })();
 
 module.exports = 'Authorization';
