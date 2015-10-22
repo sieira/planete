@@ -3,6 +3,12 @@
   "author": "Luis Sieira <luis.sieira@spacebar.fr> (http://www.spacebar.fr/)",
   "license": "AGPL-3.0",
   "dependencies": {
+    "mongoose": "^4.1.12",
     "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3",
+    "mocha-mongoose": "^1.1.0",
+    "mongodb": "^2.0.46"
   }
 }

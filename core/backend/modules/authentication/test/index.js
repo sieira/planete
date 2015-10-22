@@ -20,7 +20,8 @@ This file is part of Planète.
 
 var chai = require('chai'),
     should = chai.should(),
-    expect = chai.expect;
+    expect = chai.expect,
+    mongoose = require('mongoose');
 
 chai.use(require('chai-passport-strategy'));
 
@@ -34,47 +35,61 @@ var mockUserName = 'user',
     mockWrongPassword = 'pas';
 
 describe('\x1b[33mAuthentication\x1b[0m', function() {
-  before(function () {
+  it('Should fail when there are no users', function(done) {
+    authentication.login(mockIp, mockWrongUserName, mockWrongPassword)
+    .then(done)
+    .catch(function(err) {
+      expect(err).to.exist;
+      done();
+    });
+  });
+
+  it('Should be able to add a new user', function (done) {
     var db = require('_').db;
-    db.registerRootUser({ username: mockUserName, password: mockPassword });
+    db.registerRootUser({ username: mockUserName, password: mockPassword })
+    .then(function() { done(); })
+    .catch(done);
   });
 
   it('Should fail with wrong user', function(done) {
-    authentication.login(mockIp, mockWrongUserName, mockWrongPassword, function(err) {
+    authentication.login(mockIp, mockWrongUserName, mockWrongPassword)
+    .then(done)
+    .catch(function(err) {
       expect(err).to.exist;
       done();
     });
   });
 
   it('Should fail with wrong password', function(done) {
-    authentication.login(mockIp, mockUserName, mockWrongPassword, function(err) {
+    authentication.login(mockIp, mockUserName, mockWrongPassword)
+    .then(done)
+    .catch(function(err) {
       expect(err).to.exist;
       done();
     });
   });
 
   it('Should return user and token with proper credentials', function(done) {
-    authentication.login(mockIp, mockUserName, mockPassword, function(err, user) {
-      expect(err).to.not.exist;
+    authentication.login(mockIp, mockUserName, mockPassword)
+    .then(function(user) {
       expect(user).to.exist;
       expect(user.userId).to.exist;
       expect(user.token).to.exist;
       done();
-    });
+    })
+    .catch(done);
   });
 
   it('Should log out', function(done) {
-    authentication.login(mockIp, mockUserName, mockPassword, function(err, user) {
-      expect(err).to.not.exist;
+    authentication.login(mockIp, mockUserName, mockPassword)
+    .then(function(user) {
       expect(user).to.exist;
       expect(user.userId).to.exist;
       expect(user.token).to.exist;
 
-      authentication.logout(user.userId, user.token, function() {
-        should.fail(0,1, 'not implemented');
-        done();
-      });
-    });
+      authentication.logout(user.userId, user.token, done);
+    })
+    .catch(done);
   });
 
 });

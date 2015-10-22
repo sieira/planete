@@ -29,7 +29,9 @@ var App = (function() {
 
   app.post('/register-root-user', function(req, res) {
     db.registerRootUser(req.body)
-    .then(res.status(200).json)
+    .then(function(data) {
+      res.status(200).json(data);
+    })
     .catch(function(err) {
       logger.error(err);
       if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); };
@@ -41,7 +43,7 @@ var App = (function() {
     new db.user(req.body).save(function(err) {
       if(err) {
         logger.stack('Error registering user: %s', err);
-        db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
+        db.isConnected() ? res.status(422).send() :  res.status(503).send('Not connected'); }
       else { res.status(200).send(); };
     });
   });

@@ -24,6 +24,7 @@ var Authentication = (function () {
   var logger = require('_').logger,
       db = require('_').db,
       passport = require('passport'),
+      q = require('q'),
       BearerStrategy = require('passport-http-bearer').Strategy;
 
   var auth = new CoreModule(__dirname);
@@ -40,33 +41,43 @@ var Authentication = (function () {
   auth.middleware = passport.authenticate('bearer', { session: false });
   logger.OK('Authentication strategy registered');
 
-  auth.login = function(ip, username, password, callback) {
-    db.user.findOne({ username: username }, function (err, user) {
-      if(err) { return callback(err); }
-      if(!user) { return callback(new Error('Authentication failed')); } // No user with this username
+  auth.login = function(ip, username, password) {
+    var deferred = q.defer();
+
+    q(db.user.findOne({ username: username }).exec())
+    .then(function (user) {
+      if(!user) { throw new Error('Authentication failed'); } // No user with this username
 
       user.comparePassword(password, function(err, isMatch) {
-        if(err) { return callback(err); }
+        if(err) { throw err; }
         if(!isMatch) { // Password do not match
           user.loginFailure(ip);
-          return callback(new Error('Authentication failed'));
+          deferred.reject(new Error('Authentication failed'));
+          return;
         }
 
         new db.session({ user: user._id }).save(function(err, session) {
-          if(err) callback(err);
+          if(err) { throw err; }
           user.loginSuccess(ip);
           logger.info('Session created for user %s', session.user);
-          callback(null, { userId: session.user, token: session.token });
+          deferred.resolve({ userId: session.user, token: session.token });
         });
       });
-    });
+    })
+    .catch(function(err) {
+      deferred.reject(err);
+     });
+
+      return deferred.promise;
   };
 
   auth.logout = function(userid, token, callback) {
-    db.session.remove({ user: userid, token: token }, function() {
+    q(db.session.remove({ user: userid, token: token }).exec())
+    .then(function() {
       logger.info('User %s logged out from session with token %s', userid, token);
       callback();
-    });
+    })
+    .catch(callback);
   };
 
   return auth;
