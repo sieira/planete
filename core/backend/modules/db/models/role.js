@@ -31,10 +31,8 @@ var RoleModel = mongoose.model('Role', RoleSchema);
 RoleModel.init = function () {
   let deferred = q.defer();
 
-  RoleModel.update({ name: 'Root' },  { name: 'Root' }, { upsert: true }, function (err) {
-    if(err) { deferred.reject(err); }
-    else { deferred.resolve(); }
-  });
+  RoleModel.update({ name: 'Root' },  { name: 'Root' }, { upsert: true }).exec()
+  .then(deferred.resolve, deferred.reject);
 
   return deferred.promise;
 }
