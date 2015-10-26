@@ -51,7 +51,10 @@ var Logger = (function _Logger() {
   logger.OK = colorLogger('✔', Color.GREEN_FG);
   logger.error = colorLogger('x', Color.RED_FG);
   logger.http = colorLogger('ǁ', Color.BLUE_FG);
-  logger.stack = logger.error;
+  logger.stack = function() {
+    logger.error('');
+    console.trace.call(this, arguments);
+  }
 
   logger.middleware = function(req, res, next) {
     var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
