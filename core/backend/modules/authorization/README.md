@@ -1,9 +1,37 @@
-# Sample module
+# Authorization
+> **This document is incomplete, and needs to be inmproved**
 *This module is part of planète's core backend, whose docs can be found [here](../../README.md)*
 
-**Please, document your module**, or you'll go on seeing a baked potato with butter:
-
 ## Description
-![Baked potato with butter](https://cloud.githubusercontent.com/assets/13233859/10263240/01ad3a84-69e7-11e5-8406-7e0848b24015.jpg)
+This module uses both the [user](../db/models/user.js) and the [role](../db/models/role.js) DB models to describe a role-based access control.
+
+### Roles
+There is a set of [default roles](../db/models/default-roles.json) that can be extended by the user:
+
+  - Root: It's the main role, there should be a single root user, although this hasn't been ensured yet.
+  - Admin: An administrator is supposed to be able to manage roles, users and content within a particular domain.
+  - Author: Authors create and update their own content, but they are not allowed to publish it
+  - Editor: Editors can read, update, publish/un-publish contents created by any author in his domain
+
+### Privileges
+Privileges are expressed as model/permissions sets.
+
+```json
+{ "model": "role", "actions": "G$CRUDP" },
+```
+
+In this example, the users with this role are able to manipulate the role model wihin their group, and perform Create, Read, Update, Delete and Publish operations.
+
+```js
+  /^[UGA]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/
+```
+
+Domain: The permission set after the `$` can apply to User's content, Content of another users in the same group (domain) or Any content.
+
+## Properties
+
+## Methods
+
+### Middleware
 
 ## API

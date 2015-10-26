@@ -19,20 +19,54 @@ This file is part of Planète.
 'use strict';
 
 var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     q = require('q');
 
 var RoleSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
+  privileges: [{
+    model: { type: String, required: true },
+    actions: { type: String, validate: /^[UGA]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/, required: true }
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 
 var RoleModel = mongoose.model('Role', RoleSchema);
 
+// Insert the default roles on the database, retrying any unsuccessful insert until none of the roles left can be inserted
 RoleModel.init = function () {
-  let deferred = q.defer();
+  var defaultRoles = require('./default-roles.json').roles;
+  let errors = 0;
 
-  RoleModel.update({ name: 'Root' },  { name: 'Root' }, { upsert: true }).exec()
-  .then(deferred.resolve, deferred.reject);
+  function _init(array) {
+    let deferred = q.defer();
+
+    if(array.length && array.length > errors) {
+      let role = array.shift();
+
+      new RoleModel(role).save(function(err, elem) {
+        if(err) {
+          logger.stack(err);
+          array.push(role);
+          errors++;
+        }
+        else {
+          errors = 0;
+        }
+        _init(array)
+        .then(deferred.resolve, deferred.reject);
+      });
+    } else {
+      array.length? deferred.reject(new Error('Could not insert default roles')) : deferred.resolve();
+    };
+
+    return deferred.promise;
+  }
+
+  let deferred = q.defer();
+  _init(defaultRoles.slice())
+  .then(deferred.resolve)
+  .catch(deferred.reject);
 
   return deferred.promise;
 }

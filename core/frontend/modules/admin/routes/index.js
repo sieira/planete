@@ -21,12 +21,12 @@ This file is part of Planète.
 var express = require('express');
 
 var core = require('_'),
-    auth = core.authentication;
+    auth = core.authorization;
 
 var Routes = (function () {
   var router = express.Router();
 
-  router.use(auth.middleware);
+  router.use(auth.middleware('Root'));
 
   return router;
 })();

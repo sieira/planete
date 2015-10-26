@@ -76,9 +76,9 @@ var Db = (function () {
     var deferred = q.defer();
 
     q(db.role.count().exec()) // Check read permission on roles
-    q(db.user.count().exec()) // Check read permission on users
-    q(db.user.count().exec()) // TODO Check write permission on users
-    q(db.user.count().exec()) // TODO Check write permission on roles
+    .then(q(db.user.count().exec())) // Check read permission on users
+    .then(q(db.user.count().exec())) // TODO Check write permission on users
+    .then(q(db.user.count().exec())) // TODO Check write permission on roles
     .then(function() { deferred.resolve(true); })
     .catch(function(err) {
       logger.error(err);

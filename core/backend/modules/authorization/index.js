@@ -19,40 +19,29 @@ This file is part of Planète.
 'use strict';
 
 var Authorization = (function () {
-  var CoreModule = require('_/core-module');
-  
+  var CoreModule = require('_/core-module'),
+      authenticationMW = require('_').authentication.middleware;
+
+
   var auth = new CoreModule(__dirname);
 
-  // Generates a middleware authorizating only the given roles
-  auth.middleware = function(roles) {
-    // TODO
-    // get the user from the request
-    // check if the user has ANY of the given roles
-    // return the function if he does, 403 if not
+  // Generates a middleware responding to the restrictions added to the request,
+  // and forcing authentication when the contents are not public.
+  auth.middleware = function(restrict) {
     return function(req, res, next) {
-      // check if the user passes ALL of the restrictions
-      // OR any of the allows
-      req.on('end', function() {
+      authenticationMW(req, res, function() {
+        // get the user from the request
+        // Get user roles
+
+        // check if the user has all of the given "restrict" roles
+        // send the response as is, 403 if not
         res.status(403).send();
       });
+      next();
     }
-  };
-
-  /*
-   * Takes a request, and add restrictions to it
-   */
-  auth.restrict = function(req, roles) {
-    req.restrictTo.concat([].concat(roles));
-  };
-
-  /*
-   * Takes a request, and add restrictions to it
-   */
-  auth.allow = function(req, roles) {
-    req.allowTo.concat([].concat(roles));
   };
 
   return auth;
 })();
 
-module.exports = 'Authorization';
+module.exports = Authorization;

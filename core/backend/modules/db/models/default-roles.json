@@ -1,0 +1,32 @@
+{
+"comment" : "This file contains the default set of roles",
+"roles": [
+  {
+    "name": "Root",
+    "privileges": [{ "model": "*", "actions": "A$CRUDP" }],
+    "description": "It is the main role. There should be a single root user **Root is given unlimited rights**"
+  },
+  {
+    "name": "Admin",
+    "privileges": [
+      { "model": "role", "actions": "G$CRUDP" },
+      { "model": "user", "actions": "G$CRUDP" },
+      { "model": "content", "actions": "G$CRUDP" }
+    ],
+    "description": "An administrator is supposed to be able to do anything any author or editor can do on his domain, in addition, an administrator can create new roles and users in his group"
+  },
+  {
+    "name": "Author",
+    "privileges": [
+      { "model": "content", "actions": "U$CRUD", "domains": "own" }
+    ],
+    "description": "An author can create, read, update and delete his own contents"
+  },
+  {
+    "name": "Editor",
+    "privileges": [
+      { "model": "content", "actions": "G$RUP", "domains": "own" }
+    ],
+    "description": "An editor can read, update, publish/un-publish contents created by authors in his group"
+  }
+]}
