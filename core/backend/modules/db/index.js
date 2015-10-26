@@ -88,11 +88,6 @@ var Db = (function () {
     return deferred.promise;
   };
 
-
-  db.createUser( { "user" : "admin",
-                   "pwd": "password",
-                   "roles" : [ "readWrite" ] })
-
   db.close = function(callback) {
     mongoose.connection.close(function(err) {
       if(callback && typeof callback == 'function') {
