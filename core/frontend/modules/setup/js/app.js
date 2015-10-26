@@ -22,8 +22,9 @@ var angularInjections = angularInjections || [];
 
 angular.module('setup', [].concat(angularInjections))
 
-.controller('setupController', ['$scope', '$http', '$log', function($scope, $http, $log) {
+.controller('setupController', ['$scope', '$http', '$log', '$q', function($scope, $http, $log, $q) {
   $scope.dbTest;
+  $scope.dbAuthTest;
 
   $scope.user = {};
   $scope.user.username = null;
@@ -46,6 +47,8 @@ angular.module('setup', [].concat(angularInjections))
   };
 
   function testDb() {
+    var deferred = $q.defer();
+
     $scope.dbTest = 'RUNNING';
 
     $http({
@@ -54,11 +57,26 @@ angular.module('setup', [].concat(angularInjections))
     })
     .then(function(response) {
       $scope.dbTest = response.data ? 'OK' : 'FAIL';
+      response.data ? deferred.resolve() : deferred.reject();
+    });
+
+    return deferred.promise;
+  }
+
+  function testDbAuth() {
+    $scope.dbAuthTest = 'RUNNING';
+
+    $http({
+      method: 'POST',
+      url: '/db/check-setup-auth'
+    })
+    .then(function(response) {
+      $scope.dbAuthTest = response.data ? 'OK' : 'FAIL';
     });
   }
 
   $scope.testsOk = function() {
-    return $scope.dbTest === 'OK';
+    return $scope.dbTest === 'OK' && $scope.dbAuthTest === 'OK';
   };
 
   $scope.infocomplete = function() {
@@ -92,7 +110,8 @@ angular.module('setup', [].concat(angularInjections))
     });
   };
 
-  testDb();
+  testDb()
+  .then(testDbAuth);
 }])
 
 .directive('equals', ['$log', function($log) {

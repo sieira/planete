@@ -42,6 +42,10 @@ html
                     |  #[span(ng-show="dbTest=='RUNNING'" ng-cloak) #{__('Testing database connection')}]
                     |  #[span(ng-show="dbTest=='OK'" ng-cloak) #{__('Your database is running')}]
                     |  #[span.text-danger(ng-show="dbTest=='FAIL'" ng-cloak) #{__('Oops!! Looks like your database is not running')}]
+                  li #[i.fa(ng-class="{RUNNING : 'fa-cog fa-spin', OK: 'fa-check text-success', FAIL: 'fa-exclamation-triangle text-danger'}[dbAuthTest]")]
+                    |  #[span(ng-show="dbAuthTest=='RUNNING'" ng-cloak) #{__('Testing database permissions')}]
+                    |  #[span(ng-show="dbAuthTest=='OK'" ng-cloak) #{__('You can manipulate the database')}]
+                    |  #[span.text-danger(ng-show="dbAuthTest=='FAIL'" ng-cloak) #{__('Oops!! Looks like you do not have the required privileges over the DB')}]
               button.btn.pull-right(ng-click='step = step + 1', ng-disabled='!testsOk()') Next
 
           .panel.panel-primary(ng-hide='step != 1')

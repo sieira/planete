@@ -55,7 +55,7 @@ var Db = (function () {
 
   db.connect = function (callback) {
     var db = config.NODE_ENV == 'test'? config.TEST_DB : config.DB,
-        db_URL = 'mongodb://' + path.join(config.DB_HOST+':'+config.DB_PORT,db);
+        db_URL = 'mongodb://' + config.DB_USER + ':' + config.DB_PASSWORD + '@' +  path.join(config.DB_HOST+':'+config.DB_PORT,db);
 
     mongoose.connect(db_URL, function(err) {
       if(err) {
@@ -71,6 +71,27 @@ var Db = (function () {
   db.isConnected = function() {
     return mongoose.connection.readyState == 1;
   };
+
+  db.isAuthorizedToInstall = function() {
+    var deferred = q.defer();
+
+    q(db.role.count().exec()) // Check read permission on roles
+    q(db.user.count().exec()) // Check read permission on users
+    q(db.user.count().exec()) // TODO Check write permission on users
+    q(db.user.count().exec()) // TODO Check write permission on roles
+    .then(function() { deferred.resolve(true); })
+    .catch(function(err) {
+      logger.error(err);
+      deferred.resolve(false);
+    });
+
+    return deferred.promise;
+  };
+
+
+  db.createUser( { "user" : "admin",
+                   "pwd": "password",
+                   "roles" : [ "readWrite" ] })
 
   db.close = function(callback) {
     mongoose.connection.close(function(err) {

@@ -27,6 +27,13 @@ var App = (function() {
     res.status(200).json(db.isConnected());
   });
 
+  app.post('/check-setup-auth', function(req, res) {
+    db.isAuthorizedToInstall()
+    .then(function(data) {
+      res.status(200).json(data);
+    });
+  });
+
   app.post('/register-root-user', function(req, res) {
     db.registerRootUser(req.body)
     .then(function(data) {
