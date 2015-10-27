@@ -21,7 +21,9 @@ This file is part of Planète.
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     moment = require('moment'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    q = require('q'),
+    db = require('_').db;
 
 var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -29,8 +31,6 @@ var SessionSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   expireAt: { type: Date, default: moment().add(15,'minutes') }
 });
-
-var SessionModel = mongoose.model('Session', SessionSchema);
 
 SessionSchema.pre('validate', function(next) {
   this.token = crypto.randomBytes(16).toString('base64');
@@ -53,5 +53,33 @@ SessionSchema.pre('save', function(next, done) {
     }
   });
 });
+
+SessionSchema.methods = {
+  getUser: function (token) {
+    var deferred = q.defer();
+
+    db.user.findOne({ _id: this.user }).exec()
+    .then(deferred.resolve, deferred.reject);
+
+    return deferred.promise;
+  },
+  getUserRoles: function (token) {
+    var deferred = q.defer();
+
+    // Make sure other models are cached
+    db.role;
+    db.domain;
+
+    db.user.findOne({ _id: this.user }, {'roles.role': 1, 'roles.domain': 1})
+    .populate('roles.role', 'name -_id')
+    .populate('roles.domain', 'name -_id')
+    .exec()
+    .then(deferred.resolve, deferred.reject);
+
+    return deferred.promise;
+  }
+};
+
+var SessionModel = mongoose.model('Session', SessionSchema);
 
 module.exports = SessionModel;

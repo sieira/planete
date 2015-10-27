@@ -20,7 +20,11 @@ This file is part of Planète.
 
 var Authorization = (function () {
   var CoreModule = require('_/core-module'),
-      authenticationMW = require('_').authentication.middleware;
+      q = require('q'),
+      core = require('_'),
+      db = core.db,
+      logger = core.logger,
+      authenticationMW = core.authentication.middleware;
 
 
   var auth = new CoreModule(__dirname);
@@ -28,15 +32,31 @@ var Authorization = (function () {
   // Generates a middleware responding to the restrictions added to the request,
   // and forcing authentication when the contents are not public.
   auth.middleware = function(restrict) {
+    restrict = [].concat(restrict);
+
     return function(req, res, next) {
       authenticationMW(req, res, function() {
-        // get the user from the request
-        // Get user roles
 
-        // check if the user has all of the given "restrict" roles
-        // send the response as is, 403 if not
-        //res.status(403).send();
-        next();
+        // get the user from the request
+        q(db.session.findOne({ token: req.headers.authorization.slice('Bearer '.length) }).exec())
+        .then(function (session) {
+          return session.getUserRoles();
+        })
+        .then(function(user) {
+          // check if the user has any of the given "restrict" roles
+          restrict.forEach(function (restriction) {
+            if(user.roles.some(function (role) {
+              //TODO check also the domain
+              return role.role.name === restriction;
+            })) {
+              next();
+            } else {
+              // send the response as is, 403 if not
+              res.status(403).send();
+            }
+          });
+        })
+        .catch(logger.stack);
       });
     }
   };
