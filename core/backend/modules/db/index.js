@@ -107,17 +107,27 @@ var Db = (function () {
 
   db.registerRootUser = function(user) {
     var deferred = q.defer();
+    var roleId;
+    var domainId;
 
     q(db.user.count().exec())
     .then(function(count) {
-      if(!count) { return db.role.init(); }
-      else { throw new Error('There are already users !'); }
+      if(!count) {
+        return db.domain.init()
+               .then(db.role.init)
+               .catch(logger.stack);
+      } else { throw new Error('There are already users !'); }
     })
     .then(function () {
       return q(db.role.findOne({ name: 'Root' }).exec());
     })
     .then(function (role) {
-      user.roles = [role._id];
+      roleId = role;
+      return q(db.domain.findOne({ name: 'Root' }).exec());
+    })
+    .then(function (domain) {
+      domainId = domain;
+      user.roles = [{ role: roleId, domain: domainId}];
       return new db.user(user).save();
     })
     .then(deferred.resolve)

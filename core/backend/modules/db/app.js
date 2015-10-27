@@ -40,7 +40,7 @@ var App = (function() {
       res.status(200).json(data);
     })
     .catch(function(err) {
-      logger.error(err);
+      logger.stack(err);
       if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); };
     });
   });
@@ -57,9 +57,23 @@ var App = (function() {
 
 //TODO authorization
   app.post('/get-users', function(req, res) {
-    db.user.find(function(err, data) {
+    // Require role and domain just in case they were not required before,
+    // so mongoose can find the schema and populate the fields
+    db.role;
+    db.domain;
+
+    db.user.find()
+    .populate({
+      path: 'roles.role',
+      select: 'name -_id',
+    })
+    .populate({
+      path: 'roles.domain',
+      select: 'name -_id',
+    })
+    .exec(function(err, data) {
       if(err) {
-        logger.stack('Error registering user: %s', err);
+        logger.stack('Error getting user list: %s', err);
         db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
       else { res.status(200).send(data); };
     });

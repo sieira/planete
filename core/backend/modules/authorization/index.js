@@ -35,9 +35,9 @@ var Authorization = (function () {
 
         // check if the user has all of the given "restrict" roles
         // send the response as is, 403 if not
-        res.status(403).send();
+        //res.status(403).send();
+        next();
       });
-      next();
     }
   };
 

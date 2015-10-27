@@ -52,7 +52,7 @@ var Logger = (function _Logger() {
   logger.error = colorLogger('x', Color.RED_FG);
   logger.http = colorLogger('ǁ', Color.BLUE_FG);
   logger.stack = function() {
-    logger.error('');
+    (arguments[0] instanceof Error)? logger.error(arguments[0].message) : logger.error('');
     console.trace.call(this, arguments);
   }
 

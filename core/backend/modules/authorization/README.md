@@ -10,23 +10,23 @@ There is a set of [default roles](../db/models/default-roles.json) that can be e
 
   - Root: It's the main role, there should be a single root user, although this hasn't been ensured yet.
   - Admin: An administrator is supposed to be able to manage roles, users and content within a particular domain.
-  - Author: Authors create and update their own content, but they are not allowed to publish it
-  - Editor: Editors can read, update, publish/un-publish contents created by any author in his domain
+  - Author: Authors create and update their own content in a given domain, but they are not allowed to publish it.
+  - Editor: Editors can read, update, publish/un-publish contents created by any author in his domain.
 
 ### Privileges
 Privileges are expressed as model/permissions sets.
 
 ```json
-{ "model": "role", "actions": "G$CRUDP" },
+{ "model": "role", "actions": "D$CRUDP" },
 ```
 
-In this example, the users with this role are able to manipulate the role model wihin their group, and perform Create, Read, Update, Delete and Publish operations.
+In this example, the users with this role are able to manipulate the role model within their domain, and perform Create, Read, Update, Delete and Publish operations.
 
 ```js
-  /^[UGA]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/
+  /^[UD]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/
 ```
 
-Domain: The permission set after the `$` can apply to User's content, Content of another users in the same group (domain) or Any content.
+Domain: Determines whether the permission set after the `$` applies to User's content, or content of another users in the same group (domain).
 
 ## Properties
 

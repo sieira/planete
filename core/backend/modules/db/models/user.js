@@ -28,18 +28,25 @@ var UserSchema = new mongoose.Schema({
   firstname: {type: String, trim: true},
   lastname: {type: String, trim: true},
   password: {type: String},
-  roles: {type: [Schema.Types.ObjectId], ref: 'Role', required: true},
+  roles: [{
+    role: {type: Schema.Types.ObjectId, ref: 'Role', required: true},
+    customPrivileges: [{
+        model: { type: String, required: true },
+        actions: { type: String, validate: /^[UD]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/, required: true }
+    }],
+    domain: {type: Schema.Types.ObjectId, ref: 'Domain', required: true},
+  }],
   timestamps: {
     creation: {type: Date, default: Date.now}
   },
   login: {
     failures: [{
       date: { type: [Date] },
-      ip: { type: [Number]}
+      ip: { type: [Number] }
     }],
     successes: [{
       date: { type: [Date] },
-      ip: { type: [Number]}
+      ip: { type: [Number] }
     }]
   }
 });

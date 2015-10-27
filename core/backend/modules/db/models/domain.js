@@ -22,29 +22,26 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     q = require('q');
 
-var RoleSchema = new mongoose.Schema({
+var DomainSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  privileges: [{
-    model: { type: String, required: true },
-    actions: { type: String, validate: /^[UD]\$(?!.*([CRUDP]).*\1)[CRUDP]*$/, required: true }
-  }],
+  subDomains: {type: [Schema.Types.ObjectId], ref: 'Domain'},
   createdAt: { type: Date, default: Date.now }
 });
 
-var RoleModel = mongoose.model('Role', RoleSchema);
+var DomainModel = mongoose.model('Domain', DomainSchema);
 
-// Insert the default roles on the database, retrying any unsuccessful insert until none of the roles left can be inserted
-RoleModel.init = function () {
-  var defaultRoles = require('./default-roles.json').roles;
+// Insert the default domain on the database, retrying any unsuccessful insert until none of the domains left can be inserted
+DomainModel.init = function () {
+  var defaultDomains = require('./default-domains.json').domains;
   let errors = 0;
 
   function _init(array) {
     let deferred = q.defer();
 
     if(array.length && array.length > errors) {
-      let role = array.shift();
+      let domain = array.shift();
 
-      new RoleModel(role).save(function(err, elem) {
+      new DomainModel(domain).save(function(err, elem) {
         if(err) {
           logger.stack(err);
           array.push(role);
@@ -57,18 +54,18 @@ RoleModel.init = function () {
         .then(deferred.resolve, deferred.reject);
       });
     } else {
-      array.length? deferred.reject(new Error('Could not insert default roles')) : deferred.resolve();
+      array.length? deferred.reject(new Error('Could not insert default domains')) : deferred.resolve();
     };
 
     return deferred.promise;
   }
 
   let deferred = q.defer();
-  _init(defaultRoles.slice())
+  _init(defaultDomains.slice())
   .then(deferred.resolve)
   .catch(deferred.reject);
 
   return deferred.promise;
 }
 
-module.exports = RoleModel;
+module.exports = DomainModel;
