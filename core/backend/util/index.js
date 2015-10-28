@@ -107,24 +107,25 @@ function parallelRunner(tasks) {
  */
  function serialRunner(generator) {
    var next = generator.next(),
-       tasks = [].concat(next.value[1]);
+       tasks = next.done? [] : [].concat(next.value[1]);
 
    return new Promise(function(resolve,reject) {
-     if(tasks.length > 1) {
-       parallelRunner(tasks)
-       .then(function() {
-         if(!next.done) {
-           serialRunner(generator)
-           .then(resolve)
-           .catch(reject);
-         } else {
-           resolve();
-         }
-       })
-       .catch(reject);
-     } else {
-       next.value[1](resolve, reject);
-     }
+     switch (tasks.length) {
+     case 0:
+      resolve();
+      break;
+     case 1:
+      tasks[0](function() {
+        serialRunner(generator).then(resolve).catch(reject);
+      });
+      break;
+     default:
+      parallelRunner(tasks)
+      .then(function () {
+        serialRunner(generator).then(resolve).catch(reject);
+      })
+      .catch(reject);
+    }
    });
  }
 
