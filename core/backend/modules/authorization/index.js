@@ -29,8 +29,10 @@ var Authorization = (function () {
 
   var auth = new CoreModule(__dirname);
 
-  // Generates a middleware responding to the restrictions added to the request,
-  // and forcing authentication when the contents are not public.
+  /**
+   * Generates a middleware responding to the restrictions added to the request,
+   * and forcing authentication when the contents are not public.
+   */
   auth.middleware = function(restrict) {
     restrict = [].concat(restrict);
 

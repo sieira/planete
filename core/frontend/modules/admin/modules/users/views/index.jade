@@ -17,8 +17,11 @@
       along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 -//
 
-tr
-  td Usuario
-  td administrador
-  td 31/08/1986
-  td #[i.fa.fa-edit] Edit
+uib-tab
+  uib-tab-heading #[i.fa.fa-users] Users
+  
+  div(oc-lazy-load='modules/admin/modules/users/js/app.js')  
+    .container-fluid(ng-controller='adminUsersController', ng-init='showList = true')
+      button.btn.btn-primary(ng-show="showList", ng-click='showList = false') #[i.fa.fa-user] New user
+      user-list(ng-show="showList")
+      new-user(ng-show="!showList")

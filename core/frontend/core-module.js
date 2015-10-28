@@ -75,15 +75,15 @@ function CoreModule(dir) {
 });
   });
 
-  // Render and get any view with it's file name
+  // Render and get any view with its file name
   this.routes.get('/:pageName', function (req, res) {
     res.render(path.join(viewsDir, req.params.pageName + '.jade'), self.scriptsInjector(self.dir), function(err, html) {
-    if(err) {
+      if(err) {
         res.status(404).send(); // File doesn't exist
-    } else {
+      } else {
         res.send(html);
-    }
-});
+      }
+    });
   });
 
   //TODO remove this

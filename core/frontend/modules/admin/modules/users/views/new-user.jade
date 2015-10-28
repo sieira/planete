@@ -1,0 +1,50 @@
+//-
+  Copyright © 2015 Luis Sieira Garcia
+
+  This file is part of Planète.
+
+      Planète is free software: you can redistribute it and/or modify
+      it under the terms of the GNU Affero General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      Planète is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU Affero General Public License for more details.
+
+      You should have received a copy of the GNU Affero General Public License
+      along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
+-//
+
+h3 #{__('Create an account')}
+.alert.alert-danger(ng-show="record.status=='error'")
+  .container
+    h4 #{__('Something didn\'t go as expected... did you try turning it off, and on again?')}
+    ul.list-unstyled
+      li Error {{record.err.message}}: {{record.err.details}}
+
+form(name="form" role="form" novalidate)
+  .form-group(ng-class="{'has-error': form.username.$touched && form.username.$invalid}")
+    label(for='username') #{__('User name')}
+    input(ng-model='user.username' type='text' class='form-control' name='username', id='username' required)
+  .form-group(ng-class="{'has-error': form.password.$touched && form.password.$invalid}")
+    label(for='password') #{__('User password')}
+    input(ng-model='user.password' type='password' class='form-control' name='password' id='password' required)
+  .form-group(ng-class="{'has-error': form.passwordConfirmation.$touched && form.passwordConfirmation.$invalid}")
+    label(for='passwordConfirmation') #{__('The obnoxious please repeat your password field')}
+    input(ng-model='user.passwordConfirmation' type='password' class='form-control' name='passwordConfirmation' id='passwordConfirmation' equals='{{user.password}}' required)
+  .form-group(ng-class="{'has-error': form.email.$dirty && form.email.$invalid}")
+    label(for='email') #{__('Your email')}
+    input(ng-model='user.email' type='email' name='email' class='form-control' id='email' required)
+  .form-group
+    label(for='name') #{__('First name')}
+    input(ng-model='user.name' type='text' class='form-control' id='name')
+  .form-group
+    label(for='surname') #{__('Surname')}
+    input(ng-model='user.surname' type='text' class='form-control' id='surname')
+
+  button.pull-right.btn.btn-primary(type='button' ng-disabled='!form.$valid' ng-click='form.$valid && recordUser()')
+    i.fa.fa-cog.fa-spin(ng-show='record.running')
+    |  {{recordButton.label}}
+  button.pull-left.btn.btn-default(type='button' ng-click='clearUser(); showList=true') #{__('Back')}

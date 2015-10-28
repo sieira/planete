@@ -18,22 +18,21 @@ This file is part of Planète.
 **/
 'use strict';
 
-var angularInjections = angularInjections || [];
+var app = angular
 
-angular.module('setup', [].concat(angularInjections))
-
-.controller('setupController', ['$scope', '$http', '$log', '$q', function($scope, $http, $log, $q) {
-  $scope.dbTest;
-  $scope.dbAuthTest;
-
-  $scope.user = {};
-  $scope.user.username = null;
-  $scope.user.password = null;
-  $scope.user.email = null;
-  $scope.user.name= null;
-  $scope.user.surname= null;
-  $scope.step = 0;
-
+.module('admin.users', [])
+.service('users', ['$http', '$log', function ($http) {
+  this.retrieve = function (callback) {
+    $http({
+      method: 'POST',
+      url: '/db/get-users',
+    })
+    .then(function(data) {
+      callback(data.data);
+    });
+  }
+}])
+.controller('adminUsersController', ['$scope', '$log', '$http', 'users', function($scope, $log, $http, users) {
   $scope.record = {
     status: 'none',
     err: null,
@@ -46,43 +45,16 @@ angular.module('setup', [].concat(angularInjections))
     running: 'Registering user...'
   };
 
-  function testDb() {
-    var deferred = $q.defer();
-
-    $scope.dbTest = 'RUNNING';
-
-    $http({
-      method: 'POST',
-      url: '/db/status'
-    })
-    .then(function(response) {
-      $scope.dbTest = response.data ? 'OK' : 'FAIL';
-      response.data ? deferred.resolve() : deferred.reject();
-    });
-
-    return deferred.promise;
+  $scope.clearUser = function() {
+    $scope.user = {};
+    $scope.user.username = null;
+    $scope.user.password = null;
+    $scope.user.email = null;
+    $scope.user.name= null;
+    $scope.user.surname= null;
+    $scope.step = 0;
   }
-
-  function testDbAuth() {
-    $scope.dbAuthTest = 'RUNNING';
-
-    $http({
-      method: 'POST',
-      url: '/db/check-setup-auth'
-    })
-    .then(function(response) {
-      $scope.dbAuthTest = response.data ? 'OK' : 'FAIL';
-    });
-  }
-
-  $scope.testsOk = function() {
-    return $scope.dbTest === 'OK' && $scope.dbAuthTest === 'OK';
-  };
-
-  //TODO this can probably be removed
-  $scope.infocomplete = function() {
-    return $scope.user.username && $scope.user.password;
-  };
+  $scope.clearUser();
 
   $scope.recordUser = function() {
     $scope.record.running = true;
@@ -90,16 +62,18 @@ angular.module('setup', [].concat(angularInjections))
 
     $http({
       method: 'POST',
-      url: '/db/register-root-user',
+      url: '/db/register-user',
       data: $scope.user
     })
     .then(function(response) {
-      $scope.step++;
-
+      $scope.clearUser();
+      users.retrieve(function (data) {
+        $scope.users = data;
+        $scope.showList = true;
+      });
       $scope.record.running = false;
       $scope.recordButton.label = $scope.recordButton.notRunning;
-    },
-    function(response) {
+    }, function(response) {
       $scope.record.running = false;
       $scope.recordButton.label = $scope.recordButton.notRunning;
 
@@ -111,8 +85,24 @@ angular.module('setup', [].concat(angularInjections))
     });
   };
 
-  testDb()
-  .then(testDbAuth);
+  $scope.deleteUser = function (user) {
+    $http({
+      method: 'DELETE',
+      url: '/db/user/' + user._id
+    })
+    .then(function () {
+      users.retrieve(function (data) {
+        $scope.users = data;
+      });
+    });
+  }
+
+  users.retrieve(function (data) {
+    $log.debug(data);
+    $scope.users = data;
+  });
+
+  $scope.attributes = ['name', 'roles', 'creationDate'];
 }])
 .directive('equals', ['$log', function($log) {
   return {
@@ -142,4 +132,22 @@ angular.module('setup', [].concat(angularInjections))
       };
     }
   }
-}]);
+}])
+.directive('userList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/admin/users/user-list'
+  };
+})
+.directive('userData', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/admin/users/user-data'
+  };
+})
+.directive('newUser', function() {
+  return {
+    restrict: 'E',
+    templateUrl: '/admin/users/new-user'
+  };
+});
