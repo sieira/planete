@@ -32,6 +32,8 @@ var SessionSchema = new mongoose.Schema({
   expireAt: { type: Date, default: moment().add(15,'minutes') }
 });
 
+SessionSchema.index({ "expireAt": 1 }, { expireAfterSeconds: 0 });
+
 SessionSchema.pre('validate', function(next) {
   this.token = crypto.randomBytes(16).toString('base64');
   next();
