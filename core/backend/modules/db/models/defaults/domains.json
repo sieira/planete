@@ -1,8 +1,8 @@
 {
-"comment" : "This file contains the default content domain",
+"comment" : "This file contains the default root domain",
 "domains": [
   {
-    "name": "Root",
+    "path": "/",
     "subDomains": [],
     "description": "It is the main domain. Any other domain should be a subdomain of this one**"
   }

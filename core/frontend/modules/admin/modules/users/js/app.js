@@ -84,6 +84,9 @@ var app = angular
       }
     });
   };
+  $scope.editUser = function (user) {
+    alert('not implemented');
+  };
 
   $scope.deleteUser = function (user) {
     $http({
@@ -141,7 +144,7 @@ var app = angular
 })
 .directive('userData', function() {
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: '/admin/users/user-data'
   };
 })

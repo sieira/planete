@@ -69,7 +69,7 @@ var App = (function() {
     })
     .populate({
       path: 'roles.domain',
-      select: 'name -_id',
+      select: 'path -_id',
     })
     .exec(function(err, data) {
       if(err) {

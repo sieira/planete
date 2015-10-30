@@ -23,7 +23,7 @@ var mongoose = require('mongoose'),
     q = require('q');
 
 var DomainSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  path: { type: String, required: true, unique: true },
   subDomains: {type: [Schema.Types.ObjectId], ref: 'Domain'},
   createdAt: { type: Date, default: Date.now }
 });
@@ -32,7 +32,7 @@ var DomainModel = mongoose.model('Domain', DomainSchema);
 
 // Insert the default domain on the database, retrying any unsuccessful insert until none of the domains left can be inserted
 DomainModel.init = function () {
-  var defaultDomains = require('./default-domains.json').domains;
+  var defaultDomains = require('./defaults/domains.json').domains;
   let errors = 0;
 
   function _init(array) {

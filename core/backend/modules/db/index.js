@@ -123,7 +123,7 @@ var Db = (function () {
     })
     .then(function (role) {
       roleId = role;
-      return q(db.domain.findOne({ name: 'Root' }).exec());
+      return q(db.domain.findOne({ path: '/' }).exec());
     })
     .then(function (domain) {
       domainId = domain;

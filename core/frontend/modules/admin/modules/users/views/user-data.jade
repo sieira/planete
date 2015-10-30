@@ -17,10 +17,11 @@
       along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 -//
 
-table.table.table-striped.table-hover
-  thead
-    tr
-      th(ng-repeat='attribute in attributes') {{attribute}}
-      th
-  tbody
-    tr(ng-repeat='user in users', user-data)
+td {{ user.username}}
+td
+  table
+    tr(ng-repeat='role in user.roles')
+      td {{ role.role.name }} at {{ role.domain.path }}
+td {{ user.timestamps.creation | date }}
+td.text-right
+  .btn-group #[button.btn.btn-default.fa.fa-pencil-square-o(ng-click = 'editUser(user)')] #[button.btn.btn-default.fa.fa-trash-o(ng-click = 'deleteUser(user)')]

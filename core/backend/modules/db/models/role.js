@@ -35,7 +35,7 @@ var RoleModel = mongoose.model('Role', RoleSchema);
 
 // Insert the default roles on the database, retrying any unsuccessful insert until none of the roles left can be inserted
 RoleModel.init = function () {
-  var defaultRoles = require('./default-roles.json').roles;
+  var defaultRoles = require('./defaults/roles.json').roles;
   let errors = 0;
 
   function _init(array) {
