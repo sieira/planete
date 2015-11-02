@@ -19,7 +19,9 @@ This file is part of Planète.
 'use strict';
 
 var app = angular.module('planete', [].concat(angularInjections))
-.config(['$routeProvider', '$ocLazyLoadProvider', function($routeProvider, $ocLazyLoadProvider) {
+.config(['$routeProvider', '$locationProvider', '$ocLazyLoadProvider', function($routeProvider, $locationProvider, $ocLazyLoadProvider) {
+  $locationProvider.html5Mode(true);
+
   $routeProvider
   .when('/', {
     templateUrl: '/content/index'
