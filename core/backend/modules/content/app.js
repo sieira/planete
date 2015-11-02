@@ -19,7 +19,7 @@ This file is part of Planète.
 var App = (function() {
   var express = require('express'),
       app = express(),
-      mod = require('.'),
+      content = require('.'),
       core = require('_'),
       db = core.db,
       logger = core.logger;
@@ -28,10 +28,10 @@ var App = (function() {
    * Seek the content in the database, the initial / is trimmed
    */
   app.get('*', function(req,res) {
-    db.content.Content.findOne({URI: req.url.substring(1)})
+    content.getDocument(req.url.substring(1))
     .then(function (content) {
       if(!content) { return res.status(404).send(); }
-      res.status(200).send(content.body);
+      res.status(200).send({ format: content.format, body: content.body });
     })
     .catch(function(err) {
       logger.stack(err);

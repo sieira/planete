@@ -24,7 +24,7 @@ var app = angular.module('planete', [].concat(angularInjections))
 
   $routeProvider
   .when('/', {
-    templateUrl: '/content/index'
+    redirectTo: '/index'
   })
   .when('/admin', {
     controller: 'adminController',
@@ -56,8 +56,23 @@ var app = angular.module('planete', [].concat(angularInjections))
     }
   })
   .when('/:whatever', {
-    templateUrl: function($routeParams) {
-        return '/' + $routeParams.whatever;
+    template: '<div ng-bind-html="content"></div>',
+    controller: ['$scope', 'content', '$log', function ($scope, content, $log) {
+      $scope.content = content;
+    }],
+    resolve: {
+      content:  ['$templateRequest', '$route', '$log', '$q', function($templateRequest, $route, $log, $q) {
+        var deferred = $q.defer();
+        $templateRequest('/content/' + $route.current.params.whatever)
+        .then(function (response) {
+          var data = JSON.parse(response);
+
+          var output = (data.format === 'md') ? new showdown.Converter().makeHtml(data.body) : data.body;
+          deferred.resolve(output);
+        });
+
+        return deferred.promise;
+      }]
     }
   });
 }])

@@ -21,9 +21,14 @@ This file is part of Planète.
 var Content = (function () {
   var CoreModule = require('_/core-module'),
       core = require('_'),
+      db = core.db,
       logger = core.logger;
 
   var content =  new CoreModule(__dirname);
+
+  content.getDocument = function (uri) {
+    return db.content.Content.findOne({ URI: uri });
+  };
 
   return content;
 })();

@@ -25,6 +25,7 @@ var mongoose = require('mongoose'),
 
 var ContentSchema = new Schema({
   URI: {type: String, trim: true, unique: true, required: true },
+  format: {type: String, trim: true, required: true, validate: /^(md|html)$/, default: 'html' },
   body: {type: String, trim: true},
   auth: {type: [Schema.Types.ObjectId], ref: 'User'},
   timestamps: {

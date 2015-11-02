@@ -67,12 +67,12 @@ function CoreModule(dir) {
   // Register the route to the index file
   this.routes.get('/', function (req, res) {
     res.render(path.join(viewsDir,'index.jade'), self.scriptsInjector(self.dir), function(err, html) {
-    if(err) {
+      if(err) {
         res.status(404).send(); // File doesn't exist
-    } else {
+      } else {
         res.send(html);
-    }
-});
+      }
+    });
   });
 
   // Render and get any view with its file name
@@ -104,7 +104,10 @@ function CoreModule(dir) {
       });
     }
 
-    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'auth', 'ngRoute');
+    // Externals
+    angularInjections.push('ui.bootstrap', 'oc.lazyLoad', 'ngRoute', 'ngSanitize');
+    // Planète's
+    angularInjections.push('auth');
 
     return { styles: styles, scripts: moduleScripts, angularInjections: angularInjections };
   };
