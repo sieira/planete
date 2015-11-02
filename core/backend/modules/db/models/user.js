@@ -37,7 +37,8 @@ var UserSchema = new mongoose.Schema({
     domain: {type: Schema.Types.ObjectId, ref: 'Domain', required: true},
   }],
   timestamps: {
-    creation: {type: Date, default: Date.now}
+    creation: {type: Date, default: Date.now},
+    lastModified: {type: Date, default: Date.now}
   },
   login: {
     failures: [{
@@ -66,6 +67,11 @@ UserSchema.pre('save', function(next) {
       next();
     });
   });
+});
+
+UserSchema.pre('update', function(next) {
+  this.timestamps.lastModified = Date.now();
+  next();
 });
 
 UserSchema.methods = {

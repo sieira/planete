@@ -93,6 +93,11 @@ angular.module('setup', [].concat(angularInjections))
       url: '/db/register-root-user',
       data: $scope.user
     })
+    $http({
+      method: 'POST',
+      url: '/db/register-default-content',
+      data: $scope.user
+    })
     .then(function(response) {
       $scope.step++;
 

@@ -45,6 +45,17 @@ var App = (function() {
     });
   });
 
+  app.post('/register-default-content', function(req, res) {
+    db.registerDefaultContent()
+    .then(function(data) {
+      res.status(200).json(data);
+    })
+    .catch(function(err) {
+      logger.stack(err);
+      if(err) { db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); };
+    });
+  });
+
 //TODO authorization
   app.post('/register-user', function(req, res) {
     new db.user(req.body).save(function(err) {

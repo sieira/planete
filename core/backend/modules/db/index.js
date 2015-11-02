@@ -136,6 +136,21 @@ var Db = (function () {
     return deferred.promise;
   };
 
+  db.registerDefaultContent = function() {
+    var deferred = q.defer();
+
+    q(db.content.Content.count().exec())
+    .then(function(count) {
+      if(!count) {
+        return db.content.Content.init();
+      } else { throw new Error('There is already some content !'); }
+    })
+    .then(deferred.resolve)
+    .catch(deferred.reject);
+
+    return deferred.promise;
+  };
+
   util.parallelRunner(db.connect, exposeModels);
 
   return db;

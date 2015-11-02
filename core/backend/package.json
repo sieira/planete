@@ -4,6 +4,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "mongoose": "^4.1.12",
+    "mongoose-schema-extend": "^0.1.7",
     "q": "^1.4.1"
   },
   "devDependencies": {

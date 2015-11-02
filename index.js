@@ -35,7 +35,7 @@ function shutdown(event, logger) {
 
 process.on('SIGTERM', shutdown('SIGTERM', logger.info));
 process.on('SIGINT', shutdown('SIGINT', logger.info));
-process.on('uncaughtException', shutdown('uncaughtException', logger.error));
+process.on('uncaughtException', shutdown('uncaughtException', logger.stack));
 
 core.init(function(err) {
   if(err) {

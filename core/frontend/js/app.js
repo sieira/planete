@@ -21,6 +21,9 @@ This file is part of Planète.
 var app = angular.module('planete', [].concat(angularInjections))
 .config(['$routeProvider', '$ocLazyLoadProvider', function($routeProvider, $ocLazyLoadProvider) {
   $routeProvider
+  .when('/', {
+    templateUrl: '/content/index'
+  })
   .when('/admin', {
     controller: 'adminController',
     resolve: {
