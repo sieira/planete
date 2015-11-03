@@ -90,6 +90,18 @@ var App = (function() {
     });
   });
 
+  //TODO authorization
+  app.post('/get-content', function(req, res) {
+    db.content.Content.find()
+    .exec(function(err, data) {
+      if(err) {
+        logger.stack('Error getting content list: %s', err);
+        db.isConnected() ? res.status(401).send('Unauthorized') :  res.status(503).send('Not connected'); }
+      else { res.status(200).send(data); };
+    });
+  });
+
+  //TODO authorization
   app.delete('/user/:userId', function(req, res) {
     logger.info('Deleting user: %s', req.params);
     db.user.remove({ _id: req.params.userId}, function (err) {

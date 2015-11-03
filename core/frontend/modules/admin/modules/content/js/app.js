@@ -20,19 +20,19 @@ This file is part of Planète.
 
 var app = angular
 
-.module('admin.users', [])
-.service('users', ['$http', function ($http) {
+.module('admin.content', [])
+.service('content', ['$http', function ($http) {
   this.retrieve = function (callback) {
     $http({
       method: 'POST',
-      url: '/db/get-users',
+      url: '/db/get-content',
     })
     .then(function(data) {
       callback(data.data);
     });
   }
 }])
-.controller('adminUsersController', ['$scope', '$log', '$http', 'users', function($scope, $log, $http, users) {
+.controller('adminContentController', ['$scope', '$log', '$http', 'content', function($scope, $log, $http, content) {
   $scope.record = {
     status: 'none',
     err: null,
@@ -42,33 +42,28 @@ var app = angular
   $scope.recordButton = {
     label: 'Next',
     notRunning: 'Next',
-    running: 'Registering user...'
+    running: 'Registering content...'
   };
 
-  $scope.clearUser = function() {
-    $scope.user = {};
-    $scope.user.username = null;
-    $scope.user.password = null;
-    $scope.user.email = null;
-    $scope.user.name= null;
-    $scope.user.surname= null;
+  $scope.clearContent = function() {
+    $scope.content = {};
     $scope.step = 0;
   }
-  $scope.clearUser();
+  $scope.clearContent();
 
-  $scope.recordUser = function() {
+  $scope.recordContent = function() {
     $scope.record.running = true;
     $scope.recordButton.label = $scope.recordButton.running;
 
     $http({
       method: 'POST',
-      url: '/db/register-user',
-      data: $scope.user
+      url: '/db/register-content',
+      data: $scope.content
     })
     .then(function(response) {
-      $scope.clearUser();
-      users.retrieve(function (data) {
-        $scope.users = data;
+      $scope.clearContent();
+      content.retrieve(function (data) {
+        $scope.content = data;
         $scope.showList = true;
       });
       $scope.record.running = false;
@@ -84,27 +79,27 @@ var app = angular
       }
     });
   };
-  $scope.editUser = function (user) {
+  $scope.editContent = function (content) {
     alert('not implemented');
   };
 
-  $scope.deleteUser = function (user) {
+  $scope.deleteContent = function (content) {
     $http({
       method: 'DELETE',
-      url: '/db/user/' + user._id
+      url: '/db/content/' + content._id
     })
     .then(function () {
-      users.retrieve(function (data) {
-        $scope.users = data;
+      content.retrieve(function (data) {
+        $scope.conent = data;
       });
     });
   }
 
-  users.retrieve(function (data) {
-    $scope.users = data;
+  content.retrieve(function (data) {
+    $scope.content = data;
   });
 
-  $scope.attributes = ['name', 'roles', 'creationDate'];
+  $scope.attributes = ['title', 'creationDate'];
 }])
 .directive('equals', ['$log', function($log) {
   return {
@@ -135,21 +130,21 @@ var app = angular
     }
   }
 }])
-.directive('userList', function() {
+.directive('contentList', function() {
   return {
     restrict: 'E',
-    templateUrl: '/admin/users/user-list'
+    templateUrl: '/admin/content/content-list'
   };
 })
-.directive('userData', function() {
+.directive('contentData', function() {
   return {
     restrict: 'A',
-    templateUrl: '/admin/users/user-data'
+    templateUrl: '/admin/content/content-data'
   };
 })
-.directive('newUser', function() {
+.directive('newContent', function() {
   return {
     restrict: 'E',
-    templateUrl: '/admin/users/new-user'
+    templateUrl: '/admin/content/new-content'
   };
 });

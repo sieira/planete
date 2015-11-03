@@ -1,13 +1,15 @@
 {
 "comment": "This is the default content, it's intended to be deleted by the user",
 "content": [{
+    "title": "Wild homepage appeared",
     "URI": "index",
     "format": "md",
     "body": "# Welcome to planète\n\nYou can now log-in to the [administration panel](./admin) so you can add some content\n\n## Help !!\nPlease, feel free to contact our one-man-community in [github](https://github.com/sieira/planete), who knows, we could become a two-people-community soon, that is, a growth of 100%, our unexistant investors would be really proud."
   },
   {
+    "title": "Yep, tell me about you",
     "URI": "about",
-    "format": "HTML",
+    "format": "html",
     "body": "<h1>Planète<h1><p>Planète is an experimental framework/CMS intended to provide a quick and dirty way to create web sites using a node.js server.</p>"
   }]
 }

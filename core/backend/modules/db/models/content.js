@@ -24,6 +24,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var ContentSchema = new Schema({
+  title: {type: String, trim: true, unique: true, required: true },
   URI: {type: String, trim: true, unique: true, required: true },
   format: {type: String, trim: true, required: true, validate: /^(md|html)$/, default: 'html' },
   body: {type: String, trim: true},
