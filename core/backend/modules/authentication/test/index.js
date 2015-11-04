@@ -45,8 +45,7 @@ describe('\x1b[33mAuthentication\x1b[0m', function() {
   });
 
   it('Should be able to add a new user', function (done) {
-    var db = require('_').db;
-    db.registerRootUser({ username: mockUserName, password: mockPassword })
+    core.db.registerRootUser({ username: mockUserName, password: mockPassword })
     .then(function() { done(); })
     .catch(done);
   });

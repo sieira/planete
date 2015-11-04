@@ -21,8 +21,8 @@ This file is part of Planète.
 var Authentication = (function () {
   var CoreModule = require('_/core-module');
 
-  var logger = require('_').logger,
-      db = require('_').db,
+  var logger = core.logger,
+      db = core.db,
       passport = require('passport'),
       q = require('q'),
       BearerStrategy = require('passport-http-bearer').Strategy;

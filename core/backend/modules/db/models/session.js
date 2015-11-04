@@ -23,7 +23,7 @@ var mongoose = require('mongoose'),
     moment = require('moment'),
     crypto = require('crypto'),
     q = require('q'),
-    db = require('_').db;
+    db = core.db;
 
 var SessionSchema = new mongoose.Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -40,7 +40,7 @@ SessionSchema.pre('validate', function(next) {
 });
 
 SessionSchema.pre('save', function(next, done) {
-  var logger = require('_').logger;
+  var logger = core.logger;
 
   var self = this;
   SessionModel.findOne({ user : self.user }, function (err, session) {

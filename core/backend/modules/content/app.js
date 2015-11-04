@@ -20,7 +20,6 @@ var App = (function() {
   var express = require('express'),
       app = express(),
       content = require('.'),
-      core = require('_'),
       db = core.db,
       logger = core.logger;
 

@@ -22,7 +22,6 @@ var Db = (function () {
   var CoreModule = require('_/core-module'),
       fs = require('fs'),
       path = require('path'),
-      core = require('_'),
       logger = core.logger,
       config = core.config,
       util = require('_/util'),

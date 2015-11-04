@@ -20,7 +20,7 @@ This file is part of Planète.
 
 var Module = (function () {
   var CoreModule = require('_/core-module'),
-      core = require('_'),
+      core = core,
       logger = core.logger;
 
   var mod =  new CoreModule(__dirname);

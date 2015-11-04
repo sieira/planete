@@ -22,8 +22,7 @@ This file is part of Planète.
  * Dependencies
  */
 var should = require('chai').should(),
-    expect = require('chai').expect,
-    core = require('_');
+    expect = require('chai').expect;
 
 describe('\x1b[33mCore\x1b[0m', function() {
   it('Should init the core', function(done) {

@@ -20,7 +20,6 @@ This file is part of Planète.
 
 var Content = (function () {
   var CoreModule = require('_/core-module'),
-      core = require('_'),
       db = core.db,
       logger = core.logger;
 

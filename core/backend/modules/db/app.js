@@ -19,8 +19,8 @@ This file is part of Planète.
 var App = (function() {
   var express = require('express'),
       app = express(),
-      db = require('_').db
-      logger = require('_').logger;
+      db = core.db
+      logger = core.logger;
 
 
   app.post('/status', function(req, res) {

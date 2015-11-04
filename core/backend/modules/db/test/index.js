@@ -39,7 +39,7 @@ var mockAnotherUser = {
 
 describe('\x1b[33mDatabase\x1b[0m', function() {
   before(function (done) {
-    var config = require('_').config;
+    var config = core.config;
     var dbUri = 'mongodb://' + config.DB_USER + ':' + config.DB_PASSWORD + '@' + config.DB_HOST + ':' + config.DB_PORT + '/' + config.TEST_DB;
     mongoose.connect(dbUri, function() {
       let clearDB = require('mocha-mongoose')(dbUri);

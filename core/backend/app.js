@@ -20,8 +20,7 @@ var express = require('express'),
     bodyParser = require('body-parser');
 
 var App = (function() {
-  var core = require('_'),
-      logger = core.logger,
+  var logger = core.logger,
       config = core.config,
       i18n = core.i18n;
 

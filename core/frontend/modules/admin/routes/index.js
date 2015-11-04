@@ -20,8 +20,7 @@ This file is part of Planète.
 
 var express = require('express');
 
-var core = require('_'),
-    auth = core.authorization;
+var auth = core.authorization;
 
 var Routes = (function () {
   var router = express.Router();

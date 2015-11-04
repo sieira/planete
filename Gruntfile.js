@@ -25,6 +25,7 @@ var glob = require("glob"),
     util = require("./core/backend/util");
 
 process.env.NODE_ENV = 'test';
+global.core = require('_');
 
 var exclude = ['.git', 'node_modules','bower_components','sample-module'];
 var files = glob.sync("**/test/**/*.js", {});

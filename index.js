@@ -18,8 +18,9 @@ This file is part of Planète.
 **/
 var Reflect = require('harmony-reflect');
 
-var core = require('_'),
-    logger = core.logger;
+global.core = require('_');
+
+var logger = core.logger;
     config = core.config;
 
 // Consider if this could be placed on the core code

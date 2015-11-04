@@ -21,7 +21,6 @@ This file is part of Planète.
 var Authorization = (function () {
   var CoreModule = require('_/core-module'),
       q = require('q'),
-      core = require('_'),
       db = core.db,
       logger = core.logger,
       authenticationMW = core.authentication.middleware;

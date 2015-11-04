@@ -18,7 +18,7 @@ This file is part of Planète.
 **/
 'use strict';
 
-var logger = require('_').logger;
+var logger = core.logger;
 var fs = require('fs'),
     path = require('path'),
     express = require('express');
