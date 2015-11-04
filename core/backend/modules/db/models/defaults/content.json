@@ -10,6 +10,6 @@
     "title": "Yep, tell me about you",
     "URI": "about",
     "format": "html",
-    "body": "<h1>Planète<h1><p>Planète is an experimental framework/CMS intended to provide a quick and dirty way to create web sites using a node.js server.</p>"
+    "body": "<h2>Planète</h2><p>Planète is an experimental framework/CMS intended to provide a quick and dirty way to create web sites using a node.js server.</p>"
   }]
 }

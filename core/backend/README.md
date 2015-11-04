@@ -12,7 +12,7 @@ Each module is responsible of it's own npm dependencies.
 When several modules share the same dependencies, those dependencies may be extracted to the main core dependencies
 
 ## Require module
-During installation, the core backend is linked in the main node_modules directory under the alias `_`. You can then retrieve it using `core`
+During installation, the core backend is linked in the main node_modules directory under the alias `_`. You should anyway retrieve it using the global variable `core`.
 
 Please, note that there are consequently two ways to require any core module :
 
