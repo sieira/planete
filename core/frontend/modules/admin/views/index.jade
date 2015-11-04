@@ -17,16 +17,16 @@
       along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 -//
 
+- var modules = (function () {
+-  return ['/admin/users', '/admin/content'];
+- })();
+
 .panel
   .container-fluid
     h3 Welcome to the almighty administration panel
     hr
     uib-tabset
-      include ../modules/users/views/index.jade
-      include ../modules/content/views/index.jade
-
-      uib-tab
-        uib-tab-heading #[i.fa.fa-cog] Config
-        
-        p Vivamus ex massa, vestibulum eget nisl pulvinar, tristique molestie est. Quisque tristique sit amet nisl sit amet luctus. Nam eget erat ultricies, pellentesque est vitae, viverra metus. Nullam scelerisque auctor est, eu dictum tortor. Aliquam sed porttitor mi. Integer a facilisis tortor. Sed ultricies mauris sit amet orci viverra, a facilisis arcu tincidunt. Aenean eleifend leo turpis, at sollicitudin magna pretium ac. Integer cursus vestibulum augue, vel feugiat sem faucibus nec.
-        p Aenean cursus leo et nisl maximus commodo. Fusce placerat nibh sed nunc dignissim, at blandit eros faucibus. Aenean non lorem accumsan, pellentesque nibh sed, sagittis justo. Phasellus sollicitudin tincidunt sem, at blandit nisi dignissim vel. Quisque ligula massa, auctor id massa id, lobortis elementum velit. Nulla pulvinar nisl dui, non mollis orci hendrerit at. Fusce efficitur auctor iaculis. Nullam eleifend lacus ac risus ultricies, vel malesuada libero vulputate. 
+      each mod in modules
+        uib-tab
+            uib-tab-heading&attributes({'static-include':mod+'/header'})
+            div&attributes({'static-include':mod})

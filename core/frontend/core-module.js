@@ -31,6 +31,7 @@ function CoreModule(dir) {
    * the module.
    */
   this.dir = dir;
+  this.name = dir.substring(dir.lastIndexOf("/"));
 
   let routesDir = path.join(this.dir, 'routes'),
       viewsDir = path.join(this.dir, 'views'),
@@ -56,7 +57,7 @@ function CoreModule(dir) {
       let mod = require(path.join(modulesDir,filename));
 
       if(mod instanceof CoreModule) {
-        logger.info('Registered module %s routes', filename);
+        logger.info('Registered frontend module %s/%s routes', this.name, filename);
         this.routes.use(path.join('/' + filename), mod.routes);
       } else {
         logger.error('Module %s is not a core module', filename);

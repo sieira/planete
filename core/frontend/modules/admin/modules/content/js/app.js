@@ -19,7 +19,6 @@ This file is part of Planète.
 'use strict';
 
 var app = angular
-
 .module('admin.content', [])
 .service('content', ['$http', function ($http) {
   this.retrieve = function (callback) {

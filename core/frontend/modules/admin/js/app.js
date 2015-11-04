@@ -23,4 +23,14 @@ var angularInjections = angularInjections || [];
 var app = angular
 .module('admin', [].concat(angularInjections))
 .controller('adminController', ['$scope', '$log', function($scope, $log) {
-}]);
+}
+])
+.directive('staticInclude', function($http, $templateCache, $compile, $log) {
+    return function(scope, element, attrs) {
+        var templatePath = attrs.staticInclude;
+        $http.get(templatePath, { cache: $templateCache }).success(function(response) {
+            var contents = element.html(response).contents();
+            $compile(contents)(scope);
+        });
+    };
+});

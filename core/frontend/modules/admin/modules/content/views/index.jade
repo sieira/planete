@@ -17,11 +17,9 @@
       along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 -//
 
-uib-tab
-  uib-tab-heading #[i.fa.fa-file-text-o] Content
-  
-  div(oc-lazy-load='modules/admin/modules/content/js/app.js')  
-    .container-fluid(ng-controller='adminContentController', ng-init='showList = true')
-      button.btn.btn-primary(ng-show="showList", ng-click='showList = false') #[i.fa.fa-file-text-o] New content
-      content-list(ng-show="showList")
-      //new-content(ng-show="!showList")
+
+div(oc-lazy-load='modules/admin/modules/content/js/app.js')  
+  .container-fluid(ng-controller='adminContentController', ng-init='showList = true')
+    button.btn.btn-primary(ng-show="showList", ng-click='showList = false') #[i.fa.fa-file-text-o] New content
+    content-list(ng-show="showList")
+    //new-content(ng-show="!showList")
