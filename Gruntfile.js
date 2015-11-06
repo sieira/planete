@@ -85,6 +85,26 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask('drop', 'drop the database', function() {
+    var mongoose = require('mongoose');
+
+    // async mode
+    var done = this.async();
+
+    mongoose.connection.on('open', function () {
+      mongoose.connection.db.dropDatabase(function(err) {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log('Successfully dropped db');
+        }
+        mongoose.connection.close(done);
+      });
+    });
+
+    mongoose.connect('mongodb://admin:password@localhost:27017/planete');
+  });
+
   grunt.loadNpmTasks('grunt-auto-install');
   grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-contrib-clean');

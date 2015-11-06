@@ -17,7 +17,7 @@
       along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 -//
 
-td {{ cont.title }}
+td {{ cont.title || cont.name }}
 td {{ cont.timestamps.creation | date }}
 td.text-right
   .btn-group #[button.btn.btn-default.fa.fa-pencil-square-o(ng-click = 'editContent(cont)')] #[button.btn.btn-default.fa.fa-trash-o(ng-click = 'deleteContent(cont)')]
