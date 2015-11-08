@@ -18,17 +18,17 @@ This file is part of Planète.
 **/
 'use strict';
 
-var Authentication = (() => {
-  var CoreModule = require('_/core-module');
+let Authentication = (() => {
+  let CoreModule = require('_/core-module');
 
-  var logger = core.logger,
+  let logger = core.logger,
       db = core.db,
       passport = require('passport'),
       BearerStrategy = require('passport-http-bearer').Strategy;
 
-  var auth = new CoreModule(__dirname);
+  let auth = new CoreModule(__dirname);
 
-  var strategy = new BearerStrategy((token, done) => {
+  let strategy = new BearerStrategy((token, done) => {
     db.session.findOne({ token: token }, (err, user) => {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
