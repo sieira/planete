@@ -86,7 +86,9 @@ describe('\x1b[33mAuthentication\x1b[0m', function() {
       expect(user.userId).to.exist;
       expect(user.token).to.exist;
 
-      authentication.logout(user.userId, user.token, done);
+      authentication.logout(user.userId, user.token)
+      .then(done)
+      .catch(done);
     })
     .catch(done);
   });

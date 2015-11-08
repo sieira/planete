@@ -18,19 +18,18 @@ This file is part of Planète.
 **/
 'use strict';
 
-var Authentication = (function () {
+var Authentication = (() => {
   var CoreModule = require('_/core-module');
 
   var logger = core.logger,
       db = core.db,
       passport = require('passport'),
-      q = require('q'),
       BearerStrategy = require('passport-http-bearer').Strategy;
 
   var auth = new CoreModule(__dirname);
 
-  var strategy = new BearerStrategy(function(token, done) {
-    db.session.findOne({ token: token }, function (err, user) {
+  var strategy = new BearerStrategy((token, done) => {
+    db.session.findOne({ token: token }, (err, user) => {
       if (err) { return done(err); }
       if (!user) { return done(null, false); }
       return done(null, user, { scope: 'all' });
@@ -41,44 +40,39 @@ var Authentication = (function () {
   auth.middleware = passport.authenticate('bearer', { session: false });
   logger.OK('Authentication strategy registered');
 
-  auth.login = function(ip, username, password) {
-    var deferred = q.defer();
+  auth.login = (ip, username, password) =>
+    new Promise((resolve, reject) =>
+      db.user.findOne({ username: username }).exec()
+      .then((user) => {
+        if(!user) { throw new Error('Authentication failed'); } // No user with this username
 
-    q(db.user.findOne({ username: username }).exec())
-    .then(function (user) {
-      if(!user) { throw new Error('Authentication failed'); } // No user with this username
-
-      user.comparePassword(password, function(err, isMatch) {
-        if(err) { throw err; }
-        if(!isMatch) { // Password do not match
-          user.loginFailure(ip);
-          deferred.reject(new Error('Authentication failed'));
-          return;
-        }
-
-        new db.session({ user: user._id }).save(function(err, session) {
+        user.comparePassword(password, (err, isMatch) => {
           if(err) { throw err; }
-          user.loginSuccess(ip);
-          logger.info('Session created for user %s', session.user);
-          deferred.resolve({ userId: session.user, token: session.token });
+
+          if(!isMatch) { // Password do not match
+            user.loginFailure(ip);
+            return reject(new Error('Authentication failed'));
+          }
+
+          new db.session({ user: user._id }).save((err, session) => {
+            if(err) { throw err; }
+
+            user.loginSuccess(ip);
+            logger.info('Session created for user %s', session.user);
+            resolve({ userId: session.user, token: session.token });
+          });
         });
-      });
-    })
-    .catch(function(err) {
-      deferred.reject(err);
-     });
+      })
+      .catch(reject));
 
-      return deferred.promise;
-  };
-
-  auth.logout = function(userid, token, callback) {
-    q(db.session.remove({ user: userid, token: token }).exec())
-    .then(function() {
-      logger.info('User %s logged out from session with token %s', userid, token);
-      callback();
-    })
-    .catch(callback);
-  };
+  auth.logout = (userid, token) =>
+    new Promise((resolve,reject) =>
+      db.session.remove({ user: userid, token: token }).exec()
+      .then(() => {
+        logger.info('User %s logged out from session with token %s', userid, token);
+        resolve();
+      })
+      .catch(reject));
 
   return auth;
 })();

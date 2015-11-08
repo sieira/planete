@@ -16,26 +16,25 @@ This file is part of Planète.
     You should have received a copy of the GNU Affero General Public License
     along with along with planète.  If not, see <http://www.gnu.org/licenses/>.  If not, see <http://www.gnu.org/licenses/>
 **/
+'use strict';
+
 var App = (function() {
   var express = require('express'),
       app = express(),
       auth = require('.');
 
 
-  app.post('/login', function(req,res) {
-    var ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
+  app.post('/login', (req,res) => {
+    let ip = req.ip || req._remoteAddress || (req.connection && req.connection.remoteAddress) || undefined;
 
     auth.login(ip, req.body.username, req.body.password)
-    .then(function(user) {
-      res.status(201).json(user);
-    })
-    .catch(function() {
-      return res.status(401).send();
-    });
+    .then((user) => res.status(201).json(user))
+    .catch(() => res.status(401).send());
   });
 
-  app.post('/logout', function(req,res) {
-    auth.logout(req.body.userId, req.body.token, function(err) {
+  app.post('/logout', (req,res) => {
+    auth.logout(req.body.userId, req.body.token)
+    .then((err) => {
       if(err) { return res.status(401).send(); }
       res.status(204).send();
     });
