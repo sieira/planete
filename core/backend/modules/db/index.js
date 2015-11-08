@@ -31,6 +31,9 @@ var Db = (function () {
   var db =  new CoreModule(__dirname);
 
   function exposeModels(callback) {
+    //Use ES6 promises
+    mongoose.Promise = global.Promise;
+    
     // Expose all the models as properties
     fs.readdir(__dirname + '/models', function(err, files) {
       files.forEach(function(filename) {
