@@ -27,7 +27,7 @@ var App = (function() {
 
     auth.login(ip, req.body.username, req.body.password)
     .then(function(user) {
-      res.status(200).json(user);
+      res.status(201).json(user);
     })
     .catch(function() {
       return res.status(401).send();
@@ -37,7 +37,7 @@ var App = (function() {
   app.post('/logout', function(req,res) {
     auth.logout(req.body.userId, req.body.token, function(err) {
       if(err) { return res.status(401).send(); }
-      res.status(200).send();
+      res.status(204).send();
     });
   });
 
