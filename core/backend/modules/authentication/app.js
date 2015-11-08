@@ -18,8 +18,8 @@ This file is part of Planète.
 **/
 'use strict';
 
-var App = (function() {
-  var express = require('express'),
+let App = (() => {
+  let express = require('express'),
       app = express(),
       auth = require('.');
 
@@ -32,13 +32,10 @@ var App = (function() {
     .catch(() => res.status(401).send());
   });
 
-  app.post('/logout', (req,res) => {
+  app.post('/logout', (req,res) =>
     auth.logout(req.body.userId, req.body.token)
-    .then((err) => {
-      if(err) { return res.status(401).send(); }
-      res.status(204).send();
-    });
-  });
+    .then(() => res.status(204).send())
+    .catch((err) => res.status(401).send()));
 
   return app;
 })();
