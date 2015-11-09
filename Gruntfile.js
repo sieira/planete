@@ -25,7 +25,6 @@ var glob = require("glob"),
     util = require("./core/backend/util");
 
 process.env.NODE_ENV = 'test';
-global.core = require('_');
 
 var exclude = ['.git', 'node_modules','bower_components','sample-module'];
 var files = glob.sync("**/test/**/*.js", {});
@@ -105,6 +104,10 @@ module.exports = function(grunt) {
     mongoose.connect('mongodb://admin:password@localhost:27017/planete');
   });
 
+  grunt.registerTask('bootstrapCore', 'make the core global', function() {
+    global.core = require('_');
+  });
+
   grunt.loadNpmTasks('grunt-auto-install');
   grunt.loadNpmTasks('grunt-contrib-symlink');
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -112,6 +115,6 @@ module.exports = function(grunt) {
 
 
   grunt.registerTask('build', ['symlink', 'auto_install']);
-  grunt.registerTask('test', ['mochaTest']);
+  grunt.registerTask('test', ['bootstrapCore', 'mochaTest']);
   grunt.registerTask('rebuild', ['clean', 'build']);
 };
