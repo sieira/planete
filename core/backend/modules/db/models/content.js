@@ -19,7 +19,7 @@ This file is part of Planète.
 'use strict';
 
 var mongoose = require('mongoose'),
-    extend = require('mongoose-schema-extend'),
+    extend = require('mongoose-extend'),
     q = require('q'),
     Schema = mongoose.Schema;
 
@@ -40,7 +40,7 @@ var ContentSchema = new Schema({
  * Pages are a content containing a body and a title
  */
 var PageSchema = ContentSchema.extend({
-  title: { type: String, trim: true, unique: true, required: true },
+  title: { type: String, trim: true },
   format: { type: String, trim: true, required: true, validate: /^(md|html)$/, default: 'html' },
   body: { type: String, trim: true, required: true }
 });

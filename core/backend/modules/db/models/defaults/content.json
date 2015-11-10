@@ -20,7 +20,7 @@
       "body": "# This is what I have to say\nAnd here it is, it's said already"
     }],
     "contentsets": [{
-      "name": "All articles set",
+      "name": "Not unique name",
       "description": "List of all the articles",
       "URI": "sets/articles",
       "content": {
@@ -30,7 +30,7 @@
       }
     }],
     "views": [{
-      "name": "All articles view",
+      "name": "Not unique name",
       "URI": "views/articles",
       "format": "html",
       "body": "HERE WE ARE SUPPOSED TO INSERT THE ARTICLES SET !!!"

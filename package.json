@@ -1,6 +1,6 @@
 {
   "name": "planete",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Modular Node.js CMS",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,8 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "mocha": "^2.3.3",
+    "mongoose": "^4.2.4",
+    "mongoose-extend": "^0.1.0",
     "supertest": "^1.1.0"
   },
   "dependencies": {
