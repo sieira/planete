@@ -1,5 +1,6 @@
 # Disclaimer
-As for the present version (0.0.0), this repository is absolutely useless.
+As for the present version (0.0.1), this repository is not functional, and can only serve as a base framework.
+Please, be aware that there may be some security concerns, and it should only be used on servers allowing to redirect to the login page via an SSL connection, which has not currently been implemented as an internal feature.
 
 # Planete
 Mudular Node.js CMS
