@@ -19,7 +19,7 @@ This file is part of Planète.
 'use strict';
 
 var mongoose = require('mongoose'),
-    extend = require('mongoose-extend'),
+    extend = require('mongoose-schema-extend'),
     q = require('q'),
     Schema = mongoose.Schema;
 
