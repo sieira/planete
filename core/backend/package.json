@@ -8,6 +8,6 @@
   "devDependencies": {
     "mocha": "^2.3.3",
     "mocha-mongoose": "^1.1.0",
-    "mongodb": "^2.0.46"
+    "mongodb": "^3.6.1"
   }
 }
